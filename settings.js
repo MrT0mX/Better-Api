@@ -27,18 +27,18 @@ keymongodb = process.env.mongodb; //example "mongodb+srv://user:password@name_da
 
 //___________ ┏  SMTP Setting  ┓ ___________\\
 
-//note service SMTP Gmail Tidak Boleh Send Kat Temp Email Kalau mahu pakai temp email buat di service lain
-usetempemail = true; // kalau true boleh sing up pakai email temp kalau pakai service gmail pakai false je
-servicesmtp = "Zoho"; //Ada gmail ada sendinblue ikut masing2 limit gmail 500 limit sendinblue 300 free. List service smtp : https://nodemailer.com/smtp/well-known/
+//Note service SMTP Gmail cannot send in email if you want to apply an email in another service
+usetempemail = true; // If true, you can sing up using email temp if you use gmail service using false je
+servicesmtp = "Zoho"; //There is a gmail there is Sendinblue following each Gmail 500 limit limit 300 free limit. List service smtp : https://nodemailer.com/smtp/well-known/
 sendemail = process.env.sendemail; //Email SMTP
-fromsendemail = process.env.fromsendemail; // From Email SMTP *kalau takde custom email kena sama email dengan Email SMTP
+fromsendemail = process.env.fromsendemail; // From Email SMTP *if takde custom email hit with email with SMTP email
 sendpwmail = process.env.sendpwmail; // Password Email SMTP
-domain = "api.rivqi.my.id"; // domain website tanpa http or https
+domain = "api.rivqi.my.id"; // Website domain without http or https
 
 //_______________________ ┏  Apikey  ┓ _______________________\\
 
 // NOTE!!!!
-// KALAU APIKEY HABIS BUAT SENDIRI
+// If the apikey is done for yourself
 
 //Get Api Cuttly From https://cutt.ly/cuttly-api    \\
 apicuttly = [
