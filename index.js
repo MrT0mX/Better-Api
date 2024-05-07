@@ -86,7 +86,7 @@ cron.schedule(
   },
   {
     scheduled: true,
-    timezone: "Asia/Jakarta",
+    timezone: "Asia/Dhaka",
   }
 );
 
@@ -98,7 +98,7 @@ cron.schedule(
   },
   {
     scheduled: true,
-    timezone: "Asia/Jakarta",
+    timezone: "Asia/Dhaka",
   }
 );
 
