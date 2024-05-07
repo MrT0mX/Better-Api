@@ -2,15 +2,18 @@ __path = process.cwd()
 
 //_______________________ ┏  Info  ┓ _______________________\\
 //
-//   Credit : AlipBot
+//   Edited BY: MrTomXxX
 //   
-//   Note 
-//   Jangan Jual SC ini ,
-//   Jangan Buang Text ini,
-//   Siapa Mahu Upload Jangan Lupa Credit :),
-//   Siapa Tidak Letak Credit Akan Ambil Tindakan
+//   -----------Note ------------
+//
+//   Api Owner: Bot
+//   Don't sell this API,
+//   Don't Change this text,
+//   Who wants to upload don't forget to credit :),
+//   Who does not place credit will take action
 //   
-//_______________________ ┏ Make By AlipBot ┓ _______________________\\
+//_______________________ ┏ Modified By MrTomXxX ┓ _______________________\\
+
 
 //―――――――――――――――――――――――――――――――――――――――――― ┏  Modules ┓ ―――――――――――――――――――――――――――――――――――――――――― \\
 
