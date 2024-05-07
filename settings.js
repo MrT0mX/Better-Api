@@ -2,15 +2,18 @@ require("dotenv").config();
 
 //_______________________ ┏  Info  ┓ _______________________\\
 //
-//   Credit : AlipBot
+//   Edited BY: MrTomXxX
+//   
+//   -----------Note ------------
 //
-//   Note
-//   Jangan Jual SC ini ,
-//   Jangan Buang Text ini,
-//   Siapa Mahu Upload Jangan Lupa Credit :),
-//   Siapa Tidak Letak Credit Akan Ambil Tindakan
-//
-//_______________________ ┏ Make By AlipBot ┓ _______________________\\
+//   Api Owner: Bot
+//   Don't sell this API,
+//   Don't Change this text,
+//   Who wants to upload don't forget to credit :),
+//   Who does not place credit will take action
+//   
+//_______________________ ┏ Modified By MrTomXxX ┓ _______________________\\
+
 
 //_______________________ ┏  Main Setting  ┓ _______________________\\
 
