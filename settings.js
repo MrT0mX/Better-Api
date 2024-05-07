@@ -17,7 +17,7 @@ require("dotenv").config();
 
 //_______________________ ┏  Main Setting  ┓ _______________________\\
 
-creator = "乂𝙍𝙖𝙯𝙖𝙣乂"; // Nama
+creator = "MrTom乂x乂"; // Name
 port = 8080; //port host
 LimitApikey = 200; // Limit Apikey default
 
