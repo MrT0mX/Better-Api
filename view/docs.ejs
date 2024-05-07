@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    />
+    <link rel="stylesheet" href="/css/docs/style.css" />
+    <title>Razan API | Docs</title>
+  </head>
+  <body>
+    <!-- SIDEBAR -->
+    <section id="sidebar">
+      <a href="/" class="brand"><i class="bx bxs-smile icon"></i> RestApi</a>
+      <ul class="side-menu">
+        <li>
+          <a href="/"><i class="bx bxs-home icon"></i> Home</a>
+        </li>
+        <li>
+          <a href="#"><i class="bx bxs-dashboard icon"></i> Dashboard</a>
+        </li>
+        <li class="divider" data-text="api features">Api Features</li>
+        <li>
+          <a href="#"
+            ><i class="bx bx-download icon"></i> Downloader
+            <i class="bx bx-chevron-right icon-right"></i
+          ></a>
+          <ul class="side-dropdown">
+            <li>
+              <a
+                href="api/dowloader/fbdown?url=https://www.facebook.com/UstazAzharIdrusFansClub/videos/813224618838631&apikey=<%= apikey %>"
+                target="_blank"
+                >Facebook</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/dowloader/twitter?url=https://twitter.com/faqeeyaaz/status/1242789155173617664?s=20&t=DRgdl9U8MwTwpY0o1o-96g&apikey=<%= apikey %>"
+                target="_blank"
+                >Twitter</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/dowloader/tikok?url=https://www.tiktok.com/@yow_ai_mo_low_edit/video/7181079588112583963&apikey=<%= apikey %>"
+                target="_blank"
+                >Tiktok Slide Photo</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/dowloader/tikok?url=https://www.tiktok.com/@alipje29/video/7090119331685682458&apikey=<%= apikey %>"
+                target="_blank"
+                >Tiktok Mp4 & Mp3</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/dowloader/igdowloader?url=https://www.instagram.com/stories/solozsoloz&apikey=<%= apikey %>"
+                target="_blank"
+                >Instagram Story</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/dowloader/igdowloader?url=https://www.instagram.com/reel/Cmq_dx9hbw0/&apikey=<%= apikey %>"
+                target="_blank"
+                >Instagram Reels</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/dowloader/igdowloader?url=https://www.instagram.com/p/Ci2NrMss2hB/&apikey=<%= apikey %>"
+                target="_blank"
+                >Instagram Image Video</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/dowloader/yt?url=https://youtu.be/3hXbjp-FcTc&apikey=<%= apikey %>"
+                target="_blank"
+                >Youtube Mp4 & Mp3</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/dowloader/soundcloud?url=https://soundcloud.com/ndaa-212683099/dj-coba-kau-ingat-ingat-kembali-seharusnya-aku-jungle-dutch-terbaru-2021-full-bass-viral-tik?utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing&apikey=<%= apikey %>"
+                target="_blank"
+                >Soundcloud</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/dowloader/mediafire?url=https://www.mediafire.com/file/gpeiucmm1xo6ln0/hello_world.mp4/file&apikey=<%= apikey %>"
+                target="_blank"
+                >Mediaire</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/dowloader/sfilemobi?url=https://sfile.mobi/P0D2WxqDwA7&apikey=<%= apikey %>"
+                target="_blank"
+                >Sfilemobi</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/dowloader/zippyshare?url=https://www42.zippyshare.com/v/RLxFmmyZ/file.html&apikey=<%= apikey %>"
+                target="_blank"
+                >Zippyshare</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/dowloader/telesticker?url=https://t.me/addstickers/Shitsshitsshitsshists&apikey=<%= apikey %>"
+                target="_blank"
+                >Telegram Sticker</a
+              >
+            </li>
+          </ul>
+        </li>
+        <li>
+          <a href="#"
+            ><i class="bx bx-font icon"></i> Text Maker
+            <i class="bx bx-chevron-right icon-right"></i
+          ></a>
+          <ul class="side-dropdown">
+            <li>
+              <a
+                href="api/textpro/pencil?text=Razan&apikey=<%= apikey %>"
+                target="_blank"
+                >Pencils</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/textpro/glitch?text=Razan&apikey=<%= apikey %>"
+                target="_blank"
+                >Glitch</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/textpro/berry?text=Razan&apikey=<%= apikey %>"
+                target="_blank"
+                >Berry</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/textpro/blackpink?text=Razan&apikey=<%= apikey %>"
+                target="_blank"
+                >Blackpink</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/textpro/neon?text=Razan&apikey=<%= apikey %>"
+                target="_blank"
+                >Neon</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/textpro/logobear?text=Razan&apikey=<%= apikey %>"
+                target="_blank"
+                >Logo Bear</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/textpro/3dchristmas?text=Razan&apikey=<%= apikey %>"
+                target="_blank"
+                >3D Christmas</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/textpro/thunder?text=Razan&apikey=<%= apikey %>"
+                target="_blank"
+                >Thunder</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/textpro/3dboxtext?text=Razan&apikey=<%= apikey %>"
+                target="_blank"
+                >3D Box</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/textpro/glitch2?text=Razan&text2=pro&apikey=<%= apikey %>"
+                target="_blank"
+                >Glitch 2</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/textpro/glitchtiktok?text=Razan&text2=pro&apikey=<%= apikey %>"
+                target="_blank"
+                >Glitch Tiktok</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/textpro/video-game-classic?text=Razan&text2=pro&apikey=<%= apikey %>"
+                target="_blank"
+                >Video Game Classic</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/textpro/marvel-studios?text=Razan&text2=pro&apikey=<%= apikey %>"
+                target="_blank"
+                >Marvel Studios</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/textpro/ninja-logo?text=Razan&text2=pro&apikey=<%= apikey %>"
+                target="_blank"
+                >Ninja Logo</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/textpro/transformer?text=Razan&apikey=<%= apikey %>"
+                target="_blank"
+                >Transformer</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/textpro/green-horror?text=Razan&apikey=<%= apikey %>"
+                target="_blank"
+                >Green Horrorer</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/textpro/magma?text=Razan&apikey=<%= apikey %>"
+                target="_blank"
+                >Magma</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/textpro/3d-neon-light?text=Razan&apikey=<%= apikey %>"
+                target="_blank"
+                >3D Neon Light</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/textpro/3d-orange-juice?text=Razan&apikey=<%= apikey %>"
+                target="_blank"
+                >3D Orange Juice</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/textpro/chocolate-cake?text=Razan&apikey=<%= apikey %>"
+                target="_blank"
+                >Chocolate Cake</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/textpro/strawberry?text=Razan&apikey=<%= apikey %>"
+                target="_blank"
+                >Strawberry</a
+              >
+            </li>
+          </ul>
+        </li>
+        <li>
+          <a href="#"
+            ><i class="bx bx-image icon"></i> Photooxy
+            <i class="bx bx-chevron-right icon-right"></i
+          ></a>
+          <ul class="side-dropdown">
+            <li>
+              <a
+                href="api/photooxy/flaming?text=Razan&apikey=<%= apikey %>"
+                target="_blank"
+                >Flaming</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/photooxy/shadow-sky?text=Razan&apikey=<%= apikey %>"
+                target="_blank"
+                >Shadow Sky</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/photooxy/metallic?text=Razan&apikey=<%= apikey %>"
+                target="_blank"
+                >Metallic</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/photooxy/naruto?text=Razan&apikey=<%= apikey %>"
+                target="_blank"
+                >Naruto</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/photooxy/pubg?text=Pubg&text2=Razan&apikey=<%= apikey %>"
+                target="_blank"
+                >PUBG</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/photooxy/under-grass?text=Razan&apikey=<%= apikey %>"
+                target="_blank"
+                >Under Grass</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/photooxy/harry-potter?text=Razan&apikey=<%= apikey %>"
+                target="_blank"
+                >Harry Potter</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/photooxy/flower-typography?text=Razan&apikey=<%= apikey %>"
+                target="_blank"
+                >Flower Typography</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/photooxy/picture-of-love?text=Razan&apikey=<%= apikey %>"
+                target="_blank"
+                >Picture Of Love</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/photooxy/coffee-cup?text=Razan&apikey=<%= apikey %>"
+                target="_blank"
+                >Coffee Cup</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/photooxy/butterfly?text=Razan&apikey=<%= apikey %>"
+                target="_blank"
+                >Butterfly</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/photooxy/night-sky?text=Razan&apikey=<%= apikey %>"
+                target="_blank"
+                >Night Sky</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/photooxy/carved-wood?text=Razan&apikey=<%= apikey %>"
+                target="_blank"
+                >Carved Wood</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/photooxy/illuminated-metallic?text=Razan&apikey=<%= apikey %>"
+                target="_blank"
+                >Illuminated Metallic</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/photooxy/sweet-candy?text=Razan&apikey=<%= apikey %>"
+                target="_blank"
+                >Sweet Candy</a
+              >
+            </li>
+          </ul>
+        </li>
+        <li>
+          <a href="#"
+            ><i class="bx bx-microphone icon"></i> Sound Of Text
+            <i class="bx bx-chevron-right icon-right"></i
+          ></a>
+          <ul class="side-dropdown">
+            <li>
+              <a
+                href="api/soundoftext?text=hi&lang=id-ID&apikey=<%= apikey %>"
+                target="_blank"
+                >Indonesian</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/soundoftext?text=hi&lang=en-US&apikey=<%= apikey %>"
+                target="_blank"
+                >English (United States)</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/soundoftext?text=hi&lang=ja-JP&apikey=<%= apikey %>"
+                target="_blank"
+                >Japanese (Japan)</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/soundoftext?text=hi&lang=fr-FR&apikey=<%= apikey %>"
+                target="_blank"
+                >French</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/soundoftext?text=hi&lang=fil-PH&apikey=<%= apikey %>"
+                target="_blank"
+                >Filipino</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/soundoftext?text=hi&lang=my&apikey=<%= apikey %>"
+                target="_blank"
+                >Burmese (Myanmar)</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/soundoftext?text=hi&lang=de-DE&apikey=<%= apikey %>"
+                target="_blank"
+                >German</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/soundoftext?text=hi&lang=it-IT&apikey=<%= apikey %>"
+                target="_blank"
+                >Italian</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/soundoftext?text=hi&lang=jko-KR&apikey=<%= apikey %>"
+                target="_blank"
+                >Korean</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/soundoftext?text=hi&lang=th-TH&apikey=<%= apikey %>"
+                target="_blank"
+                >Thai</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/soundoftext?text=hi&lang=hi-IN&apikey=<%= apikey %>"
+                target="_blank"
+                >Hindi</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/soundoftext?text=hi&lang=ru-RU&apikey=<%= apikey %>"
+                target="_blank"
+                >Russian</a
+              >
+            </li>
+          </ul>
+        </li>
+        <li>
+          <a href="#"
+            ><i class="bx bx-search icon"></i> Search
+            <i class="bx bx-chevron-right icon-right"></i
+          ></a>
+          <ul class="side-dropdown">
+            <li>
+              <a
+                href="api/search/ytplay?text=starboy&apikey=<%= apikey %>"
+                target="_blank"
+                >YouTube Play</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/search/linkgroupwa?text=belajar&apikey=<%= apikey %>"
+                target="_blank"
+                >Group WA</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/search/pinterest?text=al-quran&apikey=<%= apikey %>"
+                target="_blank"
+                >Pinterest</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/search/ringtone?text=samsung&apikey=<%= apikey %>"
+                target="_blank"
+                >Ringtone</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/search/wikimedia?text=Malaysia&apikey=<%= apikey %>"
+                target="_blank"
+                >Wikimedia</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/search/google?text=Mobile%20Legends&apikey=<%= apikey %>"
+                target="_blank"
+                >Google</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/search/googleimage?text=Mobile%20Legends&apikey=<%= apikey %>"
+                target="_blank"
+                >Google Image</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/search/wallpaper?text=Mobile%20Legends&apikey=<%= apikey %>"
+                target="_blank"
+                >Wallpaper</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/search/sticker?text=fun&apikey=<%= apikey %>"
+                target="_blank"
+                >Sticker</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/search/sfilemobi?text=Tiktok%20Mod&apikey=<%= apikey %>"
+                target="_blank"
+                >Sfilemobi</a
+              >
+            </li>
+          </ul>
+        </li>
+        <li>
+          <a href="#"
+            ><i class="bx bx-shuffle icon"></i> Random Image
+            <i class="bx bx-chevron-right icon-right"></i
+          ></a>
+          <ul class="side-dropdown">
+            <li>
+              <a
+                href="api/randomgambar/couplepp?apikey=<%= apikey %>"
+                target="_blank"
+                >Couple PFP</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/randomgambar/dadu?apikey=<%= apikey %>"
+                target="_blank"
+                >Dadu</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/randomgambar/coffee?apikey=<%= apikey %>"
+                target="_blank"
+                >Coffe</a
+              >
+            </li>
+          </ul>
+        </li>
+        <li>
+          <a href="#"
+            ><i class="bx bx-joystick icon"></i> Game
+            <i class="bx bx-chevron-right icon-right"></i
+          ></a>
+          <ul class="side-dropdown">
+            <li>
+              <a
+                href="api/game/tembakgambar?apikey=<%= apikey %>"
+                target="_blank"
+                >Tebak Gambar</a
+              >
+            </li>
+            <li>
+              <a href="api/game/susunkata?apikey=<%= apikey %>" target="_blank"
+                >Susun Kata</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/game/tembakbendera?apikey=<%= apikey %>"
+                target="_blank"
+                >Tebak Bendera</a
+              >
+            </li>
+            <li>
+              <a href="api/game/tembakgame?apikey=<%= apikey %>" target="_blank"
+                >Tebak Game</a
+              >
+            </li>
+            <li>
+              <a href="api/game/tembakkata?apikey=<%= apikey %>" target="_blank"
+                >Tebak Kata</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/game/tembaklirik?apikey=<%= apikey %>"
+                target="_blank"
+                >Tembak Lirik</a
+              >
+            </li>
+            <li>
+              <a href="api/game/tembaklagu?apikey=<%= apikey %>" target="_blank"
+                >Tembak Lagu</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/game/tembakkimia?apikey=<%= apikey %>"
+                target="_blank"
+                >Tembak Kimia</a
+              >
+            </li>
+            <li>
+              <a href="api/game/truth?apikey=<%= apikey %>" target="_blank"
+                >Truth</a
+              >
+            </li>
+            <li>
+              <a href="api/game/dare?apikey=<%= apikey %>" target="_blank"
+                >Dare</a
+              >
+            </li>
+          </ul>
+        </li>
+        <li>
+          <a href="#"
+            ><i class="bx bx-edit icon"></i> Img Manipulation
+            <i class="bx bx-chevron-right icon-right"></i
+          ></a>
+          <ul class="side-dropdown">
+            <li>
+              <a
+                href="api/maker/circle?url=https://i.pinimg.com/564x/b8/a8/e2/b8a8e281f1a3113630671742b5677c15.jpg&apikey=<%= apikey %>"
+                target="_blank"
+                >Circle</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/maker/beautiful?url=https://i.pinimg.com/564x/b8/a8/e2/b8a8e281f1a3113630671742b5677c15.jpg&apikey=<%= apikey %>"
+                target="_blank"
+                >Beautiful</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/maker/blur?url=https://i.pinimg.com/564x/b8/a8/e2/b8a8e281f1a3113630671742b5677c15.jpg&apikey=<%= apikey %>"
+                target="_blank"
+                >Blur</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/maker/darkness?url=https://i.pinimg.com/564x/b8/a8/e2/b8a8e281f1a3113630671742b5677c15.jpg&no=50&apikey=<%= apikey %>"
+                target="_blank"
+                >Darkness</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/maker/facepalm?url=https://i.pinimg.com/564x/b8/a8/e2/b8a8e281f1a3113630671742b5677c15.jpg&apikey=<%= apikey %>"
+                target="_blank"
+                >Facepalm</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/maker/invert?url=https://i.pinimg.com/564x/b8/a8/e2/b8a8e281f1a3113630671742b5677c15.jpg&apikey=<%= apikey %>"
+                target="_blank"
+                >Invert</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/maker/pixelate?url=https://i.pinimg.com/564x/b8/a8/e2/b8a8e281f1a3113630671742b5677c15.jpg&no=10&apikey=<%= apikey %>"
+                target="_blank"
+                >Pixelate</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/maker/rainbow?url=https://i.pinimg.com/564x/b8/a8/e2/b8a8e281f1a3113630671742b5677c15.jpg&apikey=<%= apikey %>"
+                target="_blank"
+                >Rainbow</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/maker/resize?url=https://i.pinimg.com/564x/b8/a8/e2/b8a8e281f1a3113630671742b5677c15.jpg&width=100&height=100&apikey=<%= apikey %>"
+                target="_blank"
+                >Resize</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/maker/trigger?url=https://i.pinimg.com/564x/b8/a8/e2/b8a8e281f1a3113630671742b5677c15.jpg&apikey=<%= apikey %>"
+                target="_blank"
+                >Trigger</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/maker/wanted?url=https://i.pinimg.com/564x/b8/a8/e2/b8a8e281f1a3113630671742b5677c15.jpg&apikey=<%= apikey %>"
+                target="_blank"
+                >Wanted</a
+              >
+            </li>
+          </ul>
+        </li>
+        <li>
+          <a href="#"
+            ><i class="bx bx-brush icon"></i> Canvas
+            <i class="bx bx-chevron-right icon-right"></i
+          ></a>
+          <ul class="side-dropdown">
+            <li>
+              <a
+                href="api/maker/emojimix?emoji1=😂&emoji2=🤢&apikey=<%= apikey %>"
+                target="_blank"
+                >Emojimix</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/maker/welcome1?name=Razan&gpname=RestApiRazanV2&member=1&pp=https://telegra.ph/file/f492065d44c897cd3836e.png&bg=https://telegra.ph/file/fea867e29574ad52c3660.jpg&apikey=<%= apikey %>"
+                target="_blank"
+                >Welcome1</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/maker/goodbye1?name=Razan&gpname=RestApiRazanV2&member=1&pp=https://telegra.ph/file/f492065d44c897cd3836e.png&bg=https://telegra.ph/file/fea867e29574ad52c3660.jpg&apikey=<%= apikey %>"
+                target="_blank"
+                >GoodBye1</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/maker/attp?text=Razan&apikey=<%= apikey %>"
+                target="_blank"
+                >ATTP</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/maker/ttp?text=Razan&apikey=<%= apikey %>"
+                target="_blank"
+                >TTP</a
+              >
+            </li>
+          </ul>
+        </li>
+        <li>
+          <a href="#"
+            ><i class="bx bx-link icon"></i> Link Short
+            <i class="bx bx-chevron-right icon-right"></i
+          ></a>
+          <ul class="side-dropdown">
+            <li>
+              <a
+                href="api/linkshort/tinyurl?link=https://api.rivqi.my.id/&apikey=<%= apikey %>"
+                target="_blank"
+                >Tinyurl</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/linkshort/tinyurlwithalias?link=https://api.rivqi.my.id/&alias=RestApiAlpiV2s&apikey=<%= apikey %>"
+                target="_blank"
+                >Tinyurl With Alias</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/linkshort/cuttly?link=https://api-razan.onrender.com&apikey=<%= apikey %>"
+                target="_blank"
+                >Cuttly</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/linkshort/bitly?link=https://api.rivqi.my.id/&apikey=<%= apikey %>"
+                target="_blank"
+                >Bitly</a
+              >
+            </li>
+          </ul>
+        </li>
+        <li>
+          <a href="#"
+            ><i class="bx bx-info-circle icon"></i> Information
+            <i class="bx bx-chevron-right icon-right"></i
+          ></a>
+          <ul class="side-dropdown">
+            <li>
+              <a
+                target="_blank"
+                href="api/info/translate?text=Thank%20YOU%20Use%20REST%20API%20RAZAN&lang=ms&apikey=<%= apikey %>"
+                >Translate</a
+              >
+            </li>
+            <li>
+              <a
+                target="_blank"
+                href="api/info/emoji?emoji=🗿&apikey=<%= apikey %>"
+                >Emoji</a
+              >
+            </li>
+            <li>
+              <a
+                target="_blank"
+                href="api/info/infogempabmkg?apikey=<%= apikey %>"
+                >Info Gempa BMKG</a
+              >
+            </li>
+          </ul>
+        </li>
+        <li>
+          <a href="#"
+            ><i class="bx bx-search-alt icon"></i> Stalk Menu
+            <i class="bx bx-chevron-right icon-right"></i
+          ></a>
+          <ul class="side-dropdown">
+            <li>
+              <a
+                target="_blank"
+                href="api/info/githubstalk?user=razn-id&apikey=<%= apikey %>"
+                >Github Stalk</a
+              >
+            </li>
+          </ul>
+        </li>
+        <li>
+          <a href="#"
+            ><i class="bx bx-wrench icon"></i> Tools
+            <i class="bx bx-chevron-right icon-right"></i
+          ></a>
+          <ul class="side-dropdown">
+            <li>
+              <a
+                href="api/tools/ebase64?text=Rest%20Api%20By%20Razan&apikey=<%= apikey %>"
+                target="_blank"
+                >Ebase</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/tools/debase64?text=UmVzdCBBcGkgQnkgUmF6YW4==&apikey=<%= apikey %>"
+                target="_blank"
+                >Debase</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/tools/ebinary?text=RestApiByRazan&apikey=<%= apikey %>"
+                target="_blank"
+                >Ebinary</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/tools/debinary?text=01010010%2001100101%2001110011%2001110100%2001000001%2001110000%2001101001%2001000010%2001111001%2001000001%2001101100%2001101001%2001110000&apikey=<%= apikey %>"
+                target="_blank"
+                >Debinary</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/tools/ssweb?link=https://api-razan.onrender.com&apikey=<%= apikey %>"
+                target="_blank"
+                >SS Web</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/tools/styletext?text=Razan&apikey=<%= apikey %>"
+                target="_blank"
+                >Styletext</a
+              >
+            </li>
+          </ul>
+        </li>
+        <li>
+          <a href="#"
+            ><i class="bx bx-buildings icon"></i> Islamic
+            <i class="bx bx-chevron-right icon-right"></i
+          ></a>
+          <ul class="side-dropdown">
+            <li>
+              <a
+                target="_blank"
+                href="api/islamic/surah?no=1&apikey=<%= apikey %>"
+                >Search Surah</a
+              >
+            </li>
+            <li>
+              <a
+                target="_blank"
+                href="api/islamic/tafsirsurah?text=adam&apikey=<%= apikey %>"
+                >Tafsir Surah</a
+              >
+            </li>
+            <li>
+              <a
+                target="_blank"
+                href="api/islamic/asmaulhusnafull?apikey=<%= apikey %>"
+                >Asmaul Husna</a
+              >
+            </li>
+            <li>
+              <a
+                target="_blank"
+                href="api/islamic/asmaulhusnarandom?apikey=<%= apikey %>"
+                >Random Asmaul Husna</a
+              >
+            </li>
+            <li>
+              <a
+                target="_blank"
+                href="api/info/waktuksolatmy?apikey=<%= apikey %>"
+                >Waktu Solat Malay</a
+              >
+            </li>
+          </ul>
+        </li>
+        <li class="divider" data-text="contact">Contact</li>
+        <li>
+          <a href="https://github.com/razn-id" target="_blank"
+            ><i class="bx bxl-github icon"></i> Github</a
+          >
+        </li>
+        <li>
+          <a href="https://instagram.com/rivqi.ajaa" target="_blank"
+            ><i class="bx bxl-instagram icon"></i> Instagram</a
+          >
+        </li>
+      </ul>
+    </section>
+    <!-- SIDEBAR -->
+
+    <!-- NAVBAR -->
+    <section id="content">
+      <!-- NAVBAR -->
+      <nav>
+        <i class="bx bx-menu toggle-sidebar"></i>
+        <form action="#">
+          <div class="form-group">
+            <input type="text" placeholder="Search..." />
+            <i class="bx bx-search icon"></i>
+          </div>
+        </form>
+        <a href="#" class="nav-link">
+          <i class="bx bxs-bell icon"></i>
+          <span class="badge">5</span>
+        </a>
+        <a href="#" class="nav-link">
+          <i class="bx bxs-message-square-dots icon"></i>
+          <span class="badge">8</span>
+        </a>
+        <span class="divider"></span>
+        <div class="profile">
+          <img
+            src="https://avatars.githubusercontent.com/u/98217172?v=4"
+            alt="Profile"
+          />
+          <ul class="profile-link">
+            <li>
+              <a href="#"><i class="bx bxs-user-circle icon"></i> Profile</a>
+            </li>
+            <li>
+              <a href="#"><i class="bx bxs-cog"></i> Settings</a>
+            </li>
+            <li>
+              <a href="/logout"><i class="bx bxs-log-out-circle"></i> Logout</a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+      <!-- NAVBAR -->
+
+      <!-- MAIN -->
+      <main>
+        <h1 class="title">Dashboard</h1>
+        <!-- Alert Warning Verify -->
+        <% if(!verified){ %>
+        <div class="alert">
+          <div class="msg">
+            Atention! Please verify your account to continue using our services.
+            <a class="alert-a" href="/send-verification-email"
+              >Send Verification Email</a
+            >
+          </div>
+        </div>
+        <% } %>
+        <!-- Alert Success -->
+        <% if( success_messages !="" ){ %>
+        <div class="alert-success">
+          <div class="msg">Success! <%= success_messages %>.</div>
+        </div>
+        <% } %>
+        <!-- Alert Error -->
+        <% if( error_messages !="" ){ %>
+        <div class="alert">
+          <div class="msg">Error! <%= error_messages %>.</div>
+        </div>
+        <% } %>
+
+        <div class="info-data">
+          <div class="card">
+            <div class="head">
+              <div>
+                <p>Total User</p>
+                <h2>38546</h2>
+              </div>
+              <i class="bx bx-user-check icon"></i>
+            </div>
+          </div>
+          <div class="card">
+            <div class="head">
+              <div>
+                <p>Request Today</p>
+                <h2><%= RequestToday %></h2>
+              </div>
+              <i class="bx bx-repost bx-rotate-90 icon"></i>
+            </div>
+          </div>
+          <div class="card">
+            <div class="head">
+              <div>
+                <p>Time</p>
+                <h2 id="jamdinding">235</h2>
+              </div>
+              <i class="bx bx-time icon"></i>
+            </div>
+          </div>
+          <div class="card">
+            <div class="head">
+              <div>
+                <p>Your Ip Address</p>
+                <h2 id="ipaddress">0.0.0.0</h2>
+              </div>
+              <i class="bx bx-broadcast icon"></i>
+            </div>
+          </div>
+          <div class="card">
+            <div class="head">
+              <div>
+                <p>Apikey Limit</p>
+                <h2><%= limit %></h2>
+              </div>
+              <i class="bx bx-check-square icon"></i>
+            </div>
+          </div>
+          <div class="card">
+            <div class="head">
+              <div>
+                <p>Your Battery</p>
+                <h2 id="battery_level">Waiting...</h2>
+              </div>
+              <i class="bx bx-battery icon"></i>
+            </div>
+          </div>
+          <div class="card">
+            <div class="head">
+              <div>
+                <p>Visitors</p>
+                <h2 id="visits">29534</h2>
+              </div>
+              <i class="bx bx-user icon"></i>
+            </div>
+          </div>
+          <div class="card">
+            <div class="head">
+              <div>
+                <p>Calendar</p>
+                <h2 id="tanggal">0</h2>
+              </div>
+              <i class="bx bx-calendar icon"></i>
+            </div>
+          </div>
+        </div>
+      </main>
+      <!-- MAIN -->
+    </section>
+    <!-- NAVBAR -->
+
+    <script
+      src="https://code.jquery.com/jquery-3.7.0.min.js"
+      integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g="
+      crossorigin="anonymous"
+    ></script>
+    <script src="
+    https://cdn.jsdelivr.net/npm/jquery.easing@1.4.1/jquery.easing.min.js
+    "></script>
+    <script src="/js/docs/script.js"></script>
+    <script src="/js/menu.js"></script>
+  </body>
+</html>
