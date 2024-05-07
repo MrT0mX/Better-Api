@@ -1,4 +1,4 @@
-> **Warning**: Owner Of The Repo Stopped working on this repo. So I have decided to edit and modify by myself thanks to Alipbot for giving us this repository to us.
+> **Warning**: Owner Of The Repo Stopped working on this repo. So I have decided to edit and modify by myself thanks to Alipbot for giving us this repository.
 
 <p align="center">
   <img src="https://i.postimg.cc/4NkfZjMr/icon.png" width="200" height="200" alt="Logo">
