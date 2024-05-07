@@ -58,6 +58,15 @@ recaptcha_key_1 = 'Your reCAPTCHA V1 Key'
 recaptcha_key_2 = 'Your reCAPTCHA V2 Key'
 ```
 
+## Example
+```
+mongodb = "mongodb+srv://mtx:mtx@apiwebsite.wsdyxay.mongodb.net/?retryWrites=true&w=majority&appName=Apiwebsite"
+sendemail = 'mrtomxxx7@mail.com'
+fromsendemail = 'mrtomxxx7@mail.com'
+sendpwmail = "**********"
+recaptcha_key_1 = '6LfY1tQpAAAAADbtxfCgI7WjgQalj80aQyQNGyKE'
+recaptcha_key_2 = '6LfY1tQpAAAAAPo0XHpRLOAckWhIAxh1DUhZ1Ai5'
+```
 Get Apikey Recaptcha From https://www.google.com/recaptcha/admin/create
 
 6. Create the web service.
