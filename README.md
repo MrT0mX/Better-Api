@@ -15,21 +15,21 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/razn-id?tab=followers"><img title="Followers" src="https://img.shields.io/github/followers/razn-id?color=green&style=flat-square"></a>
-  <a href="https://github.com/razn-id/Api-Razan/stargazers/"><img title="Stars" src="https://img.shields.io/github/stars/razn-id/Api-Razan?color=white&style=flat-square"></a>
-  <a href="https://github.com/razn-id/Api-Razan/network/members"><img title="Forks" src="https://img.shields.io/github/forks/razn-id/Api-Razan?color=yellow&style=flat-square"></a>
-  <a href="https://github.com/razn-id/Api-Razan/watchers"><img title="Watching" src="https://img.shields.io/github/watchers/razn-id/Api-Razan?label=Watchers&color=red&style=flat-square"></a>
-  <a href="https://github.com/razn-id/Api-Razan"><img title="Open Source" src="https://badges.frapsoft.com/os/v2/open-source.svg?v=103"></a>
-  <a href="https://github.com/razn-id/Api-Razan/"><img title="Size" src="https://img.shields.io/github/repo-size/razn-id/Api-Razan?style=flat-square&color=darkred"></a>
-  <a href="https://hits.seeyoufarm.com"><img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Frazn-id%2FApi-Razan%2Fhit-counter&count_bg=%2379C83D&title_bg=%23555555&icon=probot.svg&icon_color=%2304FF00&title=hits&edge_flat=false"/></a>
-  <a href="https://github.com/razn-id/Api-Razan/graphs/commit-activity"><img height="20" src="https://img.shields.io/badge/Maintained-No-red.svg"></a>&nbsp;&nbsp;
+  <a href="https://github.com/MrT0mX?tab=followers"><img title="Followers" src="https://img.shields.io/github/followers/MrT0mX?color=green&style=flat-square"></a>
+  <a href="https://github.com/MrT0mX/Better-Api/stargazers/"><img title="Stars" src="https://img.shields.io/github/stars/MrT0mX/Better-Api?color=white&style=flat-square"></a>
+  <a href="https://github.com/MrT0mX/Better-Api/network/members"><img title="Forks" src="https://img.shields.io/github/forks/MrT0mX/Better-Api?color=yellow&style=flat-square"></a>
+  <a href="https://github.com/MrT0mX/Better-Api/watchers"><img title="Watching" src="https://img.shields.io/github/watchers/MrT0mX/Better-Api?label=Watchers&color=red&style=flat-square"></a>
+  <a href="https://github.com/MrT0mX/Better-Api"><img title="Open Source" src="https://badges.frapsoft.com/os/v2/open-source.svg?v=103"></a>
+  <a href="https://github.com/MrT0mX/Better-Api/"><img title="Size" src="https://img.shields.io/github/repo-size/MrT0mX/Better-Api?style=flat-square&color=darkred"></a>
+  <a href="https://hits.seeyoufarm.com"><img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2FMrT0mX%2FBetter-Api%2Fhit-counter&count_bg=%2379C83D&title_bg=%23555555&icon=probot.svg&icon_color=%2304FF00&title=hits&edge_flat=false"/></a>
+  <a href="https://github.com/MrT0mX/Better-Api/graphs/commit-activity"><img height="20" src="https://img.shields.io/badge/Maintained-No-red.svg"></a>&nbsp;&nbsp;
 </p>
 
 ## 🛠️ Setup
 
 ### STEP 1: Fork this GitHub Repository
 
-[![Fork](https://telegra.ph/file/0ac5b4f21a7c153f3bfc7.png)](https://github.com/razn-id/Api-Razan/fork)
+[![Fork](https://telegra.ph/file/0ac5b4f21a7c153f3bfc7.png)](https://github.com/MrT0mX/Better-Api/fork)
 
 ### STEP 2: Create a MongoDB Account and Database
 
@@ -67,9 +67,9 @@ Get Apikey Recaptcha From https://www.google.com/recaptcha/admin/create
 
 Edit the file `settings.js` for the following configurations:
 
-[`Change the Creator's name.`](https://github.com/razn-id/Api-Razan/blob/master/settings.js#:~:text=creator%20%3D%20%27-,%E4%B9%82%F0%9D%98%BC%F0%9D%99%A1%F0%9D%99%9E%F0%9D%99%A5%E4%B9%82,-%27%20//%20Nama)<br>
-[`Change the port.`](https://github.com/razn-id/Api-Razan/blob/master/settings.js#:~:text=port%20%3D-,8080,-//port%20host)<br>
-[`Adjust the API key limit.`](https://github.com/razn-id/Api-Razan/blob/master/settings.js#:~:text=LimitApikey%20%3D-,200,-//%20Limit%20Apikey%20default)<br>
+[`Change the Creator's name.`](https://github.com/MrT0mX/Better-Api/blob/master/settings.js#:~:text=creator%20%3D%20%27-,%E4%B9%82%F0%9D%98%BC%F0%9D%99%A1%F0%9D%99%9E%F0%9D%99%A5%E4%B9%82,-%27%20//%20Nama)<br>
+[`Change the port.`](https://github.com/MrT0mX/Better-Api/blob/master/settings.js#:~:text=port%20%3D-,8080,-//port%20host)<br>
+[`Adjust the API key limit.`](https://github.com/MrT0mX/Better-Api/blob/master/settings.js#:~:text=LimitApikey%20%3D-,200,-//%20Limit%20Apikey%20default)<br>
 
 ## 🚀 Usage
 
@@ -122,9 +122,9 @@ npm run node
 ## 👏 Support Deploy Free
 
 [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy)
-[![Run on Repl.it](https://repl.it/badge/github/razn-id/Api-Razan)](https://replit.com)
+[![Run on Repl.it](https://repl.it/badge/github/MrT0mX/Better-Api)](https://replit.com)
 
 ## 💳 Credits
 
 - [AlipBot](https://github.com/AlipBot)
-- [razn-id](https://github.com/razn-id)
+- [MrT0mX](https://github.com/MrT0mX)
