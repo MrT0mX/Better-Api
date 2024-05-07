@@ -1,4 +1,4 @@
-> **Warning**: Project ini atau repo ini tidak akan dilanjutkan lagi, jika mau tolong fork dan recode sendiri, untuk selanjutnya menunggu info terbaru dari pesan ini.
+> **Warning**: Owner Of The Repo Stopped working on this repo. So I have decided to edit and modify by myself thanks to Alipbot for giving us this repository.
 
 <p align="center">
   <img src="https://i.postimg.cc/KzFVvQFy/1673631559924.jpg" width="200" height="200" alt="Logo">
