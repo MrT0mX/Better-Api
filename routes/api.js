@@ -1538,7 +1538,7 @@ router.get("/api/search/sfilemobi", cekKey, async (req, res, next) => {
 
 router.get("/api/randomgambar/couplepp", cekKey, async (req, res, next) => {
   let resultt = await fetchJson(
-    "https://raw.githubusercontent.com/razn-id/data-rest-api/main/kopel.json"
+    "https://raw.githubusercontent.com/MrT0mX/data-rest-api/main/kopel.json"
   );
   let random = resultt[Math.floor(Math.random() * resultt.length)];
   limitapikey(req.query.apikey);
@@ -1554,7 +1554,7 @@ router.get("/api/randomgambar/couplepp", cekKey, async (req, res, next) => {
 
 router.get("/api/randomgambar/dadu", cekKey, async (req, res, next) => {
   let dadu = await fetchJson(
-    "https://raw.githubusercontent.com/razn-id/data-rest-api/main/dadu.json"
+    "https://raw.githubusercontent.com/MrT0mX/data-rest-api/main/dadu.json"
   );
   let random = dadu[Math.floor(Math.random() * dadu.length)];
   var result = await getBuffer(random.result);
@@ -1590,7 +1590,7 @@ router.get("/api/game/tembakgambar", cekKey, async (req, res, next) => {
 
 router.get("/api/game/susunkata", cekKey, async (req, res, next) => {
   let ra = await fetchJson(
-    "https://raw.githubusercontent.com/razn-id/data-rest-api/main/susunkata.json"
+    "https://raw.githubusercontent.com/MrT0mX/data-rest-api/main/susunkata.json"
   );
   let ha = ra[Math.floor(Math.random() * ra.length)];
   limitapikey(req.query.apikey);
@@ -1603,7 +1603,7 @@ router.get("/api/game/susunkata", cekKey, async (req, res, next) => {
 
 router.get("/api/game/tembakbendera", cekKey, async (req, res, next) => {
   let ra = await fetchJson(
-    "https://raw.githubusercontent.com/razn-id/data-rest-api/main/tebakbendera.json"
+    "https://raw.githubusercontent.com/MrT0mX/data-rest-api/main/tebakbendera.json"
   );
   let ha = ra[Math.floor(Math.random() * ra.length)];
   limitapikey(req.query.apikey);
@@ -1616,7 +1616,7 @@ router.get("/api/game/tembakbendera", cekKey, async (req, res, next) => {
 
 router.get("/api/game/tembakgame", cekKey, async (req, res, next) => {
   let ra = await fetchJson(
-    "https://raw.githubusercontent.com/razn-id/data-rest-api/main/tebakgame.json"
+    "https://raw.githubusercontent.com/MrT0mX/data-rest-api/main/tebakgame.json"
   );
   let ha = ra[Math.floor(Math.random() * ra.length)];
   limitapikey(req.query.apikey);
@@ -1629,7 +1629,7 @@ router.get("/api/game/tembakgame", cekKey, async (req, res, next) => {
 
 router.get("/api/game/tembakkata", cekKey, async (req, res, next) => {
   let ra = await fetchJson(
-    "https://raw.githubusercontent.com/razn-id/data-rest-api/main/tebakkata.json"
+    "https://raw.githubusercontent.com/MrT0mX/data-rest-api/main/tebakkata.json"
   );
   let ha = ra[Math.floor(Math.random() * ra.length)];
   limitapikey(req.query.apikey);
@@ -1642,7 +1642,7 @@ router.get("/api/game/tembakkata", cekKey, async (req, res, next) => {
 
 router.get("/api/game/tembaklirik", cekKey, async (req, res, next) => {
   let ra = await fetchJson(
-    "https://raw.githubusercontent.com/razn-id/data-rest-api/main/tebaklirik.json"
+    "https://raw.githubusercontent.com/MrT0mX/data-rest-api/main/tebaklirik.json"
   );
   let ha = ra[Math.floor(Math.random() * ra.length)];
   limitapikey(req.query.apikey);
@@ -1655,7 +1655,7 @@ router.get("/api/game/tembaklirik", cekKey, async (req, res, next) => {
 
 router.get("/api/game/tembaklagu", cekKey, async (req, res, next) => {
   let ra = await fetchJson(
-    "https://raw.githubusercontent.com/razn-id/data-rest-api/main/tebaklagu.json"
+    "https://raw.githubusercontent.com/MrT0mX/data-rest-api/main/tebaklagu.json"
   );
   let ha = ra[Math.floor(Math.random() * ra.length)];
   limitapikey(req.query.apikey);
@@ -1667,7 +1667,7 @@ router.get("/api/game/tembaklagu", cekKey, async (req, res, next) => {
 });
 router.get("/api/game/tembakkimia", cekKey, async (req, res, next) => {
   let ra = await fetchJson(
-    "https://raw.githubusercontent.com/razn-id/data-rest-api/main/tebakkimia.json"
+    "https://raw.githubusercontent.com/MrT0mX/data-rest-api/main/tebakkimia.json"
   );
   let ha = ra[Math.floor(Math.random() * ra.length)];
   limitapikey(req.query.apikey);
@@ -1709,7 +1709,7 @@ router.get("/api/game/dare", cekKey, async (req, res, next) => {
 //―――――――――――――――――――――――――――――――――――――――――― ┏ Random Cecan ┓ ―――――――――――――――――――――――――――――――――――――――――― \\
 // router.get("/api/cecan/china", cekKey, async (req, res, next) => {
 //   let china = await fetchJson(
-//     "https://raw.githubusercontent.com/razn-id/data-rest-api/main/cecanchina.json"
+//     "https://raw.githubusercontent.com/MrT0mX/data-rest-api/main/cecanchina.json"
 //   );
 //   let result = china[Math.floor(Math.random() * china.length)];
 //   limitapikey(req.query.apikey);
@@ -1720,7 +1720,7 @@ router.get("/api/game/dare", cekKey, async (req, res, next) => {
 
 // router.get("/api/cecan/vietnam", cekKey, async (req, res, next) => {
 //   let vietnam = await fetchJson(
-//     "https://raw.githubusercontent.com/razn-id/data-rest-api/main/cecanvietnam.json"
+//     "https://raw.githubusercontent.com/MrT0mX/data-rest-api/main/cecanvietnam.json"
 //   );
 //   limitapikey(req.query.apikey);
 //   let result = vietnam[Math.floor(Math.random() * vietnam.length)];
@@ -1731,7 +1731,7 @@ router.get("/api/game/dare", cekKey, async (req, res, next) => {
 
 // router.get("/api/cecan/thailand", cekKey, async (req, res, next) => {
 //   let thailand = await fetchJson(
-//     "https://raw.githubusercontent.com/razn-id/data-rest-api/main/cecanthailand.json"
+//     "https://raw.githubusercontent.com/MrT0mX/data-rest-api/main/cecanthailand.json"
 //   );
 //   limitapikey(req.query.apikey);
 //   let result = thailand[Math.floor(Math.random() * thailand.length)];
@@ -1742,7 +1742,7 @@ router.get("/api/game/dare", cekKey, async (req, res, next) => {
 
 // router.get("/api/cecan/indonesia", cekKey, async (req, res, next) => {
 //   let indo = await fetchJson(
-//     "https://raw.githubusercontent.com/razn-id/data-rest-api/main/cecanindo.json"
+//     "https://raw.githubusercontent.com/MrT0mX/data-rest-api/main/cecanindo.json"
 //   );
 //   limitapikey(req.query.apikey);
 //   let result = indo[Math.floor(Math.random() * indo.length)];
@@ -1753,7 +1753,7 @@ router.get("/api/game/dare", cekKey, async (req, res, next) => {
 
 // router.get("/api/cecan/korea", cekKey, async (req, res, next) => {
 //   let korea = await fetchJson(
-//     "https://raw.githubusercontent.com/razn-id/data-rest-api/main/cecankorea.json"
+//     "https://raw.githubusercontent.com/MrT0mX/data-rest-api/main/cecankorea.json"
 //   );
 //   limitapikey(req.query.apikey);
 //   let result = korea[Math.floor(Math.random() * korea.length)];
@@ -1764,7 +1764,7 @@ router.get("/api/game/dare", cekKey, async (req, res, next) => {
 
 // router.get("/api/cecan/jepang", cekKey, async (req, res, next) => {
 //   let jepang = await fetchJson(
-//     "https://raw.githubusercontent.com/razn-id/data-rest-api/main/cecanjepang.json"
+//     "https://raw.githubusercontent.com/MrT0mX/data-rest-api/main/cecanjepang.json"
 //   );
 //   limitapikey(req.query.apikey);
 //   let result = jepang[Math.floor(Math.random() * jepang.length)];
@@ -1775,7 +1775,7 @@ router.get("/api/game/dare", cekKey, async (req, res, next) => {
 
 // router.get("/api/cecan/malaysia", cekKey, async (req, res, next) => {
 //   let malay = await fetchJson(
-//     "https://raw.githubusercontent.com/razn-id/data-rest-api/main/cecanmalay.json"
+//     "https://raw.githubusercontent.com/MrT0mX/data-rest-api/main/cecanmalay.json"
 //   );
 //   limitapikey(req.query.apikey);
 //   let result = malay[Math.floor(Math.random() * malay.length)];
@@ -2994,7 +2994,7 @@ router.get("/api/islamic/tafsirsurah", cekKey, async (req, res, next) => {
 router.get("/api/islamic/asmaulhusnafull", cekKey, async (req, res) => {
   limitapikey(req.query.apikey);
   const result = await fetchJson(
-    "https://raw.githubusercontent.com/razn-id/data-rest-api/main/asmaulhusna.json"
+    "https://raw.githubusercontent.com/MrT0mX/data-rest-api/main/asmaulhusna.json"
   );
   res.json({
     status: true,
@@ -3005,7 +3005,7 @@ router.get("/api/islamic/asmaulhusnafull", cekKey, async (req, res) => {
 router.get("/api/islamic/asmaulhusnarandom", cekKey, async (req, res) => {
   limitapikey(req.query.apikey);
   const data = await fetchJson(
-    "https://raw.githubusercontent.com/razn-id/data-rest-api/main/asmaulhusna.json"
+    "https://raw.githubusercontent.com/MrT0mX/data-rest-api/main/asmaulhusna.json"
   );
   const result = data[Math.floor(Math.random() * data.length)];
   res.json({
