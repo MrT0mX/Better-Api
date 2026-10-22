@@ -3,6 +3,7 @@ const asyncHandler = require("../lib/async-handler");
 const { identifyAIUser, reserveAIQuota } = require("../lib/ai-auth");
 const logger = require("../lib/logger");
 const { getRuntimeConfig } = require("../lib/runtime-config");
+const { reserveProviderUsage, reconcileProviderUsage } = require("../lib/ai-usage");
 
 const router = express.Router();
 
@@ -250,12 +251,20 @@ async function handleChat(req, res, agentMode = false) {
     return res.status(502).json({ status: false, message: "AI provider কোনো text response দেয়নি।" });
   }
 
+  await reconcileProviderUsage(req, data.usage);
   return res.json({
     status: true,
     provider: input.provider,
     model: input.model,
     result: { role: "assistant", content },
     usage: data.usage || null,
+    budgetAlert: req.aiBudgetAlert
+      ? {
+        message: "এই provider-এর মাসিক AI token budget ৮০% বা তার বেশি ব্যবহৃত হয়েছে।",
+        remainingEstimatedTokens: req.aiBudgetAlert.remaining,
+        limit: req.aiBudgetAlert.limit,
+      }
+      : null,
     memory: "stateless",
   });
 }
@@ -272,6 +281,7 @@ router.post(
   identifyAIUser,
   prepareChat(false),
   reserveAIQuota,
+  reserveProviderUsage,
   asyncHandler((req, res) => handleChat(req, res))
 );
 router.post(
@@ -279,6 +289,7 @@ router.post(
   identifyAIUser,
   prepareChat(true),
   reserveAIQuota,
+  reserveProviderUsage,
   asyncHandler((req, res) => handleChat(req, res, true))
 );
 

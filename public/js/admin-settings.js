@@ -58,4 +58,22 @@
       }
     });
   });
+
+  const backupFile = document.querySelector("#settings-backup-file");
+  const backupResult = document.querySelector("#backup-result");
+  backupFile?.addEventListener("change", async () => {
+    const file = backupFile.files?.[0];
+    if (!file) return;
+    backupResult.textContent = "Backup যাচাই ও restore হচ্ছে…";
+    try {
+      const backup = JSON.parse(await file.text());
+      const result = await postJson("/admin/settings/restore", backup);
+      backupResult.textContent = `${result.restored}টি encrypted setting restore হয়েছে।`;
+      window.location.reload();
+    } catch (error) {
+      backupResult.textContent = error.message;
+    } finally {
+      backupFile.value = "";
+    }
+  });
 })();

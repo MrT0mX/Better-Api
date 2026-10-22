@@ -40,6 +40,21 @@ test("admin settings guard rechecks database role and marks the response private
     assert.equal(id, "admin-id");
     return account;
   });
+
+  test("admin settings guard logs out sessions that have not completed enabled MFA", async () => {
+    const account = { id: "admin-id", isAdmin: true, isVerified: true, adminMfaEnabled: true };
+    const guard = createAdminGuard(async () => account);
+    const req = {
+      isAuthenticated: () => true,
+      user: { id: "admin-id" },
+      session: {},
+      logout(callback) { this.loggedOut = true; callback(); },
+    };
+    const res = makeResponse();
+    await guard(req, res, () => assert.fail("MFA must be required"));
+    assert.equal(req.loggedOut, true);
+    assert.equal(res.redirectTo, "/login");
+  });
   const req = { isAuthenticated: () => true, user: { id: "admin-id", isAdmin: false } };
   const res = makeResponse();
   let nextCalls = 0;

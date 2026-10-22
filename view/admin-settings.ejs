@@ -1,4 +1,7 @@
 <!doctype html>
+<% const usageRows = typeof usage === "undefined" ? [] : usage; %>
+<% const auditRows = typeof audit === "undefined" ? [] : audit; %>
+<% const monthlyLimit = typeof monthlyTokenLimit === "undefined" ? 500000 : monthlyTokenLimit; %>
 <html lang="bn">
   <head>
     <meta charset="utf-8" />
@@ -15,6 +18,7 @@
       <a class="brand" href="/docs"><span class="brand-mark">M</span><span>MrTom<span class="accent">XxX</span><small>ADMIN SETTINGS</small></span></a>
       <nav class="nav-actions">
         <a class="nav-link" href="/docs">ড্যাশবোর্ড</a>
+        <a class="nav-link" href="/admin/security">Admin security</a>
         <a class="button button-outline" href="/logout">লগআউট</a>
       </nav>
     </header>
@@ -66,7 +70,9 @@
                     <% if (field.type === 'url') { %>inputmode="url"<% } %>
                   />
                   <div class="setting-actions">
-                    <button class="button button-quiet check-credential" type="button" data-key="<%= field.key %>" <%= field.configured ? '' : 'disabled' %>>Connection test</button>
+                    <% if (field.testable) { %>
+                      <button class="button button-quiet check-credential" type="button" data-key="<%= field.key %>" <%= field.configured ? '' : 'disabled' %>>Connection test</button>
+                    <% } %>
                     <% if (field.source === 'database') { %>
                       <button class="clear-credential" type="button" data-key="<%= field.key %>">Saved value মুছুন</button>
                     <% } %>
@@ -82,6 +88,51 @@
           <button class="button button-primary" type="submit" <%= encryptionReady ? '' : 'disabled' %>>নতুন settings সংরক্ষণ করুন</button>
         </div>
       </form>
+
+      <section class="settings-group">
+        <p class="section-kicker">PROVIDER CONTROLS</p>
+        <h2>চলতি মাসের ব্যবহার</h2>
+        <p class="setting-note">এটি request/token ceiling, ডলারে provider billing নয়। Provider usage না জানালে সংরক্ষিত conservative estimate-ই গণনা হয়। ৮০% budget পার হলে request response-এ alert দেখানো হবে।</p>
+        <div class="usage-grid">
+          <% usageRows.forEach((item) => { %>
+            <article class="usage-card">
+              <strong><%= item.provider %></strong>
+              <span><%= item.requests %> requests</span>
+              <span><%= item.tokens.toLocaleString() %> / <%= monthlyLimit.toLocaleString() %> tokens</span>
+              <% if (item.tokens >= monthlyLimit * 0.8) { %><b class="usage-alert">৮০% budget সতর্কতা</b><% } %>
+            </article>
+          <% }); %>
+          <% if (!usageRows.length) { %><p class="setting-note">এই মাসে এখনো AI usage নেই।</p><% } %>
+        </div>
+      </section>
+
+      <section class="settings-group">
+        <p class="section-kicker">ENCRYPTED RECOVERY</p>
+        <h2>Settings backup</h2>
+        <p class="setting-note">Backup-এ শুধু database-এ থাকা AES-256-GCM ciphertext থাকবে, plaintext credential নয়। Restore করতে একই encryption key প্রয়োজন; এটি অন্য নিরাপদ স্থানে রাখুন।</p>
+        <div class="setting-actions">
+          <a class="button button-quiet" href="/admin/settings/backup">Encrypted backup download</a>
+          <label class="button button-quiet" for="settings-backup-file">Encrypted backup restore</label>
+          <input id="settings-backup-file" type="file" accept="application/json,.json" hidden />
+          <span id="backup-result" class="test-result" role="status"></span>
+        </div>
+      </section>
+
+      <section class="settings-group">
+        <p class="section-kicker">ADMIN SECURITY AUDIT</p>
+        <h2>সাম্প্রতিক admin activity</h2>
+        <div class="audit-list">
+          <% auditRows.forEach((entry) => { %>
+            <article class="audit-row">
+              <strong><%= entry.action %></strong>
+              <span><%= entry.actor %> · <%= entry.outcome %></span>
+              <time datetime="<%= entry.createdAt.toISOString() %>"><%= entry.createdAt.toISOString() %></time>
+              <% if (entry.target) { %><small><%= entry.target %></small><% } %>
+            </article>
+          <% }); %>
+          <% if (!auditRows.length) { %><p class="setting-note">এখনো admin activity নেই।</p><% } %>
+        </div>
+      </section>
 
       <section class="settings-group host-only">
         <p class="section-kicker">HOST SECRET MANAGER</p>

@@ -35,6 +35,8 @@ test("runtime config rejects startup-only keys, unsafe URLs, and multiline value
   assert.throws(() => validateSettingInput("LLM_BASE_URL", "http://example.com"), /HTTPS URL/);
   assert.throws(() => validateSettingInput("GEMINI_API_KEY", "one\ntwo"), /single-line value/);
   assert.doesNotThrow(() => validateSettingInput("LLM_BASE_URL", "https://llm.example.com/v1/chat/completions"));
+  assert.throws(() => validateSettingInput("AI_USER_PER_MINUTE_LIMIT", "0"), /integer from 1 to 600/);
+  assert.doesNotThrow(() => validateSettingInput("AI_PROVIDER_MONTHLY_TOKEN_LIMIT", "500000"));
 });
 
 test("runtime config saves once, uses encrypted storage, and returns state without secret values", async (t) => {

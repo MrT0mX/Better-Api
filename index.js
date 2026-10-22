@@ -161,6 +161,20 @@ app.use(function (req, res, next) {
   res.locals.error = req.flash("error");
   next();
 });
+app.use((req, res, next) => {
+  if (req.user?.isAdmin !== true || req.user?.adminMfaEnabled !== true ||
+      req.session?.adminMfaVerifiedUserId === String(req.user.id)) {
+    return next();
+  }
+  return req.logout((error) => {
+    if (error) return next(error);
+    if (req.path.startsWith("/api/")) {
+      return res.status(401).json({ status: false, message: "Admin MFA verification required." });
+    }
+    req.flash("error", "Admin MFA চালু হয়েছে। আবার login করে verification সম্পন্ন করুন।");
+    return res.redirect("/login");
+  });
+});
 app.use("/", main);
 app.use("/", api);
 app.use(function (req, res, next) {

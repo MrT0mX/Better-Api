@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="bn">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex,nofollow" />
+    <title>Admin Security | MrTomXxX API</title>
+    <link rel="stylesheet" href="/css/landing.css" />
+    <link rel="stylesheet" href="/css/admin-settings.css" />
+    <script src="/js/admin-security.js" defer></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="/docs"><span class="brand-mark">M</span><span>MrTom<span class="accent">XxX</span><small>ADMIN SECURITY</small></span></a>
+      <nav class="nav-actions">
+        <a class="nav-link" href="/admin/settings">Settings</a>
+        <a class="button button-outline" href="/logout">লগআউট</a>
+      </nav>
+    </header>
+    <main class="settings-main">
+      <section class="settings-hero">
+        <p class="section-kicker">PRIVATE · ADMIN ONLY</p>
+        <h1>Admin <span>Security</span></h1>
+        <p>Password login-এর পর authenticator app-এর one-time code চাইবে। Recovery code একবারই দেখানো হবে—offline-এ নিরাপদে রাখুন।</p>
+      </section>
+      <input id="admin-csrf" type="hidden" value="<%= csrfToken %>" />
+      <div id="security-message" class="notice" role="status" aria-live="polite"></div>
+
+      <% if (!mfaEnabled) { %>
+        <section class="settings-group" id="mfa-setup">
+          <p class="section-kicker">TWO-FACTOR AUTHENTICATION</p>
+          <h2>MFA এখন বন্ধ</h2>
+          <p class="setting-note">Authenticator app (যেমন Aegis, Google Authenticator, 1Password) ব্যবহার করুন। Setup key গোপন রাখুন।</p>
+          <label class="security-label" for="setup-password">বর্তমান admin password</label>
+          <input id="setup-password" class="security-input" type="password" autocomplete="current-password" />
+          <button id="start-mfa" class="button button-primary" type="button">MFA setup শুরু</button>
+          <div id="enrollment" class="enrollment" hidden>
+            <p>Authenticator app-এ এই key manually যোগ করুন:</p>
+            <code id="mfa-secret"></code>
+            <details><summary>Manual setup URI</summary><code id="mfa-uri"></code></details>
+            <label class="security-label" for="confirm-code">App-এর ৬ digit code</label>
+            <input id="confirm-code" class="security-input" inputmode="numeric" autocomplete="one-time-code" maxlength="6" />
+            <button id="confirm-mfa" class="button button-primary" type="button">Code verify করে MFA চালু</button>
+          </div>
+          <div id="recovery-codes" class="recovery-codes" hidden>
+            <strong>Recovery codes — এগুলো এখনই কপি করুন, পরে আর দেখানো হবে না:</strong>
+            <pre id="recovery-list"></pre>
+            <p>এখন logout হবে। পরের login-এ authenticator code প্রয়োজন হবে।</p>
+          </div>
+        </section>
+      <% } else { %>
+        <section class="settings-group">
+          <p class="section-kicker">TWO-FACTOR AUTHENTICATION</p>
+          <h2><span class="security-enabled">MFA চালু আছে</span></h2>
+          <p class="setting-note">Authenticator code বা একবার ব্যবহারযোগ্য recovery code দিয়ে MFA বন্ধ করা যাবে। Password ও code দুটিই প্রয়োজন। MFA বন্ধ করলে বর্তমান session logout হবে।</p>
+          <label class="security-label" for="disable-password">বর্তমান admin password</label>
+          <input id="disable-password" class="security-input" type="password" autocomplete="current-password" />
+          <label class="security-label" for="disable-code">Authenticator অথবা unused recovery code</label>
+          <input id="disable-code" class="security-input" autocomplete="one-time-code" />
+          <button id="disable-mfa" class="button button-outline" type="button">MFA বন্ধ করুন</button>
+        </section>
+      <% } %>
+    </main>
+    <footer><span>© <span id="year"></span> MrTomXxX</span><span>Admin MFA · Recovery codes</span></footer>
+    <script>document.querySelector("#year").textContent = new Date().getFullYear();</script>
+  </body>
+</html>

@@ -36,4 +36,18 @@
 .settings-submit p { max-width: 570px; margin: 0; color: var(--muted); font-size: 11px; line-height: 1.6; }
 .settings-submit button:disabled { cursor: not-allowed; opacity: .48; }
 .host-only ul { margin: 17px 0 0; padding-left: 20px; color: var(--muted); font-size: 12px; line-height: 2; }
+.setting-note { color: var(--muted); font-size: 12px; line-height: 1.7; }
+.usage-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; margin-top: 15px; }
+.usage-card, .audit-row { display: grid; gap: 6px; padding: 13px; border: 1px solid var(--line); border-radius: 11px; color: var(--muted); font-size: 11px; }
+.usage-card strong, .audit-row strong { color: var(--text); font-size: 13px; }
+.audit-list { display: grid; gap: 8px; margin-top: 15px; }
+.audit-row time, .audit-row small { color: var(--muted); font: 10px "SFMono-Regular", Consolas, monospace; overflow-wrap: anywhere; }
+.security-label { display: block; margin: 16px 0 6px; color: var(--text); font-size: 12px; font-weight: 700; }
+.security-input { display: block; width: min(100%, 460px); min-height: 42px; margin-bottom: 13px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 9px; background: rgba(2, 4, 11, .32); color: var(--text); font: 13px "SFMono-Regular", Consolas, monospace; }
+.enrollment { margin-top: 20px; padding: 17px; border: 1px solid var(--line); border-radius: 12px; }
+.enrollment code, .recovery-codes pre { display: block; margin: 9px 0; padding: 12px; border-radius: 9px; background: rgba(2, 4, 11, .45); color: var(--cyan); overflow-wrap: anywhere; }
+.enrollment details { margin: 13px 0; color: var(--muted); font-size: 12px; }
+.recovery-codes { margin-top: 20px; padding: 17px; border: 1px solid rgba(255, 191, 91, .4); border-radius: 12px; }
+.security-enabled { color: #42dc91; }
+.usage-alert { color: #ffc15c; font-size: 10px; }
 @media (max-width: 720px) { .settings-main { padding-top: 34px; }.setting-grid { grid-template-columns: 1fr; }.settings-group { padding: 17px; }.settings-submit { align-items: stretch; flex-direction: column; } }

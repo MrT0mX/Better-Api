@@ -146,6 +146,17 @@ Browser-এ `http://localhost:8080` খুলুন। Server status: `http://lo
 
 Admin settings page-এ provider test থাকলে সেটি provider-এর public models endpoint-এ credential যাচাই করে; SMTP test শুধু connection যাচাই করে, email পাঠায় না। Cuttly/Bitly/reCAPTCHA-এর মতো service-এর key generic ভাবে test করা যায় না—সেগুলোর status “নিজে যাচাই করুন” দেখাতে পারে। Green status কেবল supported direct check সফল হলে দেখায়।
 
+## ৯.১ Admin MFA, activity audit ও recovery
+
+1. Admin হিসেবে login করে `/admin/security` খুলুন।
+2. বর্তমান password দিয়ে MFA setup শুরু করুন; Authenticator app-এ setup key যোগ করে ৬ digit code verify করুন।
+3. দেখানো ১০টি recovery code একবারই দেখা যায়—password manager বা offline নিরাপদ স্থানে রাখুন। Admin login-এর পর code চাইবে; প্রতি account-এ সর্বোচ্চ ৬টি MFA attempt/minute গ্রহণ হয়।
+4. Settings page-এ recent admin action audit দেখা যায়। সেখানে credential value/password/API token রাখা হয় না; শুধু action, actor, status, setting names এবং hashed IP থাকে।
+5. `/admin/settings` থেকে encrypted backup download করুন। Backup-এ database ciphertext থাকে—plaintext credential নয়। Restore করতে একই `ADMIN_SETTINGS_ENCRYPTION_KEY` host secret লাগবে। Backup ও ওই key আলাদা নিরাপদ স্থানে রাখুন; restore current DB values-এ encrypted records merge করে।
+6. AI provider guardrails `/admin/settings`-এ configure করুন: per-account/provider requests per minute, shared per-provider daily requests এবং per-provider monthly token ceiling। Monthly cap প্রথমে আনুমানিক input tokens ও requested output reserve করে; provider usage পেলে actual count দিয়ে adjust করে। Provider billing আলাদা—এটি dollar limit বা vendor-side spending cap নয়। ৮০% token ceiling-এ API response ও Admin page-এ alert আসে।
+
+Session store বর্তমানে process memory-তে থাকে; restart/deploy হলে session শেষ হয়ে user/admin-কে পুনরায় login করতে হবে। Multi-instance production-এ shared persistent session store ব্যবহার না করা পর্যন্ত একই app instance stickiness নিশ্চিত করুন।
+
 ## ১০. Text effect, logo ও animation API
 
 এই project-এ reference site-গুলোতে দেখা effect family—3D, metallic, neon/glow, gradient, fire/ice, nature, retro, digital, photo-art style—থেকে তৈরি **৩১টি original SVG text style**, ৬টি geometric logo style এবং ৪টি SVG motion preset আছে। এছাড়া legacy integrations-এ ২০টি TextPro ও ১৫টি Photooxy endpoint আছে। Preview APIs guest-এর জন্য, প্রতি IP-তে সর্বোচ্চ ৩০ request/minute। SVG response browser-এ দেখা যায় এবং download করা যায়।
