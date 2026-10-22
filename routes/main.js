@@ -28,6 +28,7 @@ const { router: aiRoutes } = require('./ai');
 const effectsRoutes = require('./effects');
 const creativeRoutes = require('./creative');
 const { router: adminSettingsRoutes } = require('./admin-settings');
+const { router: maintenanceRoutes } = require('./maintenance');
 const dataweb = require('../model/DataWeb');
 const User = require('../model/user');
 
@@ -108,6 +109,7 @@ router.get("/logout", (req, res, next) => {
 
 router.use(authRoutes);
 router.use(adminSettingsRoutes);
+router.use(maintenanceRoutes);
 router.use(effectsRoutes);
 router.use(creativeRoutes);
 router.use(aiRoutes);

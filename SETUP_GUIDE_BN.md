@@ -246,7 +246,69 @@ curl -X POST "http://localhost:8080/api/agent/chat" \
 
 Teaching mode prompt-কে tutor-ধাঁচের উত্তর দিতে বলে; conversation/model-কে স্বয়ংক্রিয়ভাবে train বা স্থায়ীভাবে মনে রাখে না। AI provider-এর API key server-এ রাখুন, account quota ও provider cost মাথায় রাখুন।
 
-## ১২. Test ও deploy
+## ১২. Vercel-এ deploy (serverless)
+
+প্রজেক্টটি Express app হিসেবে Vercel Functions-এ চলে। Vercel-এ request এলে function জাগে; এটি VPS-এর মতো সারাক্ষণ চালু process নয়। তাই এখানে আলাদা server process চালু করবেন না, `npm start`-ও Vercel-এর Start Command হিসেবে দেবেন না। `vercel.json`-এ daily quota maintenance schedule আছে। Function/session state MongoDB-তে রাখা হয়; `MemoryStore` শুধু local non-Vercel run-এ ব্যবহৃত হয়।
+
+### ১২.১ আগে প্রস্তুত করুন
+
+1. GitHub-এ repository push করুন; `.env` বা real credential commit করবেন না।
+2. Accessible MongoDB Atlas/managed MongoDB database তৈরি করুন। Atlas `Network Access`-এ Vercel-এর outbound IP স্থির না থাকলে provider-supported static egress/private networking ব্যবহার করুন। `0.0.0.0/0` কেবল ঝুঁকি বুঝে সাময়িকভাবে ব্যবহার করুন; এটি সব IP-কে DB connection চেষ্টা করতে দেয়।
+3. নিচের secret locally generate করুন; terminal output কখনো chat/GitHub-এ দেবেন না:
+
+   ```bash
+   node -e "console.log(require('node:crypto').randomBytes(32).toString('hex'))"
+   ```
+
+   এই command আলাদা করে `SESSION_SECRET`, `ADMIN_SETTINGS_ENCRYPTION_KEY` ও `CRON_SECRET`-এর জন্য চালান; প্রতিটির value আলাদা রাখুন।
+4. First-run admin-এর জন্য নতুন unique `ADMIN_PASSWORD` বানান। আগে public/chat-এ শেয়ার করা password পুনরায় ব্যবহার করবেন না।
+
+### ১২.২ Vercel project তৈরি করুন
+
+1. Vercel account-এ GitHub repository import করুন; Root Directory হবে project root (`Better-Api`)।
+2. Framework auto-detect হলে সেটি রাখুন; না হলে **Other** নির্বাচন করুন। Install Command দিন `npm ci --legacy-peer-deps`; Build Command, Output Directory ও Start Command ফাঁকা/default রাখুন। `package.json`/`index.js` থেকে Vercel Express app শনাক্ত করে Function তৈরি করে।
+3. Project → **Settings → Environment Variables**-এ values যোগ করুন। Production-এর জন্য অন্তত:
+
+   ```text
+   NODE_ENV=production
+   mongodb=<সম্পূর্ণ MongoDB connection URI>
+   SESSION_SECRET=<আলাদা 64-hex random secret>
+   ADMIN_SETTINGS_ENCRYPTION_KEY=<আলাদা 64-hex random secret>
+   CRON_SECRET=<আলাদা 64-hex random secret>
+   ADMIN_USERNAME=<admin username>
+   ADMIN_EMAIL=<আপনার নিয়ন্ত্রিত email>
+   ADMIN_PASSWORD=<নতুন unique password>
+   LIMIT_APIKEY=200
+   domain=<আপনার Vercel domain, https:// ছাড়া>
+   ```
+
+   Vercel-এ variable name case-sensitive; উপরের বানান ঠিক রাখুন। `mongodb`-এর URI-তে database user/password ও database name থাকতে হবে; special character URL-encode করুন।
+4. AI চাইলে `GEMINI_API_KEY`/অন্যান্য provider key, email চাইলে `sendemail`, `fromsendemail`, `sendpwmail`, `servicesmtp`, আর CAPTCHA চাইলে `recaptcha_key_1`, `recaptcha_key_2` environment-এ দিন। এগুলো ঐচ্ছিক। Website-এর admin settings page-এ AI/SMTP credential দিলেও সেটি MongoDB-তে encrypted হয়।
+5. Variables Production environment-এ যোগ করে **Redeploy** করুন; variable পরিবর্তন পুরোনো deployment-এ লাগে না। প্রথম deployment-এ app MongoDB-তে connect করে bootstrap admin তৈরি করবে; এরপর `/login`-এ username/email ও password দিয়ে login করুন।
+
+### ১২.৩ Deploy পরীক্ষা ও Cron
+
+Deployment URL-এ নিচের address পরীক্ষা করুন:
+
+```text
+/
+/healthz
+/login
+/api/creative/styles
+/api/ai/providers
+```
+
+`/healthz`-এ `200` এবং `"database":"connected"` না এলে MongoDB URI, Atlas network access ও credentials ঠিক করে redeploy করুন। Admin settings/security URL login ছাড়া খুলবে না। Vercel Cron প্রতিদিন 19:00 UTC-তে `/api/maintenance/daily` চালায়—এটি Dhaka সময় রাত ১টায় daily request counter reset করে এবং মাসের প্রথম দিনে account quota-ও reset করে। `CRON_SECRET` environment variable প্রয়োজন; cron route সঠিক `Authorization: Bearer ...` ছাড়া কাজ করবে না। Cron schedule সাধারণত Production deployment-এ চলে; plan অনুযায়ী Cron availability/limits যাচাই করুন।
+
+### Vercel-এ জেনে রাখুন
+
+- Vercel serverless function 24/7 process নয়; idle হলে বন্ধ হয়, পরের request-এ cold start হতে পারে। Free plan-এ নিশ্চিত 24/7 availability নেই।
+- Function execution duration, payload/bundle size ও plan limits প্রযোজ্য। বড় media/canvas কাজ, ধীর upstream TextPro/Photooxy, এবং ৩০ সেকেন্ড পর্যন্ত অপেক্ষা করা AI provider request সব plan-এ চলবে—এ নিশ্চয়তা নেই। Timeout হলে ওই workload-এর জন্য দীর্ঘ-running Node host ব্যবহার করুন।
+- `public/` static assets Vercel CDN থেকে serve হয়; Express `express.static()` production asset serving-এর বিকল্প নয়। EJS views deployment function-এ include করার config `vercel.json`-এ আছে।
+- MongoDB-backed session store-এর কারণে login একাধিক function instance-এর মধ্যে টিকে থাকে; `SESSION_SECRET` ও MongoDB URI স্থির রাখুন। MongoDB free tier storage/connection limits প্রযোজ্য।
+- Vercel Cron plan/feature availability বদলাতে পারে; deployment-এর **Settings → Cron Jobs** ও function logs-এ schedule এবং response যাচাই করুন। Cron ব্যর্থ হলে protected maintenance endpoint-টি `CRON_SECRET` দিয়ে manual GET করে পরীক্ষা করুন; secret প্রকাশ করবেন না।
+
+## ১৩. Test ও অন্যান্য host-এ deploy
 
 Local test:
 
@@ -263,7 +325,7 @@ Production deploy-এ:
 5. `/healthz`, `/login`, `/api/creative/styles` দেখে smoke test করুন।
 6. Free web services idle হলে sleep হতে পারে; free tier-এ uninterrupted 24/7 নিশ্চয়তা নেই। Service-এর terms বা limits পাশ কাটাতে fake uptime pinger ব্যবহার করবেন না।
 
-## ১৩. সাধারণ সমস্যা
+## ১৪. সাধারণ সমস্যা
 
 - **`/healthz` 503:** MongoDB service/URI, Atlas IP allowlist, database username/password ও URI encoding পরীক্ষা করুন।
 - **Login session টেকে না:** Production `SESSION_SECRET` স্থির, random ও 32+ characters রাখুন।
@@ -272,6 +334,9 @@ Production deploy-এ:
 - **AI endpoint 503:** `/api/ai/providers`, `.env` key spelling, server restart, provider region/quota পরীক্ষা করুন।
 - **TextPro/Photooxy endpoint ব্যর্থ:** upstream page/effect বদলে/বন্ধ হয়ে থাকতে পারে; একই text-এর জন্য original SVG `/api/creative/*` ব্যবহার করুন।
 - **API key 401/403/429:** key সঠিক কি না, email verified কি না, user quota শেষ কি না যাচাই করুন। Admin ছাড়া normal user-এর quota সীমিত।
+- **Vercel-এ `/healthz` 503:** Atlas network access-এ Vercel egress পৌঁছাতে পারছে কি না, `mongodb` variable-এর spelling/value ও database user password যাচাই করে redeploy করুন।
+- **Vercel login/session বারবার শেষ হয়:** `SESSION_SECRET` বদলাচ্ছে কি না, MongoDB `sessions` collection accessible কি না এবং একই deployment-এর variables আছে কি না দেখুন।
+- **Vercel cron চালায় না:** Production deploy, Cron plan support ও `CRON_SECRET` উপস্থিতি যাচাই করুন; function runtime logs দেখুন।
 
 ## নিরাপত্তা checklist
 

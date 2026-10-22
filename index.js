@@ -26,15 +26,16 @@ const createError = require("http-errors");
 const mongoose = require("mongoose");
 const expressSession = require("express-session");
 const MemoryStore = require("memorystore")(expressSession);
+const MongoStore = require("connect-mongo").default;
 const passport = require("passport");
 const flash = require("connect-flash");
 const csrf = require("csurf");
 const cron = require("node-cron");
 const bodyParser = require("body-parser");
-const User = require("./model/user");
 const dataweb = require("./model/DataWeb");
 const logger = require("./lib/logger");
 const { ensureBootstrapAdmin, getAdminConfig } = require("./lib/bootstrap-admin");
+const { resetApiKeyLimits, resetDailyRequestCount } = require("./lib/quota-maintenance");
 const isProduction = process.env.NODE_ENV === "production";
 const configuredSessionSecret = process.env.SESSION_SECRET?.trim();
 
@@ -44,23 +45,6 @@ if (isProduction && (!configuredSessionSecret || configuredSessionSecret.length 
 
 const sessionSecret = configuredSessionSecret || crypto.randomBytes(32).toString("hex");
 getAdminConfig();
-
-//_______________________ ┏ Funtion ┓ _______________________\\
-
-async function resetapi() {
-  await User.updateMany({}, { $set: { limitApikey: LimitApikey } });
-  logger.info("API key limits were reset.");
-}
-
-async function ResetRequestToday() {
-  await dataweb.updateOne(
-    {},
-    {
-      RequestToday: 0,
-    }
-  );
-  logger.info("Today's API request count was reset.");
-}
 
 //_______________________ ┏ Code ┓ _______________________\\
 
@@ -95,39 +79,38 @@ mongoose
     if (error.message.includes("Admin bootstrap")) process.exitCode = 1;
   });
 
-//_______________________ ┏ CronJob For Reset Limit ┓ _______________________\\
+if (process.env.VERCEL !== "1") {
+  cron.schedule(
+    "0 0 0 * * *",
+    () => {
+      resetDailyRequestCount().catch((error) => {
+        logger.error("Failed to reset today's API request count.", error);
+      });
+    },
+    { scheduled: true, timezone: "Asia/Dhaka" }
+  );
 
-// Reset Request Today Setiap sehari
-cron.schedule(
-  "0 0 0 * * *",
-  () => {
-    ResetRequestToday().catch((error) => {
-      logger.error("Failed to reset today's API request count.", error);
-    });
-  },
-  {
-    scheduled: true,
-    timezone: "Asia/Dhaka",
-  }
-);
-
-//Reset All User Apikey Limit setiap sebulan
-cron.schedule(
-  "0 0 1 * *",
-  () => {
-    resetapi().catch((error) => {
-      logger.error("Failed to reset API key limits.", error);
-    });
-  },
-  {
-    scheduled: true,
-    timezone: "Asia/Dhaka",
-  }
-);
+  cron.schedule(
+    "0 0 1 * *",
+    () => {
+      resetApiKeyLimits().catch((error) => {
+        logger.error("Failed to reset API key limits.", error);
+      });
+    },
+    { scheduled: true, timezone: "Asia/Dhaka" }
+  );
+}
 
 //_______________________ ┏ Code ┓ _______________________\\
 
 app.set("trust proxy", 1);
+const sessionStore = process.env.VERCEL === "1"
+  ? MongoStore.create({
+    mongoUrl: keymongodb,
+    collectionName: "sessions",
+    ttl: 24 * 60 * 60,
+  })
+  : new MemoryStore();
 app.use(cookieParser(sessionSecret));
 app.use(
   expressSession({
@@ -140,7 +123,7 @@ app.use(
       sameSite: "lax",
       secure: isProduction,
     },
-    store: new MemoryStore(),
+    store: sessionStore,
   })
 );
 const csrfProtection = csrf();
