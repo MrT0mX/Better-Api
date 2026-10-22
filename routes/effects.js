@@ -1,6 +1,6 @@
 const express = require("express");
 const createGuestRateLimiter = require("../lib/guest-rate-limit");
-const { effects, getEffect, renderEffectSvg } = require("../lib/text-effects");
+const { effects, getEffect, renderEffectSvg, isValidXmlText } = require("../lib/text-effects");
 
 const router = express.Router();
 const guestRateLimit = createGuestRateLimiter({ maxRequests: 30 });
@@ -10,12 +10,10 @@ router.get("/effects", (req, res) => {
 });
 
 router.get("/api/text-effects/styles", (req, res) => {
-  const groups = Object.groupBy
-    ? Object.groupBy(effects, (effect) => effect.group)
-    : effects.reduce((result, effect) => {
-      (result[effect.group] ||= []).push(effect);
-      return result;
-    }, {});
+  const groups = effects.reduce((result, effect) => {
+    (result[effect.group] ||= []).push(effect);
+    return result;
+  }, {});
   res.json({ status: true, guest: true, groups });
 });
 
@@ -26,6 +24,9 @@ router.get("/api/text-effects/render", guestRateLimit, (req, res) => {
 
   if (!text) {
     return res.status(400).json({ status: false, message: "text query parameter is required." });
+  }
+  if (!isValidXmlText(text) || !isValidXmlText(secondLine)) {
+    return res.status(400).json({ status: false, message: "Text contains unsupported control characters." });
   }
   if ([...text].length > 28 || [...secondLine].length > 20) {
     return res.status(400).json({ status: false, message: "Text is too long (maximum 28 characters per line)." });

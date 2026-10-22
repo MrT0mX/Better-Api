@@ -84,6 +84,8 @@ Edit the file `settings.js` for the following configurations:
 
 ## 🚀 লোকাল সেটআপ ও চালু করা
 
+ধাপে ধাপে সম্পূর্ণ guide—MongoDB Atlas/local setup, Gemini API key, SMTP, admin, সব effect API, deployment ও troubleshooting: [বাংলা A-to-Z Setup Guide](./SETUP_GUIDE_BN.md)।
+
 Node.js `22.22.1` ব্যবহার করুন এবং MongoDB চালু রাখুন। প্রজেক্ট ফোল্ডারে একবার dependency ইনস্টল করুন:
 
 Dependency ইনস্টল:
@@ -138,7 +140,7 @@ npm run dev
 npm test
 ```
 
-Production-এ `npm start` ব্যবহার করুন। Dashboard `/docs`-এ—আগে লগইন করতে হবে। `GET /test` API key ছাড়াই পরীক্ষা করা যায়। `/effects`-এ account ছাড়া ১২টি original SVG text style preview ও download করা যায়; public render route IP-প্রতি মিনিটে ৩০টি request-এ সীমিত।
+Production-এ `npm start` ব্যবহার করুন। Dashboard `/docs`-এ—আগে লগইন করতে হবে। `GET /test` API key ছাড়াই পরীক্ষা করা যায়। `/effects`-এ account ছাড়া ৩১টি original SVG text style preview ও download করা যায়; Creative API-তে logo ও animated SVG-ও তৈরি হয়। Guest render route IP-প্রতি মিনিটে ৩০টি request-এ সীমিত।
 
 ### First-run admin setup
 

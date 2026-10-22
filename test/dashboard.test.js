@@ -27,6 +27,9 @@ test("dashboard renders Bengali controls and no legacy scripts", async () => {
   assert.match(html, /\/js\/docs\/ai\.js/);
   assert.match(html, /Guest Text Effects/);
   assert.match(html, /SVG Text Effect \(Guest\)/);
+  assert.match(html, /api\/creative\/logo\/render/);
+  assert.match(html, /api\/creative\/animation\/render/);
+  assert.doesNotMatch(html, /api\/textpro\/transformer/);
   assert.match(html, /API অনুরোধ চালান/);
   assert.doesNotMatch(html, /\/js\/menu\.js/);
   assert.doesNotMatch(html, /jquery\.easing/);

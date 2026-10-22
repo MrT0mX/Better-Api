@@ -26,6 +26,7 @@ const authRoutes = require('./auth');
 const apiRoutes = require('./api')
 const { router: aiRoutes } = require('./ai');
 const effectsRoutes = require('./effects');
+const creativeRoutes = require('./creative');
 const dataweb = require('../model/DataWeb');
 const User = require('../model/user');
 
@@ -106,6 +107,7 @@ router.get("/logout", (req, res, next) => {
 
 router.use(authRoutes);
 router.use(effectsRoutes);
+router.use(creativeRoutes);
 router.use(aiRoutes);
 router.use(apiRoutes);
 module.exports = router;

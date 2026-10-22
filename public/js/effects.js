@@ -44,7 +44,7 @@
   const selectedName = document.querySelector("#selected-effect");
   const message = document.querySelector("#effect-message");
   const downloadButton = document.querySelector("#download-effect");
-  const cards = [...document.querySelectorAll(".style-card")];
+  let cards = [...document.querySelectorAll(".style-card")];
   let selectedEffect = "neon";
   let timer;
   let previewUrl = "";
@@ -107,14 +107,53 @@
     image.src = previewUrl;
   }
 
-  cards.forEach((card) => {
-    card.addEventListener("click", () => {
-      cards.forEach((entry) => entry.classList.toggle("active", entry === card));
-      selectedEffect = card.dataset.effect;
-      selectedName.textContent = card.querySelector("span:last-child").firstChild.textContent.trim().toUpperCase();
-      updatePreview();
+  function bindStyleCards() {
+    cards = [...document.querySelectorAll(".style-card")];
+    cards.forEach((card) => {
+      card.addEventListener("click", () => {
+        cards.forEach((entry) => entry.classList.toggle("active", entry === card));
+        selectedEffect = card.dataset.effect;
+        selectedName.textContent = card.querySelector("span:last-child").firstChild.textContent.trim().toUpperCase();
+        updatePreview();
+      });
     });
-  });
+  }
+
+  async function loadStyleCatalog() {
+    const response = await fetch("/api/text-effects/styles");
+    if (!response.ok) throw new Error("Style catalog request failed.");
+    const catalog = await response.json();
+    const styles = Object.values(catalog.groups || {}).flat();
+    if (!styles.length) throw new Error("Style catalog is empty.");
+
+    const container = document.querySelector("#style-groups");
+    const fragment = document.createDocumentFragment();
+    for (const style of styles) {
+      const card = document.createElement("button");
+      card.type = "button";
+      card.className = `style-card${style.id === selectedEffect ? " active" : ""}`;
+      card.dataset.effect = style.id;
+
+      const swatch = document.createElement("span");
+      swatch.className = `swatch swatch-${style.id}`;
+      swatch.textContent = "Aa";
+      swatch.style.backgroundColor = style.background;
+      swatch.style.color = style.stroke;
+
+      const label = document.createElement("span");
+      label.append(document.createTextNode(style.name));
+      const group = document.createElement("small");
+      group.textContent = style.group.toUpperCase();
+      label.append(group);
+
+      card.append(swatch, label);
+      fragment.append(card);
+    }
+    container.replaceChildren(fragment);
+    document.querySelector("#style-count").textContent = `${styles.length} styles`;
+    bindStyleCards();
+    updatePreview();
+  }
 
   image.addEventListener("load", () => {
     downloadButton.disabled = false;
@@ -152,5 +191,7 @@
   });
 
   document.querySelector("#year").textContent = new Date().getFullYear();
-  updatePreview();
+  loadStyleCatalog().catch(() => {
+    message.textContent = translations[document.documentElement.lang].previewFailed;
+  });
 })();
