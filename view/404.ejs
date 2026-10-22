@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <style>
       body {
-        background-color: #007bff; /* Warna biru */
-        color: #fff; /* Warna putih */
-        font-family: Arial, sans-serif;
+        background: radial-gradient(ellipse at 50% 0, #193c37, #0b1014 65%);
+        color: #edf5f4;
+        font-family: "Noto Sans Bengali", "Nirmala UI", sans-serif;
         text-align: center;
         display: flex;
         flex-direction: column;
@@ -15,28 +15,57 @@
         justify-content: center;
         height: 100vh;
         margin: 0;
+        padding: 24px;
+      }
+
+      main {
+        max-width: 560px;
+        padding: 42px;
+        border: 1px solid rgba(98, 242, 213, 0.2);
+        border-radius: 24px;
+        background: rgba(23, 29, 35, 0.82);
+        box-shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
       }
 
       h1 {
-        font-size: 100px; /* Ukuran besar angka 404 */
+        color: #62f2d5;
+        font-size: clamp(76px, 16vw, 112px);
         margin: 0;
       }
 
+      h2 {
+        margin: 0 0 10px;
+        font-size: 24px;
+      }
+
+      p {
+        color: #a6b5b8;
+        line-height: 1.7;
+      }
+
       a {
-        color: #fff; /* Warna putih untuk tautan */
+        display: inline-flex;
+        margin-top: 14px;
+        padding: 12px 18px;
+        border-radius: 12px;
+        background: linear-gradient(115deg, #62f2d5, #a0f58a);
+        color: #06211c;
+        font-weight: 700;
         text-decoration: none;
-        font-weight: bold;
       }
 
       a:hover {
-        text-decoration: underline;
+        filter: brightness(1.08);
       }
     </style>
-    <title>Error 404</title>
+    <title>পাতা পাওয়া যায়নি | MrTomX API</title>
   </head>
   <body>
-    <h1>404</h1>
-    <h3>Halaman yang Anda cari tidak ditemukan.</h3>
-    <a href="/">Kembali ke Beranda</a>
+    <main>
+      <h1>404</h1>
+      <h2>পাতাটি খুঁজে পাওয়া যায়নি</h2>
+      <p>লিংকটি ভুল হতে পারে অথবা পাতাটি সরানো হয়েছে। ঠিকানাটি পরীক্ষা করে আবার চেষ্টা করুন।</p>
+      <a href="/">হোমে ফিরে যান</a>
+    </main>
   </body>
 </html>

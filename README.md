@@ -45,27 +45,29 @@
 
 1. Create a new web service.
 2. Connect your GitHub account and select the forked repository.
-3. Set the build command to `npm install`.
+3. Set the build command to `npm ci --legacy-peer-deps`.
 4. Set the start command to `npm start`.
 5. Click on "Advanced" and add the following environment variables:
 
 ```
-mongodb = "Your MongoDB Database Key"
-sendemail = 'Your SMTP Email'
-fromsendemail = 'Same as SMTP Email'
-sendpwmail = "SMTP Email Password"
-recaptcha_key_1 = 'Your reCAPTCHA V1 Key'
-recaptcha_key_2 = 'Your reCAPTCHA V2 Key'
+mongodb = "mongodb+srv://username:password@cluster.example.mongodb.net/database"
+sendemail = 'your-smtp-email@example.com'
+fromsendemail = 'your-smtp-email@example.com'
+sendpwmail = "replace-with-a-secret"
+recaptcha_key_1 = 'your-recaptcha-site-key'
+recaptcha_key_2 = 'your-recaptcha-secret-key'
 ```
 
 ## Example
+
+বাস্তব database, SMTP বা reCAPTCHA credentials এখানে রাখবেন না। আগে কোনো public commit-এ credentials থাকলে সংশ্লিষ্ট provider-এ সেগুলো পরিবর্তন করুন।
 ```
-mongodb = "mongodb+srv://mtx:mtx@apiwebsite.wsdyxay.mongodb.net/?retryWrites=true&w=majority&appName=Apiwebsite"
-sendemail = 'mrtomxxx7@mail.com'
-fromsendemail = 'mrtomxxx7@mail.com'
-sendpwmail = "**********"
-recaptcha_key_1 = '6LfY1tQpAAAAADbtxfCgI7WjgQalj80aQyQNGyKE'
-recaptcha_key_2 = '6LfY1tQpAAAAAPo0XHpRLOAckWhIAxh1DUhZ1Ai5'
+mongodb = "mongodb+srv://username:password@cluster.example.mongodb.net/database"
+sendemail = 'your-smtp-email@example.com'
+fromsendemail = 'your-smtp-email@example.com'
+sendpwmail = "replace-with-a-secret"
+recaptcha_key_1 = 'your-recaptcha-site-key'
+recaptcha_key_2 = 'your-recaptcha-secret-key'
 ```
 Get Apikey Recaptcha From https://www.google.com/recaptcha/admin/create
 
@@ -80,31 +82,17 @@ Edit the file `settings.js` for the following configurations:
 [`Change the port.`](https://github.com/MrT0mX/Better-Api/blob/master/settings.js#:~:text=port%20%3D-,8080,-//port%20host)<br>
 [`Adjust the API key limit.`](https://github.com/MrT0mX/Better-Api/blob/master/settings.js#:~:text=LimitApikey%20%3D-,200,-//%20Limit%20Apikey%20default)<br>
 
-## 🚀 Local Setup and Install
+## 🚀 লোকাল সেটআপ ও চালু করা
 
-> Edited by MrTomXxX
+Node.js `22.22.1` ব্যবহার করুন এবং MongoDB চালু রাখুন। প্রজেক্ট ফোল্ডারে একবার dependency ইনস্টল করুন:
 
-Before running the project, install Node.js 16+ and make sure MongoDB and SMTP credentials are ready.
-
-1. Open terminal in the project folder:
+Dependency ইনস্টল:
 
 ```bash
-cd Better-Api
+npm ci --legacy-peer-deps
 ```
 
-2. Install dependencies:
-
-```bash
-npm install
-```
-
-3. Copy the sample environment file:
-
-```bash
-cp .env.example .env
-```
-
-4. Fill your real values in `.env`:
+`.env.example` কপি করে `.env` বানান এবং নিজের পরিবেশের মান বসান। MongoDB ও ইমেইল যাচাইয়ের জন্য `.env` কনফিগার করুন। Production-এ `SESSION_SECRET`-এ কমপক্ষে 32 অক্ষরের গোপন মান দিন। গোপন তথ্য Git-এ যোগ করবেন না।
 
 ```env
 mongodb="mongodb+srv://your_user:your_password@cluster.mongodb.net/?retryWrites=true&w=majority"
@@ -113,6 +101,9 @@ fromsendemail="your_smtp_email@example.com"
 sendpwmail="your_smtp_password"
 recaptcha_key_1="your_recaptcha_site_key"
 recaptcha_key_2="your_recaptcha_secret_key"
+CUTTLY_API_KEYS=""
+BITLY_API_KEYS=""
+SESSION_SECRET=""
 PORT=8080
 LIMIT_APIKEY=200
 CREATOR="MrTom乂x乂"
@@ -121,33 +112,19 @@ servicesmtp="Zoho"
 domain="localhost:8080"
 ```
 
-5. Start the app:
-
-```bash
-npm start
-```
-
-or
+5. ডেভেলপমেন্ট সার্ভার চালু করুন:
 
 ```bash
 npm run dev
 ```
 
-If you want to run it in production-like mode, set the same values in your hosting provider environment settings instead of using a local `.env` file.
+পরীক্ষা চালাতে:
 
-## 🚀 Usage
-
-Start the application with:
-
-```
-npm start
+```bash
+npm test
 ```
 
-or
-
-```
-npm run node
-```
+Production-এ `npm start` ব্যবহার করুন। ড্যাশবোর্ড `/docs`-এ—আগে লগইন করতে হবে। `GET /test` API key ছাড়াই পরীক্ষা করা যায়; অন্য API-তে যাচাইকৃত অ্যাকাউন্ট ও API key প্রয়োজন। Node ও dependency আপডেটের ধাপ [UPDATE_GUIDE.md](UPDATE_GUIDE.md)-এ আছে।
 
 ## ✨ Features
 

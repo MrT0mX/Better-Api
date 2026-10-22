@@ -40,9 +40,22 @@ function checkAuth(req, res, next) {
 }
 
 async function getApikey(id) {
-    let limit = await dataweb.findOne();
-    let users = await User.findOne({_id: id})
-    return {apikey: users.apikey, username: users.username, checklimit: users.limitApikey, isVerified : users.isVerified, RequestToday: limit.RequestToday};
+  const [limit, user, totalUsers] = await Promise.all([
+    dataweb.findOne().lean(),
+    User.findById(id).select('apikey username limitApikey isVerified').lean(),
+    User.countDocuments(),
+  ]);
+
+  if (!user) throw new Error('Authenticated user was not found.');
+
+  return {
+    apikey: user.apikey,
+    username: user.username,
+    checklimit: user.limitApikey,
+    isVerified: user.isVerified,
+    RequestToday: limit?.RequestToday ?? 0,
+    totalUsers,
+  };
 }
 
 
@@ -52,15 +65,33 @@ router.get('/', (req, res) => {
         res.render("home");
 });
 
-router.get('/docs',  checkAuth, async (req, res) => {
-  let getinfo =  await getApikey(req.user.id)
-  let { apikey, username, checklimit, isVerified , RequestToday } = getinfo
-    res.render("docs", { username: username, verified: isVerified, apikey: apikey, limit: checklimit , RequestToday: RequestToday });
-    
+router.get('/healthz', (req, res) => {
+    const databaseConnected = require('mongoose').connection.readyState === 1;
+    res.status(databaseConnected ? 200 : 503).json({
+        status: databaseConnected ? 'ok' : 'degraded',
+        service: 'Better-Api',
+        database: databaseConnected ? 'connected' : 'disconnected',
+    });
+});
+
+router.get('/docs', checkAuth, async (req, res, next) => {
+  try {
+    const { apikey, username, checklimit, isVerified, RequestToday, totalUsers } = await getApikey(req.user.id);
+    res.render("docs", {
+      username,
+      verified: isVerified,
+      apikey,
+      limit: checklimit,
+      RequestToday,
+      totalUsers,
+    });
+  } catch (error) {
+    next(error);
+  }
 });
 
 
-router.get("/logout", (req, res) => {
+router.get("/logout", (req, res, next) => {
     req.logout(req.user, err => {
       if(err) return next(err);
       res.redirect("/login");
