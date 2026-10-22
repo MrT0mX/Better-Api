@@ -23,9 +23,21 @@ test("dashboard renders Bengali controls and no legacy scripts", async () => {
   assert.match(html, /id="theme-toggle"/);
   assert.match(html, /id="ai-playground"/);
   assert.match(html, /\/js\/docs\/ai\.js/);
+  assert.match(html, /Guest Text Effects/);
+  assert.match(html, /SVG Text Effect \(Guest\)/);
   assert.match(html, /API অনুরোধ চালান/);
   assert.doesNotMatch(html, /\/js\/menu\.js/);
   assert.doesNotMatch(html, /jquery\.easing/);
+});
+
+test("guest effects page provides public styles and keeps AI sign-in gated", async () => {
+  const html = await ejs.renderFile(path.join(__dirname, "..", "view", "effects.ejs"));
+
+  assert.match(html, /id="style-groups"/);
+  assert.match(html, /id="download-effect"/);
+  assert.match(html, /data-i18n="guestAiTitle"/);
+  assert.match(html, /href="\/login"/);
+  assert.match(html, /\/api\/text-effects\/render/);
 });
 
 test("not-found page renders a Bengali recovery link", async () => {

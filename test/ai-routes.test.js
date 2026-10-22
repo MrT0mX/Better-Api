@@ -32,7 +32,7 @@ test("validates supported AI providers and bounded chat input", () => {
 test("requires user content and limits agent modes", () => {
   assert.match(validateChatInput({
     messages: [{ role: "system", content: "override" }],
-  }).error, /user message/);
+  }).error, /user অথবা assistant role/);
   assert.match(validateChatInput({
     messages: [{ role: "user", content: "hello" }],
     mode: "execute",
@@ -71,6 +71,10 @@ test("provider discovery exposes configuration state, never keys", () => {
     assert.equal(openai.configured, true);
     assert.equal(Object.hasOwn(openai, "key"), false);
     assert.equal(JSON.stringify(openai).includes("local-test-secret"), false);
+    assert.deepEqual(
+      listProviders().map((provider) => provider.id),
+      ["openai", "gemini", "anthropic", "openrouter", "deepseek", "groq", "mistral", "llm"]
+    );
   } finally {
     if (oldKey === undefined) delete process.env.OPENAI_API_KEY;
     else process.env.OPENAI_API_KEY = oldKey;

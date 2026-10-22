@@ -121,7 +121,7 @@ cron.schedule(
 
 //_______________________ ┏ Code ┓ _______________________\\
 
-app.set("trust proxy", true);
+app.set("trust proxy", 1);
 app.use(cookieParser(sessionSecret));
 app.use(
   expressSession({

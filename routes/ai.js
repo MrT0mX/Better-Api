@@ -1,6 +1,6 @@
 const express = require("express");
 const asyncHandler = require("../lib/async-handler");
-const cekKey = require("../lib/api-key");
+const { identifyAIUser, reserveAIQuota } = require("../lib/ai-auth");
 const logger = require("../lib/logger");
 
 const router = express.Router();
@@ -30,6 +30,30 @@ const providers = {
     url: "https://openrouter.ai/api/v1/chat/completions",
     model: "openai/gpt-4o-mini",
   },
+  deepseek: {
+    name: "DeepSeek",
+    key: "DEEPSEEK_API_KEY",
+    url: "https://api.deepseek.com/chat/completions",
+    model: "deepseek-chat",
+  },
+  groq: {
+    name: "Groq",
+    key: "GROQ_API_KEY",
+    url: "https://api.groq.com/openai/v1/chat/completions",
+    model: "llama-3.3-70b-versatile",
+  },
+  mistral: {
+    name: "Mistral",
+    key: "MISTRAL_API_KEY",
+    url: "https://api.mistral.ai/v1/chat/completions",
+    model: "mistral-small-latest",
+  },
+  llm: {
+    name: "Custom OpenAI-compatible LLM",
+    key: "LLM_API_KEY",
+    url: process.env.LLM_BASE_URL || "",
+    model: process.env.LLM_MODEL || "custom-model",
+  },
 };
 
 function normalizeProvider(value) {
@@ -41,7 +65,10 @@ function listProviders() {
   return Object.entries(providers).map(([id, config]) => ({
     id,
     name: config.name,
-    configured: Boolean(process.env[config.key]?.trim()),
+    configured: Boolean(
+      process.env[config.key]?.trim() &&
+      (id !== "llm" || config.url)
+    ),
     defaultModel: config.model,
   }));
 }
@@ -64,8 +91,8 @@ function validateChatInput(body, agentMode = false) {
   let totalCharacters = 0;
   const messages = [];
   for (const message of body.messages) {
-    if (!message || !["user", "assistant", "system"].includes(message.role) || typeof message.content !== "string") {
-      return { error: "প্রতিটি message-এ user, assistant অথবা system role এবং string content দিন।" };
+    if (!message || !["user", "assistant"].includes(message.role) || typeof message.content !== "string") {
+      return { error: "প্রতিটি message-এ user অথবা assistant role এবং string content দিন।" };
     }
     const content = message.content.trim();
     if (!content || content.length > 12000) return { error: "প্রতিটি message ১ থেকে ১২,০০০ অক্ষরের মধ্যে হতে হবে।" };
@@ -98,7 +125,7 @@ function buildProviderRequest(config, apiKey, input, agentMode) {
 
   const headers = { "Content-Type": "application/json" };
   let payload;
-  if (config === providers.anthropic) {
+  if (config.key === providers.anthropic.key) {
     headers["x-api-key"] = apiKey;
     headers["anthropic-version"] = "2023-06-01";
     payload = {
@@ -116,7 +143,7 @@ function buildProviderRequest(config, apiKey, input, agentMode) {
     };
   }
 
-  if (config === providers.openrouter) {
+  if (config.key === providers.openrouter.key) {
     headers["HTTP-Referer"] = process.env.OPENROUTER_SITE_URL || "http://localhost";
     headers["X-Title"] = process.env.OPENROUTER_APP_NAME || "MrTomXxX API";
   }
@@ -140,10 +167,13 @@ function prepareChat(agentMode) {
     if (input.error) return res.status(400).json({ status: false, message: input.error });
 
     const config = providers[input.provider];
-    if (!process.env[config.key]?.trim()) {
+    const isConfigured = listProviders().find((provider) => provider.id === input.provider)?.configured;
+    if (!isConfigured) {
       return res.status(503).json({
         status: false,
-        message: `${config.name} এখন configure করা নেই। সার্ভারে ${config.key} সেট করুন।`,
+        message: input.provider === "llm"
+          ? "Custom LLM এখন configure করা নেই। সার্ভারে LLM_BASE_URL ও LLM_API_KEY সেট করুন।"
+          : `${config.name} এখন configure করা নেই। সার্ভারে ${config.key} সেট করুন।`,
       });
     }
 
@@ -158,8 +188,17 @@ async function handleChat(req, res, agentMode = false) {
 
   const config = providers[input.provider];
   const apiKey = process.env[config.key]?.trim();
+  const providerUrl = input.provider === "llm"
+    ? process.env.LLM_BASE_URL?.trim()
+    : config.url;
+  if (!providerUrl) {
+    return res.status(503).json({
+      status: false,
+      message: "Custom LLM provider configure করা নেই। সার্ভারে LLM_BASE_URL দিন।",
+    });
+  }
 
-  const request = buildProviderRequest(config, apiKey, input, agentMode);
+  const request = buildProviderRequest({ ...config, url: providerUrl }, apiKey, input, agentMode);
   let upstream;
   try {
     upstream = await fetch(request.url, {
@@ -213,8 +252,20 @@ router.get("/api/ai/providers", (req, res) => {
   res.json({ status: true, providers: listProviders() });
 });
 
-router.post("/api/ai/chat", prepareChat(false), cekKey, asyncHandler((req, res) => handleChat(req, res)));
-router.post("/api/agent/chat", prepareChat(true), cekKey, asyncHandler((req, res) => handleChat(req, res, true)));
+router.post(
+  "/api/ai/chat",
+  identifyAIUser,
+  prepareChat(false),
+  reserveAIQuota,
+  asyncHandler((req, res) => handleChat(req, res))
+);
+router.post(
+  "/api/agent/chat",
+  identifyAIUser,
+  prepareChat(true),
+  reserveAIQuota,
+  asyncHandler((req, res) => handleChat(req, res, true))
+);
 
 router.stack.forEach((layer) => {
   if (layer.route) {

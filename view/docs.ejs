@@ -27,6 +27,9 @@
         <li>
           <a href="/docs" aria-current="page"><i class="bx bxs-dashboard icon"></i> ড্যাশবোর্ড</a>
         </li>
+        <li>
+          <a href="/effects"><i class="bx bx-font icon"></i> Guest Text Effects</a>
+        </li>
         <li class="divider" data-text="API বিভাগ">API বিভাগ</li>
         <li>
           <a href="#"
@@ -278,6 +281,18 @@
                 href="api/textpro/strawberry?text=MrTomXxX&apikey=<%= apikey %>"
                 target="_blank"
                 >Strawberry</a
+              >
+            </li>
+            <li>
+              <a href="api/text-effects/styles" target="_blank"
+                >Original Effect Styles (Guest)</a
+              >
+            </li>
+            <li>
+              <a
+                href="api/text-effects/render?text=Hello&effect=neon"
+                target="_blank"
+                >SVG Text Effect (Guest)</a
               >
             </li>
           </ul>
@@ -1141,6 +1156,10 @@
                   <option value="gemini">Google Gemini</option>
                   <option value="anthropic">Anthropic Claude</option>
                   <option value="openrouter">OpenRouter</option>
+                  <option value="deepseek">DeepSeek</option>
+                  <option value="groq">Groq</option>
+                  <option value="mistral">Mistral</option>
+                  <option value="llm">Custom OpenAI-compatible LLM</option>
                 </select>
               </label>
               <label>Model

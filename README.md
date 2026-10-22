@@ -108,6 +108,12 @@ GEMINI_API_KEY=""
 ANTHROPIC_API_KEY=""
 OPENROUTER_API_KEY=""
 OPENROUTER_SITE_URL=""
+DEEPSEEK_API_KEY=""
+GROQ_API_KEY=""
+MISTRAL_API_KEY=""
+LLM_API_KEY=""
+LLM_BASE_URL=""
+LLM_MODEL=""
 SESSION_SECRET=""
 PORT=8080
 LIMIT_APIKEY=200
@@ -129,11 +135,11 @@ npm run dev
 npm test
 ```
 
-Production-এ `npm start` ব্যবহার করুন। ড্যাশবোর্ড `/docs`-এ—আগে লগইন করতে হবে। `GET /test` API key ছাড়াই পরীক্ষা করা যায়; অন্য API-তে যাচাইকৃত অ্যাকাউন্ট ও API key প্রয়োজন। Node ও dependency আপডেটের ধাপ [UPDATE_GUIDE.md](UPDATE_GUIDE.md)-এ আছে।
+Production-এ `npm start` ব্যবহার করুন। Dashboard `/docs`-এ—আগে লগইন করতে হবে। `GET /test` API key ছাড়াই পরীক্ষা করা যায়। `/effects`-এ account ছাড়া ১২টি original SVG text style preview ও download করা যায়; public render route IP-প্রতি মিনিটে ৩০টি request-এ সীমিত।
 
 ### AI chat ও teaching agent
 
-AI provider চালু করতে `.env`-এ নিজের provider key সেট করুন। Key browser-এ প্রকাশ করা হয় না। `GET /api/ai/providers` configure করা provider-এর নাম ও default model দেখায়। Chat ও agent request যাচাইকৃত account API key চায় এবং বিদ্যমান `LIMIT_APIKEY` quota ব্যবহার করে; provider key না থাকলে endpoint `503` দেয়।
+AI provider চালু করতে `.env`-এ provider key সেট করুন। Supported providers: OpenAI, Gemini, Anthropic/Claude, OpenRouter, DeepSeek, Groq, Mistral এবং OpenAI-compatible custom LLM (`LLM_BASE_URL`, `LLM_API_KEY`, `LLM_MODEL`)। Custom LLM-এর `LLM_BASE_URL`-এ সম্পূর্ণ chat-completions endpoint URL দিন। Key browser-এ প্রকাশ করা হয় না। `GET /api/ai/providers` provider configuration status ও default model দেখায়। AI chat/agent-এর জন্য verified login session অথবা verified account-এর API key লাগে; account quota ব্যবহার হয়, provider key না থাকলে endpoint `503` দেয়।
 
 ```bash
 curl -X POST http://localhost:8080/api/ai/chat \
@@ -142,7 +148,16 @@ curl -X POST http://localhost:8080/api/ai/chat \
   -d '{"provider":"gemini","messages":[{"role":"user","content":"Explain REST APIs simply"}]}'
 ```
 
-Teaching mode-এর route হলো `POST /api/agent/chat`; request-এ `"mode":"teach"` দিন। এটি configured provider-কে teaching style-এ উত্তর দিতে নির্দেশ দেয়, কিন্তু conversation সংরক্ষণ বা model-কে স্বয়ংক্রিয়ভাবে train করে না। API-গুলো সীমাহীন নয়—AI provider usage-এ খরচ হতে পারে, তাই API key ও quota সচল রাখতে হবে।
+Teaching mode-এর route হলো `POST /api/agent/chat`; request-এ `"mode":"teach"` দিন। এটি configured provider-কে teaching style-এ উত্তর দিতে নির্দেশ দেয়, কিন্তু conversation সংরক্ষণ বা model-কে স্বয়ংক্রিয়ভাবে train করে না। Guest session-এ AI locked; verified login account-এ dashboard থেকে AI ব্যবহার করা যায়। AI requests account API quota ব্যবহার করে এবং provider billing-এর আওতায় আসতে পারে।
+
+Guest text-effect endpoints:
+
+```text
+GET /api/text-effects/styles
+GET /api/text-effects/render?text=Hello&effect=neon
+```
+
+Text-effect render সীমা: প্রতি IP-তে মিনিটে ৩০ request, মূল লেখা সর্বোচ্চ ২৮ অক্ষর এবং optional দ্বিতীয় লাইন ২০ অক্ষর। Styles-গুলো এই project-এর original SVG compositions; কোনো third-party website-এর proprietary artwork বা assets copy করা হয়নি।
 
 ## ✨ Features
 
