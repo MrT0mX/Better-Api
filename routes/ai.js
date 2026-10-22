@@ -2,6 +2,7 @@ const express = require("express");
 const asyncHandler = require("../lib/async-handler");
 const { identifyAIUser, reserveAIQuota } = require("../lib/ai-auth");
 const logger = require("../lib/logger");
+const { getRuntimeConfig } = require("../lib/runtime-config");
 
 const router = express.Router();
 
@@ -61,15 +62,15 @@ function normalizeProvider(value) {
   return provider === "claude" ? "anthropic" : provider;
 }
 
-function listProviders() {
+function listProviders(runtimeConfig = process.env) {
   return Object.entries(providers).map(([id, config]) => ({
     id,
     name: config.name,
     configured: Boolean(
-      process.env[config.key]?.trim() &&
-      (id !== "llm" || config.url)
+      runtimeConfig[config.key]?.trim() &&
+      (id !== "llm" || runtimeConfig.LLM_BASE_URL?.trim())
     ),
-    defaultModel: config.model,
+    defaultModel: id === "llm" ? runtimeConfig.LLM_MODEL || config.model : config.model,
   }));
 }
 
@@ -144,8 +145,8 @@ function buildProviderRequest(config, apiKey, input, agentMode) {
   }
 
   if (config.key === providers.openrouter.key) {
-    headers["HTTP-Referer"] = process.env.OPENROUTER_SITE_URL || "http://localhost";
-    headers["X-Title"] = process.env.OPENROUTER_APP_NAME || "MrTomXxX API";
+    headers["HTTP-Referer"] = config.siteUrl || process.env.OPENROUTER_SITE_URL || "http://localhost";
+    headers["X-Title"] = config.appName || process.env.OPENROUTER_APP_NAME || "MrTomXxX API";
   }
 
   return { url: config.url, headers, payload };
@@ -162,24 +163,29 @@ function extractReply(provider, data) {
 }
 
 function prepareChat(agentMode) {
-  return (req, res, next) => {
+  return asyncHandler(async (req, res, next) => {
     const input = validateChatInput(req.body, agentMode);
     if (input.error) return res.status(400).json({ status: false, message: input.error });
 
+    const runtimeConfig = await getRuntimeConfig();
     const config = providers[input.provider];
-    const isConfigured = listProviders().find((provider) => provider.id === input.provider)?.configured;
+    const isConfigured = listProviders(runtimeConfig).find((provider) => provider.id === input.provider)?.configured;
     if (!isConfigured) {
       return res.status(503).json({
         status: false,
         message: input.provider === "llm"
-          ? "Custom LLM এখন configure করা নেই। সার্ভারে LLM_BASE_URL ও LLM_API_KEY সেট করুন।"
-          : `${config.name} এখন configure করা নেই। সার্ভারে ${config.key} সেট করুন।`,
+          ? "Custom LLM এখন configure করা নেই। Admin settings-এ LLM_BASE_URL ও LLM_API_KEY দিন।"
+          : `${config.name} এখন configure করা নেই। Admin settings থেকে ${config.key} যোগ করুন।`,
       });
     }
 
+    if (input.provider === "llm" && !req.body.model) {
+      input.model = runtimeConfig.LLM_MODEL || config.model;
+    }
     req.aiRequest = input;
+    req.aiRuntimeConfig = runtimeConfig;
     return next();
-  };
+  });
 }
 
 async function handleChat(req, res, agentMode = false) {
@@ -187,9 +193,10 @@ async function handleChat(req, res, agentMode = false) {
   if (input.error) return res.status(400).json({ status: false, message: input.error });
 
   const config = providers[input.provider];
-  const apiKey = process.env[config.key]?.trim();
+  const runtimeConfig = req.aiRuntimeConfig || await getRuntimeConfig();
+  const apiKey = runtimeConfig[config.key]?.trim();
   const providerUrl = input.provider === "llm"
-    ? process.env.LLM_BASE_URL?.trim()
+    ? runtimeConfig.LLM_BASE_URL?.trim()
     : config.url;
   if (!providerUrl) {
     return res.status(503).json({
@@ -198,7 +205,12 @@ async function handleChat(req, res, agentMode = false) {
     });
   }
 
-  const request = buildProviderRequest({ ...config, url: providerUrl }, apiKey, input, agentMode);
+  const request = buildProviderRequest({
+    ...config,
+    url: providerUrl,
+    siteUrl: runtimeConfig.OPENROUTER_SITE_URL,
+    appName: runtimeConfig.OPENROUTER_APP_NAME,
+  }, apiKey, input, agentMode);
   let upstream;
   try {
     upstream = await fetch(request.url, {
@@ -248,9 +260,12 @@ async function handleChat(req, res, agentMode = false) {
   });
 }
 
-router.get("/api/ai/providers", (req, res) => {
-  res.json({ status: true, providers: listProviders() });
-});
+router.get("/api/ai/providers", asyncHandler(async (req, res) => {
+  res.json({
+    status: true,
+    providers: listProviders(await getRuntimeConfig()),
+  });
+}));
 
 router.post(
   "/api/ai/chat",
@@ -277,4 +292,11 @@ router.stack.forEach((layer) => {
   }
 });
 
-module.exports = { router, providers, listProviders, validateChatInput, buildProviderRequest, extractReply };
+module.exports = {
+  router,
+  providers,
+  listProviders,
+  validateChatInput,
+  buildProviderRequest,
+  extractReply,
+};

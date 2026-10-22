@@ -84,7 +84,7 @@ Edit the file `settings.js` for the following configurations:
 
 ## 🚀 লোকাল সেটআপ ও চালু করা
 
-ধাপে ধাপে সম্পূর্ণ guide—MongoDB Atlas/local setup, Gemini API key, SMTP, admin, সব effect API, deployment ও troubleshooting: [বাংলা A-to-Z Setup Guide](./SETUP_GUIDE_BN.md)।
+ধাপে ধাপে সম্পূর্ণ guide—MongoDB Atlas/local setup, Gemini API key, SMTP, admin, website থেকে encrypted runtime credentials, সব effect API, deployment ও troubleshooting: [বাংলা A-to-Z Setup Guide](./SETUP_GUIDE_BN.md)।
 
 Node.js `22.22.1` ব্যবহার করুন এবং MongoDB চালু রাখুন। প্রজেক্ট ফোল্ডারে একবার dependency ইনস্টল করুন:
 
@@ -145,6 +145,8 @@ Production-এ `npm start` ব্যবহার করুন। Dashboard `/doc
 ### First-run admin setup
 
 Optional secure admin bootstrap-এর জন্য `.env`/hosting secret store-এ `ADMIN_USERNAME=mrtomxx`, `ADMIN_EMAIL` এবং একটি নতুন, unique `ADMIN_PASSWORD` দিন (কমপক্ষে ১২ অক্ষর; uppercase, lowercase ও digit থাকবে)। MongoDB-তে account না থাকলে server password-টি bcrypt hash করে verified admin account তৈরি করবে। matching account আগে থেকেই থাকলে সেটিকে verified admin role দেয়; existing password বদলায় না। এরপর `/login`-এ username অথবা email ও সেই admin account-এর password দিয়ে স্বাভাবিকভাবে login করুন—automatic login/backdoor নেই। Admin API key quota-তে সীমাবদ্ধ নয়; AI usage provider-এর billing-এ পড়তে পারে। Bootstrap-এর পর admin password deployment secrets-এ সংরক্ষণ করুন; `.env` বা code-এ commit করবেন না। এখানে আগে শেয়ার করা password-টি exposed ধরে নতুন password ব্যবহার করুন।
+
+Login করার পর profile menu থেকে `/admin/settings` খুলে Gemini/OpenAI/অন্য AI keys, SMTP, Cuttly/Bitly ও reCAPTCHA credentials একবার save করতে পারবেন। Database-এ AES-256-GCM encrypted থাকে এবং page/API-তে plaintext ফেরত আসে না; existing blank field ফাঁকা রাখলে saved value অক্ষত থাকে। আগে `.env`/hosting secrets-এ stable `ADMIN_SETTINGS_ENCRYPTION_KEY` (কমপক্ষে ৩২ অক্ষরের random value) দিন। MongoDB URI, `SESSION_SECRET`, admin bootstrap password ও encryption master key ইচ্ছাকৃতভাবেই শুধু host secret store-এ থাকবে—web form-এ নয়। Supported provider test pass করলে green, fail করলে red; SMTP test email পাঠায় না।
 
 ### ২৪ ঘণ্টা চালু রাখা ও free hosting
 

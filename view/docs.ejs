@@ -1038,6 +1038,11 @@
             <li>
               <a href="#account-key"><i class="bx bxs-key"></i> API key</a>
             </li>
+            <% if (isAdmin) { %>
+            <li>
+              <a href="/admin/settings"><i class="bx bx-cog"></i> Admin settings</a>
+            </li>
+            <% } %>
             <li>
               <a href="/logout"><i class="bx bxs-log-out-circle"></i> লগআউট</a>
             </li>

@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="bn">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex,nofollow" />
+    <meta name="theme-color" content="#0a0c16" />
+    <title>Admin Settings | MrTomXxX API</title>
+    <link rel="stylesheet" href="/css/landing.css" />
+    <link rel="stylesheet" href="/css/admin-settings.css" />
+    <script src="/js/admin-settings.js" defer></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="/docs"><span class="brand-mark">M</span><span>MrTom<span class="accent">XxX</span><small>ADMIN SETTINGS</small></span></a>
+      <nav class="nav-actions">
+        <a class="nav-link" href="/docs">ড্যাশবোর্ড</a>
+        <a class="button button-outline" href="/logout">লগআউট</a>
+      </nav>
+    </header>
+    <main class="settings-main">
+      <section class="settings-hero">
+        <p class="section-kicker">PRIVATE · ADMIN ONLY</p>
+        <h1>Runtime <span>Credentials</span></h1>
+        <p>Secret একবার save করুন; পরে আবার লিখতে হবে না। Value কখনো screen-এ ফেরত দেখানো হয় না—শুধু status ও connection test দেখাবে।</p>
+      </section>
+
+      <% if (!encryptionReady) { %>
+        <div class="notice notice-danger" role="alert">
+          <strong>Secret encryption চালু নয়।</strong>
+          <p>Hosting provider-এর secret settings-এ <code>ADMIN_SETTINGS_ENCRYPTION_KEY</code> দিন (কমপক্ষে ৩২ অক্ষরের random secret)। একবার তৈরি করে backup রাখুন; এই key হারালে database-এ encrypted secrets আর পড়া যাবে না। Server restart-এর পর আবার এই page-এ এসে save করুন।</p>
+        </div>
+      <% } %>
+      <% if (message) { %>
+        <div class="notice <%= message.includes('Settings encrypted') ? 'notice-success' : 'notice-danger' %>" role="status"><%= message %></div>
+      <% } %>
+      <div class="notice notice-warning">
+        <strong>এখানে কোন settings রাখবেন?</strong>
+        <p>AI, SMTP, Cuttly/Bitly ও reCAPTCHA credentials এখানে encrypted অবস্থায় থাকবে। MongoDB URI, SESSION_SECRET, admin bootstrap password ও encryption master key website থেকে edit করা যায় না; এগুলো host-এর secret manager/`.env`-এ রাখতে হয়, কারণ server শুরু হওয়ার আগেই লাগে।</p>
+      </div>
+
+      <form class="settings-form" method="post" action="/admin/settings" autocomplete="off">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+        <% groups.forEach((group) => { %>
+          <section class="settings-group">
+            <div class="group-heading"><div><p class="section-kicker">CONFIGURATION</p><h2><%= group.title %></h2></div></div>
+            <div class="setting-grid">
+              <% group.fields.forEach((field) => { %>
+                <article class="setting-card" data-setting="<%= field.key %>">
+                  <div class="setting-label-row">
+                    <label for="setting-<%= field.key %>"><%= field.label %></label>
+                    <span class="setting-status" data-status-for="<%= field.key %>" data-configured="<%= field.configured ? 'true' : 'false' %>">
+                      <i class="status-light status-<%= field.configured ? 'unknown' : 'error' %>"></i>
+                      <span><%= field.configured ? (field.source === 'environment' ? 'Host-এ configured · test বাকি' : 'সংরক্ষিত · test বাকি') : 'দেওয়া হয়নি' %></span>
+                    </span>
+                  </div>
+                  <p><%= field.hint %></p>
+                  <input
+                    id="setting-<%= field.key %>"
+                    name="<%= field.key %>"
+                    type="<%= field.type %>"
+                    maxlength="4096"
+                    placeholder="<%= field.configured ? 'আগের value থাকবে; বদলাতে নতুন value দিন' : 'একবার দিন, তারপর save করুন' %>"
+                    autocomplete="new-password"
+                    spellcheck="false"
+                    <% if (field.type === 'url') { %>inputmode="url"<% } %>
+                  />
+                  <div class="setting-actions">
+                    <button class="button button-quiet check-credential" type="button" data-key="<%= field.key %>" <%= field.configured ? '' : 'disabled' %>>Connection test</button>
+                    <% if (field.source === 'database') { %>
+                      <button class="clear-credential" type="button" data-key="<%= field.key %>">Saved value মুছুন</button>
+                    <% } %>
+                    <span class="test-result" data-result-for="<%= field.key %>" role="status" aria-live="polite"></span>
+                  </div>
+                </article>
+              <% }); %>
+            </div>
+          </section>
+        <% }); %>
+        <div class="settings-submit">
+          <p>ফাঁকা রাখা field পরিবর্তন হবে না। Save করলে শুধু নতুন value-গুলো encrypted করে সংরক্ষণ হবে।</p>
+          <button class="button button-primary" type="submit" <%= encryptionReady ? '' : 'disabled' %>>নতুন settings সংরক্ষণ করুন</button>
+        </div>
+      </form>
+
+      <section class="settings-group host-only">
+        <p class="section-kicker">HOST SECRET MANAGER</p>
+        <h2>Website থেকে বদলানো যাবে না</h2>
+        <ul>
+          <li><code>mongodb</code> — Database URI; boot-এর সময় লাগে।</li>
+          <li><code>SESSION_SECRET</code> — সব user session sign করে। বদলালে সবাই logout হবে।</li>
+          <li><code>ADMIN_USERNAME</code>, <code>ADMIN_EMAIL</code>, <code>ADMIN_PASSWORD</code> — secure admin bootstrap-এর জন্য।</li>
+          <li><code>ADMIN_SETTINGS_ENCRYPTION_KEY</code> — saved secrets decrypt করতে প্রয়োজন। এটি কখনো হারাবেন/rotate করবেন না যতক্ষণ পুরোনো secrets re-save না করেন।</li>
+          <li><code>PORT</code>, <code>LIMIT_APIKEY</code>, <code>CREATOR</code> — deployment/application settings।</li>
+        </ul>
+      </section>
+    </main>
+    <footer><span>© <span id="year"></span> MrTomXxX</span><span>Secrets encrypted · Admin-only</span></footer>
+    <script>document.querySelector("#year").textContent = new Date().getFullYear();</script>
+  </body>
+</html>

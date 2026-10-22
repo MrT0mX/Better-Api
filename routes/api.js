@@ -26,6 +26,7 @@ const router = express.Router();
 const asyncHandler = require("../lib/async-handler");
 const logger = require("../lib/logger");
 const cekKey = require("../lib/api-key");
+const { getRuntimeConfig } = require("../lib/runtime-config");
 
 //_______________________ ┏  Info  ┓ _______________________\\
 //
@@ -2484,11 +2485,12 @@ router.get("/api/linkshort/cuttly", cekKey, async (req, res, next) => {
       message: "[!] Masukan parameter url sahaja",
     });
 
-  if (!apicuttly.length) {
+  const configuredKeys = (await getRuntimeConfig()).CUTTLY_API_KEYS.split(",").map((key) => key.trim()).filter(Boolean);
+  if (!configuredKeys.length) {
     return res.status(503).json({ status: false, message: "Cuttly API keys are not configured." });
   }
 
-  let randomapicuttly = apicuttly[Math.floor(Math.random() * apicuttly.length)];
+  let randomapicuttly = configuredKeys[Math.floor(Math.random() * configuredKeys.length)];
   var hasil = await fetchJson(
     `https://cutt.ly/api/api.php?key=${randomapicuttly}&short=${link}`
   );
@@ -2517,11 +2519,12 @@ router.get("/api/linkshort/bitly", cekKey, async (req, res, next) => {
       message: "[!] Masukan parameter url sahaja",
     });
 
-  if (!apibitly.length) {
+  const configuredKeys = (await getRuntimeConfig()).BITLY_API_KEYS.split(",").map((key) => key.trim()).filter(Boolean);
+  if (!configuredKeys.length) {
     return res.status(503).json({ status: false, message: "Bitly API keys are not configured." });
   }
 
-  let randomapibitly = apibitly[Math.floor(Math.random() * apibitly.length)];
+  let randomapibitly = configuredKeys[Math.floor(Math.random() * configuredKeys.length)];
   const bitly = new BitlyClient(randomapibitly);
   bitly
     .shorten(link)

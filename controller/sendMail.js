@@ -1,18 +1,17 @@
 require("../settings");
 const nodemailer = require("nodemailer");
-
-const transporter =
-  sendemail && sendpwmail && fromsendemail && servicesmtp
-    ? nodemailer.createTransport({
-        service: servicesmtp,
-        auth: { user: sendemail, pass: sendpwmail },
-      })
-    : null;
+const { getRuntimeConfig } = require("../lib/runtime-config");
 
 async function sendEmailWithTemplate({ to, subject, link, actionText, message, route }) {
-  if (!transporter) {
+  const config = await getRuntimeConfig();
+  if (!config.sendemail || !config.sendpwmail || !config.fromsendemail || !config.servicesmtp) {
     return "error";
   }
+  const transporter = nodemailer.createTransport({
+    service: config.servicesmtp,
+    auth: { user: config.sendemail, pass: config.sendpwmail },
+  });
+  const protocol = process.env.NODE_ENV === "production" ? "https" : "http";
 
   const html = `
     <!DOCTYPE html>
@@ -22,11 +21,11 @@ async function sendEmailWithTemplate({ to, subject, link, actionText, message, r
           <h2 style="margin-top: 0;">${subject}</h2>
           <p>${message}</p>
           <p>
-            <a href="http://${domain}/${route}?token=${link}" style="display: inline-block; background: #2563eb; color: white; text-decoration: none; padding: 12px 20px; border-radius: 8px;">
+            <a href="${protocol}://${config.domain || domain}/${route}?token=${encodeURIComponent(link)}" style="display: inline-block; background: #2563eb; color: white; text-decoration: none; padding: 12px 20px; border-radius: 8px;">
               ${actionText}
             </a>
           </p>
-          <p style="font-size: 12px; color: #6b7280;">MrTomXxX - ${domain}</p>
+          <p style="font-size: 12px; color: #6b7280;">MrTomXxX - ${config.domain || domain}</p>
         </div>
       </body>
     </html>
@@ -34,15 +33,17 @@ async function sendEmailWithTemplate({ to, subject, link, actionText, message, r
 
   try {
     await transporter.sendMail({
-      from: fromsendemail,
+      from: config.fromsendemail,
       to,
-      subject: `${subject} | ${domain}`,
+      subject: `${subject} | ${config.domain || domain}`,
       html,
     });
     return;
   } catch (error) {
-    console.log("[!] Warning SMTP error, limit habis or bad config");
+    console.warn("[!] SMTP delivery failed; verify the configured mail provider and account.");
     return "error";
+  } finally {
+    transporter.close();
   }
 }
 

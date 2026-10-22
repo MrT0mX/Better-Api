@@ -78,7 +78,15 @@ Production-এ `SESSION_SECRET` অবশ্যই কমপক্ষে 32 অ�
 node -e "console.log(require('node:crypto').randomBytes(32).toString('hex'))"
 ```
 
-এই value `.env` বা hosting provider-এর secret settings-এ রাখুন—source code-এ নয়। `.env` Git-এ commit করবেন না; `.env.example`-এ কেবল blank/sample values রাখুন।
+`ADMIN_SETTINGS_ENCRYPTION_KEY`-এর জন্য আলাদা random key একবার তৈরি করুন এবং `.env`/hosting secret store-এ স্থায়ীভাবে সংরক্ষণ করুন:
+
+```bash
+node -e "console.log(require('node:crypto').randomBytes(32).toString('hex'))"
+```
+
+এই master key হারালে website-এ সংরক্ষিত AI/SMTP/API credentials decrypt করা যাবে না। MongoDB URI, session/admin bootstrap secrets এবং এই encryption master key Admin page-এ প্রবেশ করানো যায় না; সেগুলো hosting provider-এর secret settings-এ দিতে হবে।
+
+এই values `.env` বা hosting provider-এর secret settings-এ রাখুন—source code-এ নয়। `.env` Git-এ commit করবেন না; `.env.example`-এ কেবল blank/sample values রাখুন।
 
 ## ৫. Email ও CAPTCHA (ঐচ্ছিক)
 
@@ -134,6 +142,9 @@ Browser-এ `http://localhost:8080` খুলুন। Server status: `http://lo
 3. `/login`-এ sign in করুন।
 4. `/docs` dashboard-এ নিজের API key, quota ও endpoint examples দেখুন।
 5. API key URL-এর `apikey` query parameter অথবা `x-api-key` header-এ পাঠান। Public endpoint ছাড়া key কাউকে দেবেন না।
+6. Admin হিসেবে login করলে profile menu থেকে `/admin/settings` খুলুন। Credential একবার লিখে Save করুন; পরে পরিবর্তন না চাইলে আবার লিখতে হবে না। Field ফাঁকা রাখলে আগের value অক্ষত থাকে। Secret আর কোনো page/API response-এ ফেরত দেখানো হয় না।
+
+Admin settings page-এ provider test থাকলে সেটি provider-এর public models endpoint-এ credential যাচাই করে; SMTP test শুধু connection যাচাই করে, email পাঠায় না। Cuttly/Bitly/reCAPTCHA-এর মতো service-এর key generic ভাবে test করা যায় না—সেগুলোর status “নিজে যাচাই করুন” দেখাতে পারে। Green status কেবল supported direct check সফল হলে দেখায়।
 
 ## ১০. Text effect, logo ও animation API
 

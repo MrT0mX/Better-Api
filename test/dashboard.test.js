@@ -24,6 +24,7 @@ test("dashboard renders Bengali controls and no legacy scripts", async () => {
   assert.match(html, /id="theme-toggle"/);
   assert.match(html, /id="ai-playground"/);
   assert.match(html, /ADMIN · Full API quota/);
+  assert.match(html, /href="\/admin\/settings"/);
   assert.match(html, /\/js\/docs\/ai\.js/);
   assert.match(html, /Guest Text Effects/);
   assert.match(html, /SVG Text Effect \(Guest\)/);
@@ -59,6 +60,35 @@ test("login accepts username or email", async () => {
   assert.match(html, /Username or email/);
   assert.match(html, /type="text"[\s\S]*name="email"/);
   assert.match(html, /autocomplete="username"/);
+});
+
+test("admin settings template never reflects saved secret values", async () => {
+  const html = await ejs.renderFile(
+    path.join(__dirname, "..", "view", "admin-settings.ejs"),
+    {
+      csrfToken: "test-csrf",
+      encryptionReady: true,
+      message: "",
+      groups: [{
+        title: "AI",
+        fields: [{
+          key: "GEMINI_API_KEY",
+          label: "Google Gemini",
+          hint: "Server API key.",
+          secret: true,
+          configured: true,
+          source: "database",
+          type: "password",
+        }],
+      }],
+    }
+  );
+
+  assert.match(html, /name="GEMINI_API_KEY"/);
+  assert.match(html, /সংরক্ষিত · test বাকি/);
+  assert.doesNotMatch(html, /value="secret/);
+  assert.match(html, /autocomplete="new-password"/);
+  assert.match(html, /MongoDB URI/);
 });
 
 test("not-found page renders a Bengali recovery link", async () => {

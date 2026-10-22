@@ -16,17 +16,23 @@ const passwordValidator = require("password-validator");
 const generateApiKey = require("generate-api-key").default;
 const containsEmoji = require("contains-emoji");
 const Recaptcha = require("express-recaptcha").RecaptchaV2;
-const recaptcha = recaptcha_key_1 && recaptcha_key_2 ? new Recaptcha(recaptcha_key_1, recaptcha_key_2) : null;
+const { getRuntimeConfig } = require("../lib/runtime-config");
 
-const renderCaptcha = (req, res, next) => {
-  if (!recaptcha) return next();
-  return recaptcha.middleware.render(req, res, next);
-};
+function recaptchaMiddleware(method) {
+  return async (req, res, next) => {
+    try {
+      const config = await getRuntimeConfig();
+      if (!config.recaptcha_key_1 || !config.recaptcha_key_2) return next();
+      const recaptcha = new Recaptcha(config.recaptcha_key_1, config.recaptcha_key_2);
+      return recaptcha.middleware[method](req, res, next);
+    } catch (error) {
+      return next(error);
+    }
+  };
+}
 
-const verifyCaptcha = (req, res, next) => {
-  if (!recaptcha) return next();
-  return recaptcha.middleware.verify(req, res, next);
-};
+const renderCaptcha = recaptchaMiddleware("render");
+const verifyCaptcha = recaptchaMiddleware("verify");
 
 //_______________________ ┏ Function ┓ _______________________\\
 

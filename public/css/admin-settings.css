@@ -1,0 +1,39 @@
+.settings-main { padding-top: 54px; padding-bottom: 70px; }
+.settings-hero { max-width: 740px; margin-bottom: 32px; }
+.settings-hero h1 { margin: 14px 0; }
+.settings-hero h1 span { color: var(--purple); }
+.settings-hero > p:last-child { max-width: 650px; color: var(--muted); line-height: 1.8; }
+.notice { margin: 15px 0; padding: 17px 19px; border: 1px solid var(--line); border-radius: 13px; background: var(--surface); font-size: 13px; }
+.notice p { margin: 8px 0 0; color: var(--muted); font-size: 12px; line-height: 1.8; }
+.notice code, .host-only code { color: var(--cyan); overflow-wrap: anywhere; }
+.notice-danger { border-color: rgba(255, 102, 116, .42); }
+.notice-success { border-color: rgba(68, 217, 146, .45); }
+.notice-warning { border-color: rgba(255, 191, 91, .4); }
+.settings-group { margin-top: 23px; padding: 24px; border: 1px solid var(--line); border-radius: 17px; background: var(--surface); }
+.group-heading { margin-bottom: 17px; }
+.group-heading .section-kicker, .host-only .section-kicker { margin-bottom: 7px; }
+.group-heading h2, .host-only h2 { margin: 0; font: 700 21px Manrope, "Noto Sans Bengali", sans-serif; }
+.setting-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.setting-card { min-width: 0; padding: 15px; border: 1px solid var(--line); border-radius: 13px; background: rgba(5, 8, 17, .2); }
+.setting-label-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 9px; }
+.setting-label-row label { font-size: 13px; font-weight: 700; }
+.setting-status { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); font-size: 10px; white-space: nowrap; }
+.status-light { width: 9px; height: 9px; flex: none; border-radius: 50%; }
+.status-saved { background: #42dc91; box-shadow: 0 0 10px rgba(66, 220, 145, .7); }
+.status-missing { background: #ff596b; box-shadow: 0 0 10px rgba(255, 89, 107, .6); }
+.status-ok { background: #42dc91; box-shadow: 0 0 10px rgba(66, 220, 145, .7); }
+.status-error { background: #ff596b; box-shadow: 0 0 10px rgba(255, 89, 107, .6); }
+.status-unknown { background: #ffc15c; box-shadow: 0 0 9px rgba(255, 193, 92, .5); }
+.setting-card > p { min-height: 35px; margin: 8px 0 10px; color: var(--muted); font-size: 11px; line-height: 1.6; }
+.setting-card input { width: 100%; min-height: 41px; padding: 10px 11px; border: 1px solid var(--line); border-radius: 9px; outline: none; background: rgba(2, 4, 11, .32); color: var(--text); font: 12px "SFMono-Regular", Consolas, monospace; }
+.setting-card input:focus { border-color: var(--purple); box-shadow: 0 0 0 3px rgba(168, 139, 255, .12); }
+.setting-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 9px; margin-top: 9px; }
+.setting-actions .button { min-height: 30px; padding: 0 10px; font-size: 10px; }
+.setting-actions button:disabled { cursor: not-allowed; opacity: .45; }
+.clear-credential { padding: 4px; border: 0; background: transparent; color: #ff8993; font-size: 10px; cursor: pointer; }
+.test-result { flex-basis: 100%; color: var(--muted); font-size: 10px; line-height: 1.5; }
+.settings-submit { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin: 18px 0 28px; padding: 17px 4px; }
+.settings-submit p { max-width: 570px; margin: 0; color: var(--muted); font-size: 11px; line-height: 1.6; }
+.settings-submit button:disabled { cursor: not-allowed; opacity: .48; }
+.host-only ul { margin: 17px 0 0; padding-left: 20px; color: var(--muted); font-size: 12px; line-height: 2; }
+@media (max-width: 720px) { .settings-main { padding-top: 34px; }.setting-grid { grid-template-columns: 1fr; }.settings-group { padding: 17px; }.settings-submit { align-items: stretch; flex-direction: column; } }
