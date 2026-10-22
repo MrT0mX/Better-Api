@@ -91,6 +91,34 @@ test("admin settings template never reflects saved secret values", async () => {
   assert.match(html, /MongoDB URI/);
 });
 
+test("admin credential fields offer direct official provider links", async () => {
+  const { buildFields } = require("../routes/admin-settings");
+  const fields = buildFields([]).flatMap((group) => group.fields);
+  const gemini = fields.find((field) => field.key === "GEMINI_API_KEY");
+  const recaptcha = fields.find((field) => field.key === "recaptcha_key_1");
+  assert.equal(gemini.sourceUrl, "https://aistudio.google.com/apikey");
+  assert.equal(recaptcha.sourceUrl, "https://www.google.com/recaptcha/admin");
+
+  const html = await ejs.renderFile(
+    path.join(__dirname, "..", "view", "admin-settings.ejs"),
+    {
+      csrfToken: "test-csrf",
+      encryptionReady: true,
+      message: "",
+      groups: [{
+        title: "AI",
+        fields: [{
+          ...gemini,
+          configured: false,
+          source: "missing",
+        }],
+      }],
+    }
+  );
+  assert.match(html, /href="https:\/\/aistudio\.google\.com\/apikey" target="_blank" rel="noopener noreferrer"/);
+  assert.match(html, /Google AI Studio-তে API key নিন/);
+});
+
 test("not-found page renders a Bengali recovery link", async () => {
   const html = await ejs.renderFile(path.join(__dirname, "..", "view", "404.ejs"));
 

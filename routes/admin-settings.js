@@ -86,6 +86,22 @@ const settingGroups = [
   },
 ];
 
+const credentialSources = {
+  GEMINI_API_KEY: ["Google AI Studio-তে API key নিন", "https://aistudio.google.com/apikey"],
+  OPENAI_API_KEY: ["OpenAI Platform-এ API key নিন", "https://platform.openai.com/api-keys"],
+  ANTHROPIC_API_KEY: ["Anthropic Console-এ API key নিন", "https://console.anthropic.com/settings/keys"],
+  OPENROUTER_API_KEY: ["OpenRouter-এ API key নিন", "https://openrouter.ai/keys"],
+  DEEPSEEK_API_KEY: ["DeepSeek Platform-এ API key নিন", "https://platform.deepseek.com/api_keys"],
+  GROQ_API_KEY: ["GroqCloud-এ API key নিন", "https://console.groq.com/keys"],
+  MISTRAL_API_KEY: ["Mistral Console-এ API key নিন", "https://console.mistral.ai/api-keys"],
+  CUTTLY_API_KEYS: ["Cuttly Developer API দেখুন", "https://cutt.ly/cuttly-api"],
+  BITLY_API_KEYS: ["Bitly API documentation দেখুন", "https://dev.bitly.com/"],
+  recaptcha_key_1: ["Google reCAPTCHA Admin Console খুলুন", "https://www.google.com/recaptcha/admin"],
+  recaptcha_key_2: ["Google reCAPTCHA Admin Console খুলুন", "https://www.google.com/recaptcha/admin"],
+  sendemail: ["Zoho Mail SMTP setup দেখুন", "https://www.zoho.com/mail/help/adminconsole/configure-email-delivery.html"],
+  sendpwmail: ["Gmail App Password নির্দেশনা দেখুন", "https://support.google.com/accounts/answer/185833"],
+};
+
 function buildFields(state) {
   const stateByKey = new Map(state.map((entry) => [entry.key, entry]));
   return settingGroups.map((group) => ({
@@ -94,6 +110,8 @@ function buildFields(state) {
       key,
       label,
       hint,
+      sourceLabel: credentialSources[key]?.[0] || "",
+      sourceUrl: credentialSources[key]?.[1] || "",
       secret: stateByKey.get(key)?.secret || false,
       configured: stateByKey.get(key)?.configured || false,
       source: stateByKey.get(key)?.source || "missing",
@@ -412,4 +430,11 @@ router.get("/admin/settings/audit", requireAdmin, asyncHandler(async (req, res) 
   return res.json({ status: true, records });
 }));
 
-module.exports = { router, requireAdmin, buildFields, verifyCredential, settingGroups };
+module.exports = {
+  router,
+  requireAdmin,
+  buildFields,
+  verifyCredential,
+  settingGroups,
+  credentialSources,
+};

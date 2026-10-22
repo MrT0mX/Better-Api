@@ -25,6 +25,8 @@
 .status-error { background: #ff596b; box-shadow: 0 0 10px rgba(255, 89, 107, .6); }
 .status-unknown { background: #ffc15c; box-shadow: 0 0 9px rgba(255, 193, 92, .5); }
 .setting-card > p { min-height: 35px; margin: 8px 0 10px; color: var(--muted); font-size: 11px; line-height: 1.6; }
+.credential-source { display: inline-flex; margin: -2px 0 10px; color: var(--cyan); font-size: 11px; font-weight: 700; text-decoration: none; }
+.credential-source:hover { color: var(--purple); text-decoration: underline; }
 .setting-card input { width: 100%; min-height: 41px; padding: 10px 11px; border: 1px solid var(--line); border-radius: 9px; outline: none; background: rgba(2, 4, 11, .32); color: var(--text); font: 12px "SFMono-Regular", Consolas, monospace; }
 .setting-card input:focus { border-color: var(--purple); box-shadow: 0 0 0 3px rgba(168, 139, 255, .12); }
 .setting-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 9px; margin-top: 9px; }

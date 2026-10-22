@@ -59,6 +59,11 @@
                     </span>
                   </div>
                   <p><%= field.hint %></p>
+                  <% if (field.sourceUrl) { %>
+                    <a class="credential-source" href="<%= field.sourceUrl %>" target="_blank" rel="noopener noreferrer">
+                      <%= field.sourceLabel || 'Go to provider' %> ↗
+                    </a>
+                  <% } %>
                   <input
                     id="setting-<%= field.key %>"
                     name="<%= field.key %>"
