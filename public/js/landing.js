@@ -167,7 +167,8 @@
   window.setInterval(updateClock, 1000);
   document.querySelector("#year").textContent = new Date().getFullYear();
 
-  fetch("/healthz", { headers: { Accept: "application/json" } })
+  const apiBaseUrl = window.BETTER_API_BASE_URL || "";
+  fetch(`${apiBaseUrl}/healthz`, { headers: { Accept: "application/json" } })
     .then((response) => {
       if (!response.ok) throw new Error("Service health request failed");
       return response.json();

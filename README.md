@@ -86,6 +86,8 @@ Edit the file `settings.js` for the following configurations:
 
 ধাপে ধাপে সম্পূর্ণ guide—MongoDB Atlas/local setup, Gemini API key, SMTP, admin, website থেকে encrypted runtime credentials, সব effect API, deployment ও troubleshooting: [বাংলা A-to-Z Setup Guide](./SETUP_GUIDE_BN.md)।
 
+সম্পূর্ণ login/API backend Render, Railway বা Vercel-এ চালান। GitHub Pages কেবল public static landing ও guest SVG effects frontend host করে; GitHub Actions-এ `API_BASE_URL` repository variable দিন, তারপর Pages workflow চালান। Pages-এ backend, login session বা MongoDB চলে না।
+
 Node.js `22.22.1` ব্যবহার করুন এবং MongoDB চালু রাখুন। প্রজেক্ট ফোল্ডারে একবার dependency ইনস্টল করুন:
 
 Dependency ইনস্টল:

@@ -246,6 +246,12 @@ curl -X POST "http://localhost:8080/api/agent/chat" \
 
 Teaching mode prompt-কে tutor-ধাঁচের উত্তর দিতে বলে; conversation/model-কে স্বয়ংক্রিয়ভাবে train বা স্থায়ীভাবে মনে রাখে না। AI provider-এর API key server-এ রাখুন, account quota ও provider cost মাথায় রাখুন।
 
+## ১২. Hosting বেছে নিন: backend বনাম static frontend
+
+এই project-এর login, dashboard, admin settings, database, AI ও API চালাতে Node.js server/backend লাগে। **GitHub Pages শুধু static HTML/CSS/JavaScript host করে—এখানে Express server, login session, MongoDB connection বা AI/API backend চালানো যায় না।** তাই পূর্ণ app-এর জন্য Render অথবা Railway বেছে নিন; চাইলে GitHub Pages-এ public landing/effects frontend রেখে সেটিকে ওই backend-এর সঙ্গে যুক্ত করুন। Pages থেকে login/dashboard link backend domain-এ যাবে।
+
+একই backend একসঙ্গে Render ও Railway-এ deploy করা সম্ভব, তবে দুটিই আলাদা service হিসেবে চলবে। Production database, `SESSION_SECRET`, encryption key ও provider keys—প্রতিটি service-এর environment settings-এ একই stable value configure করতে হবে। Free tier-এ sleep, quota ও availability সীমা থাকতে পারে।
+
 ## ১২. Vercel-এ deploy (serverless)
 
 প্রজেক্টটি Express app হিসেবে Vercel Functions-এ চলে। Vercel-এ request এলে function জাগে; এটি VPS-এর মতো সারাক্ষণ চালু process নয়। তাই এখানে আলাদা server process চালু করবেন না, `npm start`-ও Vercel-এর Start Command হিসেবে দেবেন না। `vercel.json`-এ daily quota maintenance schedule আছে। Function/session state MongoDB-তে রাখা হয়; `MemoryStore` শুধু local non-Vercel run-এ ব্যবহৃত হয়।
@@ -305,8 +311,43 @@ Deployment URL-এ নিচের address পরীক্ষা করুন:
 - Vercel serverless function 24/7 process নয়; idle হলে বন্ধ হয়, পরের request-এ cold start হতে পারে। Free plan-এ নিশ্চিত 24/7 availability নেই।
 - Function execution duration, payload/bundle size ও plan limits প্রযোজ্য। বড় media/canvas কাজ, ধীর upstream TextPro/Photooxy, এবং ৩০ সেকেন্ড পর্যন্ত অপেক্ষা করা AI provider request সব plan-এ চলবে—এ নিশ্চয়তা নেই। Timeout হলে ওই workload-এর জন্য দীর্ঘ-running Node host ব্যবহার করুন।
 - `public/` static assets Vercel CDN থেকে serve হয়; Express `express.static()` production asset serving-এর বিকল্প নয়। EJS views deployment function-এ include করার config `vercel.json`-এ আছে।
-- MongoDB-backed session store-এর কারণে login একাধিক function instance-এর মধ্যে টিকে থাকে; `SESSION_SECRET` ও MongoDB URI স্থির রাখুন। MongoDB free tier storage/connection limits প্রযোজ্য।
+- Production-এ MongoDB-backed session store-এর কারণে login একাধিক function instance-এর মধ্যে টিকে থাকে; `SESSION_SECRET` ও MongoDB URI স্থির রাখুন। MongoDB free tier storage/connection limits প্রযোজ্য।
 - Vercel Cron plan/feature availability বদলাতে পারে; deployment-এর **Settings → Cron Jobs** ও function logs-এ schedule এবং response যাচাই করুন। Cron ব্যর্থ হলে protected maintenance endpoint-টি `CRON_SECRET` দিয়ে manual GET করে পরীক্ষা করুন; secret প্রকাশ করবেন না।
+
+## ১২.১ Render-এ deploy (পূর্ণ backend)
+
+Repository-তে থাকা `render.yaml` Blueprint ব্যবহার করে Web Service তৈরি করা যায়:
+
+1. Render-এ GitHub account connect করে `Better-Api` repository import/Blueprint deploy করুন; অথবা New → Web Service থেকে repository নির্বাচন করুন।
+2. Root Directory project root রাখুন। Build command `npm ci --legacy-peer-deps`, Start command `npm start`, Health Check Path `/healthz` রাখুন। `render.yaml` এগুলো আগে থেকেই নির্ধারণ করে।
+3. Render Dashboard → service → **Environment**-এ `mongodb`, `SESSION_SECRET`, `ADMIN_SETTINGS_ENCRYPTION_KEY` যোগ করুন। প্রথম admin স্বয়ংক্রিয়ভাবে বানাতে `ADMIN_USERNAME`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`—তিনটিই দিন; bootstrap না চাইলে তিনটিই ফাঁকা/বাদ রাখুন। Password অবশ্যই নতুন ও private হবে।
+4. AI/email/CAPTCHA দরকার হলে সংশ্লিষ্ট environment variables যোগ করুন। Render-এর environment variable values secret হিসেবে বিবেচনা করুন; `.env` upload করবেন না।
+5. Deploy শেষ হলে `https://<service>.onrender.com/healthz` খুলুন। Database connected থাকলে `200` হবে; `/login`, `/effects` এবং `/api/creative/styles`-ও পরীক্ষা করুন।
+
+Render Free service idle হলে spin down হতে পারে; প্রথম request ধীর হতে পারে। App-এর Node scheduler Render-এ daily/monthly quota reset চালায়। একাধিক instance scale করলে একই scheduler প্রতিটি instance-এ চলতে পারে—তাই এই app-কে এক instance-এ রাখুন, অথবা external single Cron runner-এ migrate করুন।
+
+## ১২.২ Railway-এ deploy (পূর্ণ backend)
+
+Repository root-এর `railway.json` build, start ও health check command configure করে:
+
+1. Railway-তে **New Project → Deploy from GitHub repo** বেছে `Better-Api` repository connect করুন।
+2. Service → **Variables**-এ `NODE_ENV=production`, MongoDB Atlas URI হিসেবে `mongodb`, `SESSION_SECRET`, `ADMIN_SETTINGS_ENCRYPTION_KEY` যোগ করুন। Railway স্বয়ংক্রিয়ভাবে `PORT` দেয়—নিজে fixed port set করবেন না।
+3. Optional first admin চাইলে `ADMIN_USERNAME`, `ADMIN_EMAIL`, `ADMIN_PASSWORD` তিনটিই দিন। প্রথম deploy-এর পর public Railway domain তৈরি করে domain variable `domain`-এ দিন; AI/email/CAPTCHA keys দরকার হলে একই Variables panel-এ দিন।
+4. Railway deployment logs-এ MongoDB connected message দেখুন; **Settings → Networking → Generate Domain** দিয়ে পাওয়া URL-এ `/healthz`, `/login`, `/effects`, `/api/creative/styles` যাচাই করুন।
+
+Railway service server process হিসেবে চলে; quota reset-এর in-process scheduler সক্রিয় থাকে। Multiple replicas চালালে duplicate scheduler run হওয়ার ঝুঁকি আছে—এক replica রাখুন অথবা schedule-কে একটি আলাদা single-runner-এ সীমাবদ্ধ করুন।
+
+## ১২.৩ GitHub Pages-এ public frontend (static-only)
+
+GitHub Pages full Better-Api server নয়। এটি public home page ও guest SVG effects page host করবে; `/login`/account/dashboard link backend-এর Render/Railway URL-এ যাবে। Effects preview ও health indicator remote backend-এ request পাঠাবে। API key, Mongo URI, `SESSION_SECRET` বা AI credential Pages/GitHub variable-এ দেবেন না—frontend variable public HTML/JavaScript-এ প্রকাশ পায়।
+
+1. আগে Render/Railway (অথবা Vercel) backend deploy করে HTTPS URL নিন; উদাহরণ `https://better-api.onrender.com`। Backend থেকে GitHub Pages origin-এ CORS request অনুমোদিত হতে হবে; এই app-এর public API/health frontend request CORS-enabled।
+2. GitHub repo → **Settings → Pages → Build and deployment → Source: GitHub Actions** নির্বাচন করুন।
+3. Repo → **Settings → Secrets and variables → Actions → Variables**-এ `API_BASE_URL` নামে backend-এর HTTPS base URL দিন—শেষে `/` দেবেন না। যেমন `https://better-api.onrender.com`। এটি public URL, secret নয়; GitHub Actions variable হিসেবে রাখুন।
+4. `main` branch-এ workflow/code push করুন অথবা Actions → **Deploy GitHub Pages frontend** → Run workflow দিন। Workflow `npm run build:pages` চালিয়ে static files তৈরি ও deploy করে।
+5. Pages URL `https://<github-user>.github.io/Better-Api/` খুলুন। Text Effects page-এ preview ও SVG download, home-এর health status, আর login link backend URL-এ খোলে কি না যাচাই করুন। Backend URL বদলালে `API_BASE_URL` update করে workflow পুনরায় চালান।
+
+Custom domain ব্যবহার করলে workflow-র `GITHUB_PAGES_BASE_PATH`-কে `/` করতে হবে। আলাদা Pages repository name ব্যবহার করলে `.github/workflows/github-pages.yml`-এর path (`/Better-Api/`) সেই repository path অনুযায়ী বদলান। GitHub Pages-এ backend-এর private dashboard/session একই origin-এ serve হয় না—তাই Pages-কে শুধু public frontend হিসেবেই ব্যবহার করুন।
 
 ## ১৩. Test ও অন্যান্য host-এ deploy
 
@@ -337,6 +378,9 @@ Production deploy-এ:
 - **Vercel-এ `/healthz` 503:** Atlas network access-এ Vercel egress পৌঁছাতে পারছে কি না, `mongodb` variable-এর spelling/value ও database user password যাচাই করে redeploy করুন।
 - **Vercel login/session বারবার শেষ হয়:** `SESSION_SECRET` বদলাচ্ছে কি না, MongoDB `sessions` collection accessible কি না এবং একই deployment-এর variables আছে কি না দেখুন।
 - **Vercel cron চালায় না:** Production deploy, Cron plan support ও `CRON_SECRET` উপস্থিতি যাচাই করুন; function runtime logs দেখুন।
+- **GitHub Pages-এ preview চলে না:** Actions variable `API_BASE_URL` ঠিক আছে কি না, সেটি HTTPS backend-এর root URL কি না এবং backend CORS/health status ঠিক আছে কি না দেখুন। Variable বদলালে Pages workflow আবার চালান।
+- **Pages-এ login/dashboard দেখা যায় না:** এটি প্রত্যাশিত; GitHub Pages static-only। সেখানে login link backend service-এর `/login`-এ পাঠাবে।
+- **Render/Railway-এ deployment health check fail:** Service variables-এ `mongodb` ও production `SESSION_SECRET` আছে কি না এবং Atlas Network Access deployed service-কে allow করছে কি না যাচাই করুন।
 
 ## নিরাপত্তা checklist
 

@@ -12,6 +12,7 @@
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
+    "build:pages": "node scripts/build-github-pages.js",
     "check": "node scripts/check-syntax.js",
     "test": "npm run check && node --test"
   },

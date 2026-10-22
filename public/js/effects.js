@@ -48,6 +48,7 @@
   let selectedEffect = "neon";
   let timer;
   let previewUrl = "";
+  const apiBaseUrl = window.BETTER_API_BASE_URL || "";
 
   const languageSelect = document.querySelector("#effects-language");
   const preferredLanguage = localStorage.getItem("site-language") || "auto";
@@ -89,7 +90,7 @@
       effect: selectedEffect,
     });
     if (secondLineInput.value.trim()) params.set("text2", secondLineInput.value.trim());
-    return `/api/text-effects/render?${params}`;
+    return `${apiBaseUrl}/api/text-effects/render?${params}`;
   }
 
   function updatePreview() {
@@ -120,7 +121,7 @@
   }
 
   async function loadStyleCatalog() {
-    const response = await fetch("/api/text-effects/styles");
+    const response = await fetch(`${apiBaseUrl}/api/text-effects/styles`);
     if (!response.ok) throw new Error("Style catalog request failed.");
     const catalog = await response.json();
     const styles = Object.values(catalog.groups || {}).flat();

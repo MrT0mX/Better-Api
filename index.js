@@ -104,7 +104,7 @@ if (process.env.VERCEL !== "1") {
 //_______________________ ┏ Code ┓ _______________________\\
 
 app.set("trust proxy", 1);
-const sessionStore = process.env.VERCEL === "1"
+const sessionStore = isProduction || process.env.VERCEL === "1"
   ? MongoStore.create({
     mongoUrl: keymongodb,
     collectionName: "sessions",
