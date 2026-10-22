@@ -22,10 +22,10 @@ const { fetchJson, getBuffer, runtime } = require("../lib/myfunc");
 const Canvacord = require("canvacord");
 const isNumber = require("is-number");
 const User = require("../model/user");
-const dataweb = require("../model/DataWeb");
 const router = express.Router();
 const asyncHandler = require("../lib/async-handler");
 const logger = require("../lib/logger");
+const cekKey = require("../lib/api-key");
 
 //_______________________ ┏  Info  ┓ _______________________\\
 //
@@ -58,56 +58,6 @@ const logger = require("../lib/logger");
 //
 
 //―――――――――――――――――――――――――――――――――――――――――― ┏  Function ┓ ―――――――――――――――――――――――――――――――――――――――――― \\
-
-async function cekKey(req, res, next) {
-  const apikey = req.query.apikey;
-  if (!apikey)
-    return res.status(401).json({
-      status: false,
-      creator: `${creator}`,
-      message: "API key অনুপস্থিত। apikey প্যারামিটার যোগ করুন।",
-    });
-
-  let db = await User.findOne({ apikey });
-  if (db === null) {
-    return res.status(401).json({
-      status: false,
-      creator: `${creator}`,
-      message: "API key সঠিক নয়।",
-    });
-  } else if (!db.isVerified) {
-    return res.status(403).json(loghandler.verify);
-  } else if (db.limitApikey === 0) {
-    return res.status(429).json({
-      status: false,
-      creator: `${creator}`,
-      message: "API key-এর অনুরোধসীমা শেষ।",
-    });
-  } else {
-    await limitapikey(apikey);
-    return next();
-  }
-}
-
-async function limitapikey(apikey) {
-  const user = await User.findOneAndUpdate(
-    { apikey, limitApikey: { $gt: 0 } },
-    { $inc: { limitApikey: -1 } },
-    { new: true }
-  );
-
-  if (!user) {
-    const error = new Error("API key-এর অনুরোধসীমা শেষ।");
-    error.status = 429;
-    throw error;
-  }
-
-  await dataweb.updateOne(
-    {},
-    { $inc: { RequestToday: 1 } },
-    { upsert: true }
-  );
-}
 
 function sendServiceError(res) {
   logger.error(`${res.req.method} ${res.req.path} failed while processing an API request.`);

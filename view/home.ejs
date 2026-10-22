@@ -1,198 +1,118 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="bn">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>MrTomXxX APIs</title>
-    <meta name="description" content="Rest Api website" />
-    <meta name="author" content="MrTomXxX" />
-
-    <link rel="stylesheet" href="/css/base.css" />
-    <link rel="stylesheet" href="/css/vendor.css" />
-    <link rel="stylesheet" href="/css/main.css" />
-
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"
-    />
-
-    <script src="/js/modernizr.js"></script>
-    <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
-    <link rel="icon" type="image/x-icon" href="/images/favicon.ico" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0a0c16" />
+    <meta name="description" content="MrTomXxX API — বাংলা-প্রথম developer platform, API tools ও AI integrations." />
+    <title>MrTomXxX API — Developer platform</title>
+    <link rel="icon" href="/favicon.ico" />
+    <link rel="stylesheet" href="/css/landing.css" />
+    <script src="/js/landing.js" defer></script>
   </head>
+  <body>
+    <div class="ambient ambient-one" aria-hidden="true"></div>
+    <div class="ambient ambient-two" aria-hidden="true"></div>
+    <header class="site-header">
+      <a class="brand" href="/" aria-label="MrTomXxX API home">
+        <span class="brand-mark">M</span>
+        <span>MrTom<span class="accent">XxX</span><small>DEVELOPER PLATFORM</small></span>
+      </a>
+      <nav class="nav-actions" aria-label="Main navigation">
+        <a class="nav-link" href="#features" data-i18n="features">সুবিধা</a>
+        <a class="nav-link" href="#about" data-i18n="about">সম্পর্কে</a>
+        <select id="language-switch" class="language-switch" aria-label="ভাষা নির্বাচন">
+          <option value="auto">🌐 Auto</option>
+          <option value="bn">বাংলা</option>
+          <option value="en">English</option>
+          <option value="hi">हिन्दी</option>
+          <option value="id">Indonesia</option>
+          <option value="ar">العربية</option>
+        </select>
+        <button id="theme-switch" class="theme-switch" type="button" aria-label="থিম বদলান">☼</button>
+        <a class="button button-outline" href="/login" data-i18n="login">লগইন</a>
+      </nav>
+    </header>
 
-  <body id="top">
-    <section
-      id="home"
-      data-parallax="scroll"
-      data-image-src="https://i.postimg.cc/wvX23Nfr/Hutao-Wallp-2560x1440.jpg"
-    >
-      <script src="https://raw.githubusercontent.com/MrT0mX/data-rest-api/main/script/sweetalert.min.js"></script>
-      <div class="overlay"></div>
-      <div class="home-content">
-        <div class="row contents">
-          <div class="home-content-left">
-            <h3>Assalamualaikum,</h3>
-            <h1>Welcome to MrTomXxX Rest Rest</h1>
-            <div class="buttons" data-aos="fade-up">
-              <a href="/login" class="button stroke">
-                <span><i class="fas fa-folder"></i></span>
-                Dashboard
-              </a>
-              <a
-                href="https://www.facebook.com/MrTomXxX"
-                class="button stroke"
-                target="__blank"
-              >
-                <span><i class="fas fa-code"></i></span>
-                Owner
-              </a>
-            </div>
+    <main>
+      <section class="hero">
+        <div class="hero-copy">
+          <div class="status-pill"><span class="pulse"></span><span data-i18n="eyebrow">ডেভেলপারদের জন্য তৈরি</span></div>
+          <p class="greeting" data-i18n="greeting">আসসালামু আলাইকুম</p>
+          <h1 data-i18n="headline">আপনার পরের আইডিয়া,<br /><span>এখান থেকেই শুরু।</span></h1>
+          <p class="hero-description" data-i18n="description">এক জায়গায় দরকারি API, সহজ ইন্টিগ্রেশন এবং আপনার নিজের AI provider key দিয়ে AI tools চালানোর সুবিধা।</p>
+          <div class="hero-actions">
+            <a class="button button-primary" href="/login"><span data-i18n="getStarted">শুরু করুন</span><span aria-hidden="true">↗</span></a>
+            <a class="button button-quiet" href="/test"><span data-i18n="tryApi">API পরীক্ষা</span><span aria-hidden="true">→</span></a>
+          </div>
+          <div class="hero-meta">
+            <span><span class="meta-icon">◷</span><span id="local-clock">--:--:--</span></span>
+            <span><span class="meta-icon">◎</span><span id="browser-region" data-i18n="region">ব্রাউজারের অঞ্চল শনাক্ত হচ্ছে</span></span>
+            <span><span class="meta-icon">◉</span><span id="service-status" data-i18n="checking">সার্ভিস পরীক্ষা হচ্ছে</span></span>
           </div>
         </div>
-      </div>
 
-      <ul class="home-social-list">
-        <li>
-          <a href="https://www.facebook.com/MrTomXxX" target="__blank"
-            ><i class="fab fa-instagram fa-lg"></i
-          ></a>
-        </li>
-        <li>
-          <a href="https://github.com/MrT0mX" target="__blank"
-            ><i class="fab fa-github fa-lg"></i
-          ></a>
-        </li>
-        <li>
-          <a href="https://api.rivqi.my.id/" target="__blank"
-            ><i class="fas fa-link fa-lg"></i
-          ></a>
-        </li>
-      </ul>
-      <div class="home-scrolldown">
-        <a href="#testimonials" class="scroll-icon smoothscroll">
-          <span>Scroll</span>
-          <i class="icon-arrow-right" aria-hidden="true"></i>
-        </a>
-      </div>
-    </section>
-
-    <section id="testimonials">
-      <div class="row">
-        <div class="col-twelve">
-          <h1 class="intro-header" data-aos="fade-up">About Me</h1>
-        </div>
-      </div>
-      <div class="row owl-wrap">
-        <div id="testimonial-slider" data-aos="fade-up">
-          <div>
-            <p>
-              Assalamualaikum, I am Ratul Hassan. I am 14, I live in
-              Bangladesh,.May contact me at
-              <a href="https://www.facebook.com/MrTomXxX" target="__blank"
-                >Facebook</a
-              >
-            </p>
-            <div class="testimonial-author">
-              <img
-                src="https://avatars.githubusercontent.com/u/162676576?v=4"
-                alt="Author image"
-              />
-              <div class="author-info">
-                MrTomXxX
-                <span>Owner, Api MrTomXxX</span>
-              </div>
-            </div>
+        <div class="hero-visual" aria-label="API response example">
+          <div class="orbit orbit-large"></div>
+          <div class="orbit orbit-small"></div>
+          <div class="glass-card code-card">
+            <div class="window-bar"><span></span><span></span><span></span><b>api-response.json</b></div>
+            <pre><code><span class="code-purple">{
+  <span class="code-blue">"status"</span>: <span class="code-green">"ready"</span>,
+  <span class="code-blue">"language"</span>: <span class="code-green">"your choice"</span>,
+  <span class="code-blue">"tools"</span>: [
+    <span class="code-orange">"REST API"</span>,
+    <span class="code-orange">"AI providers"</span>,
+    <span class="code-orange">"developer tools"</span>
+  ]
+}</span></code></pre>
+            <div class="response-footer"><span class="response-dot"></span><span data-i18n="responseReady">সার্ভার রেসপন্সের উদাহরণ</span><span>JSON</span></div>
           </div>
+          <div class="floating-chip chip-ai"><span>✳</span> AI tools</div>
+          <div class="floating-chip chip-api"><span>⌘</span> REST API</div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <section id="download">
-      <div class="row">
-        <div class="col-full">
-          <h1 class="intro-header" data-aos="fade-up">About Source Code</h1>
-          <p class="lead" data-aos="fade-up">
-            Script Rest APIs MrTomXxX?
-            <a href="https://github.com/MrT0mX/Better-Api" target="__blank"
-              >Click here</a
-            ><br />
-            There is a problem?Contact me via
-            <a href="https://www.facebook.com/MrTomXxX" target="__blank"
-              >Facebook</a
-            >
-          </p>
-          <div class="primary" data-aos="fade-up">
-            <a
-              class="button button-default"
-              href="https://github.com/MrT0mX/Better-Api"
-              target="__blank"
-            >
-              <span aria-hidden="true"><i class="fas fa-code"></i></span>
-              Script Api MrTomXxX</a
-            >
-          </div>
+      <section class="feature-section" id="features">
+        <div class="section-heading">
+          <p class="section-kicker" data-i18n="toolkit">YOUR TOOLKIT</p>
+          <h2 data-i18n="featuresTitle">একটি প্ল্যাটফর্ম, অনেক সম্ভাবনা</h2>
+          <p data-i18n="featuresDescription">প্রয়োজনীয় টুলস দ্রুত খুঁজুন, পরীক্ষা করুন, তারপর নিজের প্রজেক্টে ব্যবহার করুন।</p>
         </div>
-      </div>
-    </section>
-
-    <footer>
-      <div class="footer-bottom">
-        <div class="row">
-          <div class="col-twelve">
-            <div class="copyright">
-              <span
-                ><a href="https://github.com/MrT0mX"
-                  >2023 ©️MrTomXxX - All Rights Reserved</a
-                ></span
-              >
-            </div>
-            <div id="go-top">
-              <a class="smoothscroll" title="Back to Top" href="#top"
-                ><i class="fas fa-arrow-up"></i>
-              </a>
-            </div>
-          </div>
+        <div class="feature-grid">
+          <article class="feature-card feature-violet">
+            <div class="feature-icon">⌘</div><p class="feature-tag">01 / API</p>
+            <h3 data-i18n="featureApi">সহজ API access</h3>
+            <p data-i18n="featureApiDesc">ডকুমেন্টেশন থেকে endpoint দেখুন এবং নিজের API key দিয়ে request পরীক্ষা করুন।</p>
+            <a href="/login" data-i18n="explore">এক্সপ্লোর করুন ↗</a>
+          </article>
+          <article class="feature-card feature-cyan">
+            <div class="feature-icon">✳</div><p class="feature-tag">02 / AI</p>
+            <h3 data-i18n="featureAi">একাধিক AI provider</h3>
+            <p data-i18n="featureAiDesc">OpenAI, Gemini, Claude ও OpenRouter—নিজের server-side key configure করে ব্যবহার করুন।</p>
+            <a href="#ai-setup" data-i18n="providerSetup">Provider setup ↗</a>
+          </article>
+          <article class="feature-card feature-amber">
+            <div class="feature-icon">◈</div><p class="feature-tag">03 / WORKSPACE</p>
+            <h3 data-i18n="featureDashboard">নিজস্ব dashboard</h3>
+            <p data-i18n="featureDashboardDesc">API usage, endpoint directory ও playground এক responsive জায়গায়।</p>
+            <a href="/login" data-i18n="openDashboard">Dashboard খুলুন ↗</a>
+          </article>
         </div>
-      </div>
-    </footer>
+      </section>
 
-    <div id="preloader">
-      <div id="loader"></div>
-    </div>
-    <script
-      src="https://code.jquery.com/jquery-2.2.4.min.js"
-      integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
-      crossorigin="anonymous"
-    ></script>
-    <script src="/js/plugins.js"></script>
-    <script src="/js/main.js"></script>
-    <!-- Google tag (gtag.js) -->
-    <script
-      async
-      src="https://www.googletagmanager.com/gtag/js?id=G-PE8DZCWKTL"
-    ></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag() {
-        dataLayer.push(arguments);
-      }
-      gtag("js", new Date());
+      <section class="ai-note" id="ai-setup">
+        <div><span class="section-kicker" data-i18n="aiReady">AI INTEGRATION</span><h2 data-i18n="aiTitle">আপনার provider key, আপনার নিয়ন্ত্রণে</h2></div>
+        <p data-i18n="aiDescription">API key server-এর environment variable-এ রাখুন। Provider configure না থাকলে AI endpoint সেটিকে স্পষ্টভাবে জানাবে; গোপন key browser-এ পাঠানো হয় না।</p>
+        <code>OPENAI_API_KEY · GEMINI_API_KEY · ANTHROPIC_API_KEY · OPENROUTER_API_KEY</code>
+      </section>
 
-      gtag("config", "G-PE8DZCWKTL");
-    </script>
+      <section class="about-section" id="about">
+        <div><p class="section-kicker" data-i18n="builtBy">BUILT BY</p><h2>MrTom<span class="accent">XxX</span></h2></div>
+        <p data-i18n="aboutText">ডেভেলপারদের জন্য তৈরি একটি API project। ওপেন সোর্স code, ব্যবহার নির্দেশনা ও attribution GitHub-এ দেখুন।</p>
+        <a class="button button-outline" href="https://github.com/MrT0mX/Better-Api" target="_blank" rel="noopener noreferrer" data-i18n="viewGithub">GitHub দেখুন ↗</a>
+      </section>
+    </main>
+    <footer><span>© <span id="year"></span> MrTomXxX</span><span data-i18n="footer">সবার জন্য তৈরি, ভালো ব্যবহারের জন্য।</span><a href="/login" data-i18n="account">অ্যাকাউন্ট</a></footer>
   </body>
 </html>

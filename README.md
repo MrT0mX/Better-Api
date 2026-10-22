@@ -103,6 +103,11 @@ recaptcha_key_1="your_recaptcha_site_key"
 recaptcha_key_2="your_recaptcha_secret_key"
 CUTTLY_API_KEYS=""
 BITLY_API_KEYS=""
+OPENAI_API_KEY=""
+GEMINI_API_KEY=""
+ANTHROPIC_API_KEY=""
+OPENROUTER_API_KEY=""
+OPENROUTER_SITE_URL=""
 SESSION_SECRET=""
 PORT=8080
 LIMIT_APIKEY=200
@@ -125,6 +130,19 @@ npm test
 ```
 
 Production-এ `npm start` ব্যবহার করুন। ড্যাশবোর্ড `/docs`-এ—আগে লগইন করতে হবে। `GET /test` API key ছাড়াই পরীক্ষা করা যায়; অন্য API-তে যাচাইকৃত অ্যাকাউন্ট ও API key প্রয়োজন। Node ও dependency আপডেটের ধাপ [UPDATE_GUIDE.md](UPDATE_GUIDE.md)-এ আছে।
+
+### AI chat ও teaching agent
+
+AI provider চালু করতে `.env`-এ নিজের provider key সেট করুন। Key browser-এ প্রকাশ করা হয় না। `GET /api/ai/providers` configure করা provider-এর নাম ও default model দেখায়। Chat ও agent request যাচাইকৃত account API key চায় এবং বিদ্যমান `LIMIT_APIKEY` quota ব্যবহার করে; provider key না থাকলে endpoint `503` দেয়।
+
+```bash
+curl -X POST http://localhost:8080/api/ai/chat \
+  -H "Content-Type: application/json" \
+  -H "x-api-key: YOUR_ACCOUNT_API_KEY" \
+  -d '{"provider":"gemini","messages":[{"role":"user","content":"Explain REST APIs simply"}]}'
+```
+
+Teaching mode-এর route হলো `POST /api/agent/chat`; request-এ `"mode":"teach"` দিন। এটি configured provider-কে teaching style-এ উত্তর দিতে নির্দেশ দেয়, কিন্তু conversation সংরক্ষণ বা model-কে স্বয়ংক্রিয়ভাবে train করে না। API-গুলো সীমাহীন নয়—AI provider usage-এ খরচ হতে পারে, তাই API key ও quota সচল রাখতে হবে।
 
 ## ✨ Features
 

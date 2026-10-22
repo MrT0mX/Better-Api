@@ -24,6 +24,7 @@ const passport = require('passport');
 require('../controller/passportLocal')(passport);
 const authRoutes = require('./auth');
 const apiRoutes = require('./api')
+const { router: aiRoutes } = require('./ai');
 const dataweb = require('../model/DataWeb');
 const User = require('../model/user');
 
@@ -101,7 +102,7 @@ router.get("/logout", (req, res, next) => {
 
 
 router.use(authRoutes);
+router.use(aiRoutes);
 router.use(apiRoutes);
 module.exports = router;
-
 

@@ -137,7 +137,11 @@ app.use(
     store: new MemoryStore(),
   })
 );
-app.use(csrf());
+const csrfProtection = csrf();
+app.use((req, res, next) => {
+  if (req.path.startsWith("/api/ai/") || req.path.startsWith("/api/agent/")) return next();
+  return csrfProtection(req, res, next);
+});
 app.use(passport.initialize());
 app.use(express.static("public"));
 app.use(passport.session());

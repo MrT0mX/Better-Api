@@ -1124,6 +1124,45 @@
           </article>
         </section>
 
+        <section class="ai-workspace" aria-labelledby="ai-workspace-title">
+          <div class="directory-heading ai-heading">
+            <div>
+              <p class="eyebrow">AI WORKSPACE</p>
+              <h2 id="ai-workspace-title">AI chat ও teaching agent</h2>
+              <p class="dashboard-subtitle">নিজের server-configured provider দিয়ে প্রশ্ন করুন বা শেখার অনুশীলন করুন।</p>
+            </div>
+            <span id="ai-provider-status" class="ai-provider-status" role="status" aria-live="polite">Provider পরীক্ষা হচ্ছে…</span>
+          </div>
+          <form id="ai-playground" class="ai-playground">
+            <div class="ai-controls">
+              <label>Provider
+                <select id="ai-provider" name="provider">
+                  <option value="openai">OpenAI</option>
+                  <option value="gemini">Google Gemini</option>
+                  <option value="anthropic">Anthropic Claude</option>
+                  <option value="openrouter">OpenRouter</option>
+                </select>
+              </label>
+              <label>Model
+                <input id="ai-model" name="model" type="text" maxlength="100" placeholder="provider default" autocomplete="off" />
+              </label>
+              <label>Mode
+                <select id="ai-mode" name="mode">
+                  <option value="chat">সাধারণ chat</option>
+                  <option value="teach">শেখার সহায়ক</option>
+                </select>
+              </label>
+            </div>
+            <label for="ai-message">আপনার প্রশ্ন</label>
+            <textarea id="ai-message" name="message" rows="4" maxlength="12000" placeholder="কোনো বিষয় সহজভাবে বুঝিয়ে বলুন..." required></textarea>
+            <div class="ai-submit-row">
+              <span class="panel-hint">এই request আপনার API key quota থেকে ১টি ব্যবহার করবে। AI provider key server-এ configure করা থাকতে হবে।</span>
+              <button class="action-button run-button" id="ai-submit" type="submit"><i class="bx bx-send"></i><span>পাঠান</span></button>
+            </div>
+          </form>
+          <pre id="ai-response" class="ai-response" aria-live="polite">AI response এখানে দেখাবে।</pre>
+        </section>
+
         <section class="endpoint-directory" id="endpoint-directory" aria-labelledby="endpoint-title">
           <div class="directory-heading">
             <div>
@@ -1145,5 +1184,6 @@
     <!-- NAVBAR -->
 
     <script src="/js/docs/script.js"></script>
+    <script src="/js/docs/ai.js"></script>
   </body>
 </html>
