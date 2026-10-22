@@ -80,6 +80,61 @@ Edit the file `settings.js` for the following configurations:
 [`Change the port.`](https://github.com/MrT0mX/Better-Api/blob/master/settings.js#:~:text=port%20%3D-,8080,-//port%20host)<br>
 [`Adjust the API key limit.`](https://github.com/MrT0mX/Better-Api/blob/master/settings.js#:~:text=LimitApikey%20%3D-,200,-//%20Limit%20Apikey%20default)<br>
 
+## 🚀 Local Setup and Install
+
+> Edited by MrTomXxX
+
+Before running the project, install Node.js 16+ and make sure MongoDB and SMTP credentials are ready.
+
+1. Open terminal in the project folder:
+
+```bash
+cd Better-Api
+```
+
+2. Install dependencies:
+
+```bash
+npm install
+```
+
+3. Copy the sample environment file:
+
+```bash
+cp .env.example .env
+```
+
+4. Fill your real values in `.env`:
+
+```env
+mongodb="mongodb+srv://your_user:your_password@cluster.mongodb.net/?retryWrites=true&w=majority"
+sendemail="your_smtp_email@example.com"
+fromsendemail="your_smtp_email@example.com"
+sendpwmail="your_smtp_password"
+recaptcha_key_1="your_recaptcha_site_key"
+recaptcha_key_2="your_recaptcha_secret_key"
+PORT=8080
+LIMIT_APIKEY=200
+CREATOR="MrTom乂x乂"
+USE_TEMP_EMAIL=true
+servicesmtp="Zoho"
+domain="localhost:8080"
+```
+
+5. Start the app:
+
+```bash
+npm start
+```
+
+or
+
+```bash
+npm run dev
+```
+
+If you want to run it in production-like mode, set the same values in your hosting provider environment settings instead of using a local `.env` file.
+
 ## 🚀 Usage
 
 Start the application with:

@@ -1,5 +1,10 @@
 require("dotenv").config();
 
+const getEnv = (key, fallback = "") => {
+  const value = process.env[key];
+  return value && String(value).trim() ? String(value).trim() : fallback;
+};
+
 //_______________________ ┏  Info  ┓ _______________________\\
 //
 //   Edited BY: MrTomXxX
@@ -17,23 +22,23 @@ require("dotenv").config();
 
 //_______________________ ┏  Main Setting  ┓ _______________________\\
 
-creator = "MrTom乂x乂"; // Name
-port = 8080; //port host
-LimitApikey = 200; // Limit Apikey default
+creator = getEnv("CREATOR", "MrTom乂x乂"); // Name
+port = Number(getEnv("PORT", "8080")); // port host
+LimitApikey = Number(getEnv("LIMIT_APIKEY", "200")); // Limit Apikey default
 
 //___________ ┏  Database Mongodb Setting  ┓ ___________\\
 
-keymongodb = process.env.mongodb; //example "mongodb+srv://user:password@name_database.mongodb.net/?retryWrites=true&w=majority";
+keymongodb = getEnv("mongodb", "mongodb://127.0.0.1:27017/better-api"); // example "mongodb+srv://user:password@name_database.mongodb.net/?retryWrites=true&w=majority"
 
 //___________ ┏  SMTP Setting  ┓ ___________\\
 
 //Note service SMTP Gmail cannot send in email if you want to apply an email in another service
-usetempemail = true; // If true, you can sing up using email temp if you use gmail service using false je
-servicesmtp = "Zoho"; //There is a gmail there is Sendinblue following each Gmail 500 limit limit 300 free limit. List service smtp : https://nodemailer.com/smtp/well-known/
-sendemail = process.env.sendemail; //Email SMTP
-fromsendemail = process.env.fromsendemail; // From Email SMTP *if takde custom email hit with email with SMTP email
-sendpwmail = process.env.sendpwmail; // Password Email SMTP
-domain = "api.rivqi.my.id"; // Website domain without http or https
+usetempemail = getEnv("USE_TEMP_EMAIL", "true").toLowerCase() !== "false"; // If true, you can sing up using email temp if you use gmail service using false je
+servicesmtp = getEnv("servicesmtp", "Zoho"); //There is a gmail there is Sendinblue following each Gmail 500 limit limit 300 free limit. List service smtp : https://nodemailer.com/smtp/well-known/
+sendemail = getEnv("sendemail", ""); // Email SMTP
+fromsendemail = getEnv("fromsendemail", ""); // From Email SMTP *if takde custom email hit with email with SMTP email
+sendpwmail = getEnv("sendpwmail", ""); // Password Email SMTP
+domain = getEnv("domain", "localhost:8080"); // Website domain without http or https
 
 //_______________________ ┏  Apikey  ┓ _______________________\\
 
@@ -82,8 +87,8 @@ apibitly = [
 ];
 
 //APIKEY RECAPTCHA From https://www.google.com/recaptcha/about/ or https://www.google.com/recaptcha/admin  \\
-recaptcha_key_1 = process.env.recaptcha_key_1;
-recaptcha_key_2 = process.env.recaptcha_key_2;
+recaptcha_key_1 = getEnv("recaptcha_key_1", "");
+recaptcha_key_2 = getEnv("recaptcha_key_2", "");
 
 //_______________________ ┏  Loghandler  ┓ _______________________\\
 

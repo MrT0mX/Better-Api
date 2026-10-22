@@ -16,7 +16,17 @@ const passwordValidator = require("password-validator");
 const generateApiKey = require("generate-api-key").default;
 const containsEmoji = require("contains-emoji");
 const Recaptcha = require("express-recaptcha").RecaptchaV2;
-const recaptcha = new Recaptcha(recaptcha_key_1, recaptcha_key_2);
+const recaptcha = recaptcha_key_1 && recaptcha_key_2 ? new Recaptcha(recaptcha_key_1, recaptcha_key_2) : null;
+
+const renderCaptcha = (req, res, next) => {
+  if (!recaptcha) return next();
+  return recaptcha.middleware.render(req, res, next);
+};
+
+const verifyCaptcha = (req, res, next) => {
+  if (!recaptcha) return next();
+  return recaptcha.middleware.verify(req, res, next);
+};
 
 //_______________________ ┏ Function ┓ _______________________\\
 
@@ -34,7 +44,7 @@ function checkAuth(req, res, next) {
 }
 
 function captchaForgotPassword(req, res, next) {
-  if (req.recaptcha.error) {
+  if (recaptcha && req.recaptcha && req.recaptcha.error) {
     req.flash("error_messages", "reCAPTCHA Tidak Valid");
     res.redirect("/forgot-password");
   } else {
@@ -44,7 +54,7 @@ function captchaForgotPassword(req, res, next) {
 
 function captchaResetPassword(req, res, next) {
   const { token } = req.body;
-  if (req.recaptcha.error) {
+  if (recaptcha && req.recaptcha && req.recaptcha.error) {
     req.flash("error_messages", "reCAPTCHA Tidak Valid");
     res.redirect(`/reset-password?token=${token}`);
   } else {
@@ -53,7 +63,7 @@ function captchaResetPassword(req, res, next) {
 }
 
 function captchaRegister(req, res, next) {
-  if (req.recaptcha.error) {
+  if (recaptcha && req.recaptcha && req.recaptcha.error) {
     req.flash("error_messages", "reCAPTCHA Tidak Valid");
     res.redirect("/signup");
   } else {
@@ -62,7 +72,7 @@ function captchaRegister(req, res, next) {
 }
 
 function captchaLogin(req, res, next) {
-  if (req.recaptcha.error) {
+  if (recaptcha && req.recaptcha && req.recaptcha.error) {
     req.flash("error_messages", "reCAPTCHA Tidak Valid");
     res.redirect("/login");
   } else {
@@ -72,20 +82,20 @@ function captchaLogin(req, res, next) {
 
 //_______________________ ┏ Router ┓ _______________________\\
 
-router.get("/login", recaptcha.middleware.render, (req, res) => {
+router.get("/login", renderCaptcha, (req, res) => {
   if (req.isAuthenticated()) {
     res.redirect("/docs");
   } else {
     res.render("login", {
       csrfToken: req.csrfToken(),
-      recaptcha: res.recaptcha,
+      recaptcha: res.recaptcha || null,
     });
   }
 });
 
 router.post(
   "/login",
-  recaptcha.middleware.verify,
+  verifyCaptcha,
   captchaLogin,
   (req, res, next) => {
     passport.authenticate("local", {
@@ -96,20 +106,20 @@ router.post(
   }
 );
 
-router.get("/signup", recaptcha.middleware.render, (req, res) => {
+router.get("/signup", renderCaptcha, (req, res) => {
   if (req.isAuthenticated()) {
     res.redirect("/docs");
   } else {
     res.render("signup", {
       csrfToken: req.csrfToken(),
-      recaptcha: res.recaptcha,
+      recaptcha: res.recaptcha || null,
     });
   }
 });
 
 router.post(
   "/signup",
-  recaptcha.middleware.verify,
+  verifyCaptcha,
   captchaRegister,
   async (req, res) => {
     const { email, username, password, confirmpassword } = req.body;
@@ -262,18 +272,18 @@ router.get("/verifyemail", async (req, res) => {
 
 router.get(
   "/forgot-password",
-  recaptcha.middleware.render,
+  renderCaptcha,
   async (req, res) => {
     res.render("forgot-password.ejs", {
       csrfToken: req.csrfToken(),
-      recaptcha: res.recaptcha,
+      recaptcha: res.recaptcha || null,
     });
   }
 );
 
 router.post(
   "/forgot-password",
-  recaptcha.middleware.verify,
+  verifyCaptcha,
   captchaForgotPassword,
   async (req, res) => {
     const { email } = req.body;
@@ -314,7 +324,7 @@ router.post(
   }
 );
 
-router.get("/reset-password", recaptcha.middleware.render, async (req, res) => {
+router.get("/reset-password", renderCaptcha, async (req, res) => {
   const token = req.query.token;
 
   if (token) {
@@ -322,7 +332,7 @@ router.get("/reset-password", recaptcha.middleware.render, async (req, res) => {
     if (check) {
       res.render("forgot-password.ejs", {
         csrfToken: req.csrfToken(),
-        recaptcha: res.recaptcha,
+        recaptcha: res.recaptcha || null,
         reset: true,
         email: check.email,
         token: token,
@@ -338,7 +348,7 @@ router.get("/reset-password", recaptcha.middleware.render, async (req, res) => {
 
 router.post(
   "/reset-password",
-  recaptcha.middleware.verify,
+  verifyCaptcha,
   captchaResetPassword,
   async (req, res) => {
     const { password, confirmpassword, email, token } = req.body;
