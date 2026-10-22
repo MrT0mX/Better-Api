@@ -123,6 +123,7 @@ router.post(
   captchaRegister,
   async (req, res) => {
     const { email, username, password, confirmpassword } = req.body;
+    const normalizedEmail = typeof email === "string" ? email.trim().toLowerCase() : "";
     var createpw = new passwordValidator();
     createpw
       .is()
@@ -145,7 +146,7 @@ router.post(
     var checkpw = createpw.validate(password);
 
     if (!usetempemail) {
-      var checkemail = await isGmail(email);
+      var checkemail = await isGmail(normalizedEmail);
     } else {
       var checkemail = true;
     }
@@ -182,7 +183,7 @@ router.post(
       res.redirect("/signup");
     } else {
       user.findOne(
-        { $or: [{ email: email }, { username: username }] },
+        { $or: [{ email: normalizedEmail }, { username: username }] },
         function (err, data) {
           if (err) throw err;
           if (data) {
@@ -195,7 +196,7 @@ router.post(
                 if (err) throw err;
                 user({
                   username: username,
-                  email: email,
+                  email: normalizedEmail,
                   password: hash,
                   apikey: generateApiKey({ method: "bytes", length: 8 }),
                   limitApikey: LimitApikey,

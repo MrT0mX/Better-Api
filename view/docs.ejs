@@ -1023,6 +1023,7 @@
           <div>
             <p class="eyebrow">আপনার API কর্মক্ষেত্র</p>
             <h1 class="title">স্বাগতম, <%= username %></h1>
+            <% if (isAdmin) { %><span class="admin-badge">ADMIN · Full API quota</span><% } %>
             <p class="dashboard-subtitle">এপিআই, ব্যবহার ও অ্যাকাউন্ট—সবকিছু এক জায়গায়।</p>
           </div>
           <div class="dashboard-actions">
@@ -1081,7 +1082,7 @@
             <div class="head">
               <div>
                 <p>আপনার বাকি অনুরোধ</p>
-                <h2><%= limit.toLocaleString() %></h2>
+                <h2><%= isAdmin ? 'সীমাহীন' : limit.toLocaleString() %></h2>
               </div>
               <i class="bx bx-pulse icon"></i>
             </div>

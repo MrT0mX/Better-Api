@@ -34,6 +34,7 @@ const bodyParser = require("body-parser");
 const User = require("./model/user");
 const dataweb = require("./model/DataWeb");
 const logger = require("./lib/logger");
+const { ensureBootstrapAdmin, getAdminConfig } = require("./lib/bootstrap-admin");
 const isProduction = process.env.NODE_ENV === "production";
 const configuredSessionSecret = process.env.SESSION_SECRET?.trim();
 
@@ -42,6 +43,7 @@ if (isProduction && (!configuredSessionSecret || configuredSessionSecret.length 
 }
 
 const sessionSecret = configuredSessionSecret || crypto.randomBytes(32).toString("hex");
+getAdminConfig();
 
 //_______________________ ┏ Funtion ┓ _______________________\\
 
@@ -84,9 +86,13 @@ mongoose
       await dataweb.create(obj);
       logger.info("Website statistics record created.");
     }
+    const admin = await ensureBootstrapAdmin();
+    if (admin.created) logger.info("Secure bootstrap admin account created from environment configuration.");
+    else if (admin.promoted) logger.info("Configured existing account was granted the admin role.");
   })
   .catch((error) => {
-    logger.error("MongoDB connection failed.", error);
+    logger.error("Database initialization or admin bootstrap failed.", error);
+    if (error.message.includes("Admin bootstrap")) process.exitCode = 1;
   });
 
 //_______________________ ┏ CronJob For Reset Limit ┓ _______________________\\

@@ -1724,3 +1724,16 @@ body :focus-visible {
     flex-direction: column;
   }
 }
+.admin-badge {
+  display: inline-flex;
+  width: fit-content;
+  margin: 8px 0;
+  padding: 6px 10px;
+  border: 1px solid rgba(168, 139, 255, .35);
+  border-radius: 999px;
+  background: rgba(168, 139, 255, .1);
+  color: #a88bff;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .08em;
+}

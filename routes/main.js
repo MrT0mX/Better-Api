@@ -44,7 +44,7 @@ function checkAuth(req, res, next) {
 async function getApikey(id) {
   const [limit, user, totalUsers] = await Promise.all([
     dataweb.findOne().lean(),
-    User.findById(id).select('apikey username limitApikey isVerified').lean(),
+    User.findById(id).select('apikey username limitApikey isVerified isAdmin').lean(),
     User.countDocuments(),
   ]);
 
@@ -55,6 +55,7 @@ async function getApikey(id) {
     username: user.username,
     checklimit: user.limitApikey,
     isVerified: user.isVerified,
+    isAdmin: user.isAdmin === true,
     RequestToday: limit?.RequestToday ?? 0,
     totalUsers,
   };
@@ -78,10 +79,11 @@ router.get('/healthz', (req, res) => {
 
 router.get('/docs', checkAuth, async (req, res, next) => {
   try {
-    const { apikey, username, checklimit, isVerified, RequestToday, totalUsers } = await getApikey(req.user.id);
+    const { apikey, username, checklimit, isVerified, isAdmin, RequestToday, totalUsers } = await getApikey(req.user.id);
     res.render("docs", {
       username,
       verified: isVerified,
+      isAdmin,
       apikey,
       limit: checklimit,
       RequestToday,

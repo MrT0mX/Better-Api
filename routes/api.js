@@ -83,7 +83,7 @@ router.get("/cekapikey", cekKey, async (req, res) => {
       username: `${db.username}`,
       email: `${db.email}`,
       apikey: `${db.apikey}`,
-      limit: `${db.limitApikey}`,
+      limit: db.isAdmin ? "unlimited" : `${db.limitApikey}`,
     },
   });
 });

@@ -9,6 +9,7 @@ test("dashboard renders Bengali controls and no legacy scripts", async () => {
     {
       username: "MrTomX",
       verified: true,
+      isAdmin: true,
       apikey: "test-key",
       limit: 20,
       RequestToday: 3,
@@ -22,6 +23,7 @@ test("dashboard renders Bengali controls and no legacy scripts", async () => {
   assert.match(html, /id="endpoint-grid"/);
   assert.match(html, /id="theme-toggle"/);
   assert.match(html, /id="ai-playground"/);
+  assert.match(html, /ADMIN · Full API quota/);
   assert.match(html, /\/js\/docs\/ai\.js/);
   assert.match(html, /Guest Text Effects/);
   assert.match(html, /SVG Text Effect \(Guest\)/);
@@ -38,6 +40,22 @@ test("guest effects page provides public styles and keeps AI sign-in gated", asy
   assert.match(html, /data-i18n="guestAiTitle"/);
   assert.match(html, /href="\/login"/);
   assert.match(html, /\/api\/text-effects\/render/);
+});
+
+test("login accepts username or email", async () => {
+  const html = await ejs.renderFile(
+    path.join(__dirname, "..", "view", "login.ejs"),
+    {
+      csrfToken: "test-csrf",
+      recaptcha: "",
+      error: "",
+      error_messages: "",
+      success_messages: "",
+    }
+  );
+  assert.match(html, /Username or email/);
+  assert.match(html, /type="text"[\s\S]*name="email"/);
+  assert.match(html, /autocomplete="username"/);
 });
 
 test("not-found page renders a Bengali recovery link", async () => {

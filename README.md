@@ -121,6 +121,9 @@ CREATOR="MrTom乂x乂"
 USE_TEMP_EMAIL=true
 servicesmtp="Zoho"
 domain="localhost:8080"
+ADMIN_USERNAME=""
+ADMIN_EMAIL=""
+ADMIN_PASSWORD=""
 ```
 
 5. ডেভেলপমেন্ট সার্ভার চালু করুন:
@@ -136,6 +139,26 @@ npm test
 ```
 
 Production-এ `npm start` ব্যবহার করুন। Dashboard `/docs`-এ—আগে লগইন করতে হবে। `GET /test` API key ছাড়াই পরীক্ষা করা যায়। `/effects`-এ account ছাড়া ১২টি original SVG text style preview ও download করা যায়; public render route IP-প্রতি মিনিটে ৩০টি request-এ সীমিত।
+
+### First-run admin setup
+
+Optional secure admin bootstrap-এর জন্য `.env`/hosting secret store-এ `ADMIN_USERNAME=mrtomxx`, `ADMIN_EMAIL` এবং একটি নতুন, unique `ADMIN_PASSWORD` দিন (কমপক্ষে ১২ অক্ষর; uppercase, lowercase ও digit থাকবে)। MongoDB-তে account না থাকলে server password-টি bcrypt hash করে verified admin account তৈরি করবে। matching account আগে থেকেই থাকলে সেটিকে verified admin role দেয়; existing password বদলায় না। এরপর `/login`-এ username অথবা email ও সেই admin account-এর password দিয়ে স্বাভাবিকভাবে login করুন—automatic login/backdoor নেই। Admin API key quota-তে সীমাবদ্ধ নয়; AI usage provider-এর billing-এ পড়তে পারে। Bootstrap-এর পর admin password deployment secrets-এ সংরক্ষণ করুন; `.env` বা code-এ commit করবেন না। এখানে আগে শেয়ার করা password-টি exposed ধরে নতুন password ব্যবহার করুন।
+
+### ২৪ ঘণ্টা চালু রাখা ও free hosting
+
+Local setup-এর দ্রুত ধাপ:
+
+```bash
+nvm use
+npm ci --legacy-peer-deps
+cp .env.example .env
+# .env-এ MongoDB URI, 32+ অক্ষরের SESSION_SECRET, ও চাইলে SMTP/AI/admin secrets দিন
+npm start
+```
+
+Browser-এ `http://localhost:8080` খুলুন; `http://localhost:8080/healthz` দিয়ে service status দেখুন। MongoDB database লাগবে; MongoDB Atlas-এর free shared cluster একটি বিকল্প। Account verification/password reset-এর email চালাতে SMTP credentials লাগবে; SMTP না থাকলে সেই email features কাজ করবে না। AI provider secret ছাড়া AI routes `503` দেবে।
+
+Render-এ free web service deploy করতে repository connect করুন, build command `npm ci --legacy-peer-deps`, start command `npm start` দিন; Render environment settings-এ `.env`-এর প্রয়োজনীয় values secrets হিসেবে যোগ করুন। Free web services idle হলে sleep/spin down হতে পারে, তাই **free hosting-এ নিশ্চিত uninterrupted 24/7 availability নেই**। ঘুম এড়াতে fake uptime pinger ব্যবহার করবেন না—provider-এর limits মানুন। সত্যিকারের সবসময়-চালু instance দরকার হলে কোনো free Always-Free VM allocation (যেমন Oracle Cloud Always Free, যদি account/region-এ পাওয়া যায়) ব্যবহার করে Node 22, MongoDB connectivity ও process manager/systemd configure করুন; capacity/availability guaranteed নয়। Production uptime guarantee সাধারণত paid hosting চায়।
 
 ### AI chat ও teaching agent
 
