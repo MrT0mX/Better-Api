@@ -74,6 +74,9 @@ mongoose
       await dataweb.create(obj);
       console.log("DATA WEBSITE Sussces Create");
     }
+  })
+  .catch((error) => {
+    console.error("MongoDB connection failed:", error.message);
   });
 
 //_______________________ ┏ CronJob For Reset Limit ┓ _______________________\\
@@ -121,7 +124,7 @@ app.use(passport.session());
 app.set("trust proxy", true);
 app.set("json spaces", 2);
 app.use(cors());
-app.use(secure);
+if (process.env.NODE_ENV === "production") app.use(secure);
 app.use(flash());
 app.use(function (req, res, next) {
   res.locals.success_messages = req.flash("success_messages");
