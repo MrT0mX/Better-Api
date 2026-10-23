@@ -36,8 +36,17 @@ process.on("uncaughtExceptionMonitor", (error, origin) => {
 const server = http.createServer(app);
 server.on("error", (error) => {
   logger.fatal("HTTP server failed.", error);
-  process.exitCode = 1;
+  process.exit(1);
 });
+
+async function shutdown(signal) {
+  logger.info(`${signal} received; shutting down.`);
+  server.close(() => process.exit(0));
+  setTimeout(() => process.exit(1), 10000).unref();
+}
+
+process.on("SIGINT", () => shutdown("SIGINT"));
+process.on("SIGTERM", () => shutdown("SIGTERM"));
 
 server.listen(PORTHOST, () => {
   if (process.stdout.isTTY) console.clear();

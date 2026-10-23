@@ -60,8 +60,25 @@ app.use(bodyParser.urlencoded({ extended: true }));
 //_______________________ ┏ Connect Database ┓ _______________________\\
 
 mongoose.set("strictQuery", false);
+const mongoConnectionOptions = {
+  serverSelectionTimeoutMS: Number(process.env.MONGO_SERVER_SELECTION_TIMEOUT_MS) || 10000,
+  connectTimeoutMS: Number(process.env.MONGO_CONNECT_TIMEOUT_MS) || 10000,
+  socketTimeoutMS: Number(process.env.MONGO_SOCKET_TIMEOUT_MS) || 45000,
+  maxPoolSize: Number(process.env.MONGO_MAX_POOL_SIZE) || 10,
+};
+
+mongoose.connection.on("connected", () => {
+  logger.info("MongoDB connection established.");
+});
+mongoose.connection.on("disconnected", () => {
+  logger.warn("MongoDB connection lost; the driver will retry server selection.");
+});
+mongoose.connection.on("error", (error) => {
+  logger.error("MongoDB connection error.", error);
+});
+
 mongoose
-  .connect(keymongodb, { useNewUrlParser: true, useUnifiedTopology: true })
+  .connect(keymongodb, mongoConnectionOptions)
   .then(async () => {
     logger.info("Connected to MongoDB.");
     let limit = await dataweb.findOne();
