@@ -54,7 +54,7 @@ function checkAuth(req, res, next) {
 }
 
 function captchaForgotPassword(req, res, next) {
-  if (recaptcha && req.recaptcha && req.recaptcha.error) {
+  if (req.recaptcha && req.recaptcha.error) {
     req.flash("error_messages", "reCAPTCHA Tidak Valid");
     res.redirect("/forgot-password");
   } else {
@@ -64,7 +64,7 @@ function captchaForgotPassword(req, res, next) {
 
 function captchaResetPassword(req, res, next) {
   const { token } = req.body;
-  if (recaptcha && req.recaptcha && req.recaptcha.error) {
+  if (req.recaptcha && req.recaptcha.error) {
     req.flash("error_messages", "reCAPTCHA Tidak Valid");
     res.redirect(`/reset-password?token=${token}`);
   } else {
@@ -73,7 +73,7 @@ function captchaResetPassword(req, res, next) {
 }
 
 function captchaRegister(req, res, next) {
-  if (recaptcha && req.recaptcha && req.recaptcha.error) {
+  if (req.recaptcha && req.recaptcha.error) {
     req.flash("error_messages", "reCAPTCHA Tidak Valid");
     res.redirect("/signup");
   } else {
@@ -82,7 +82,7 @@ function captchaRegister(req, res, next) {
 }
 
 function captchaLogin(req, res, next) {
-  if (recaptcha && req.recaptcha && req.recaptcha.error) {
+  if (req.recaptcha && req.recaptcha.error) {
     req.flash("error_messages", "reCAPTCHA Tidak Valid");
     res.redirect("/login");
   } else {
@@ -94,7 +94,7 @@ function captchaLogin(req, res, next) {
 
 router.get("/login", renderCaptcha, (req, res) => {
   if (req.isAuthenticated()) {
-    res.redirect("/docs");
+    res.redirect(req.user.isAdmin ? "/admin/settings" : "/docs");
   } else if (req.session.adminMfaPending) {
     res.redirect("/login/totp");
   } else {
@@ -141,7 +141,7 @@ router.post(
         }
         return req.logIn(account, (loginError) => {
           if (loginError) return next(loginError);
-          return res.redirect("/docs");
+          return res.redirect(account.isAdmin ? "/admin/settings" : "/docs");
         });
       } catch (auditError) {
         return next(auditError);
@@ -224,7 +224,7 @@ router.post("/login/totp", async (req, res, next) => {
       return req.logIn(admin, (loginError) => {
         if (loginError) return next(loginError);
         req.session.adminMfaVerifiedUserId = String(admin._id);
-        return res.redirect("/docs");
+        return res.redirect("/admin/settings");
       });
     });
   } catch (error) {
@@ -247,98 +247,91 @@ router.post(
   "/signup",
   verifyCaptcha,
   captchaRegister,
-  async (req, res) => {
-    const { email, username, password, confirmpassword } = req.body;
-    const normalizedEmail = typeof email === "string" ? email.trim().toLowerCase() : "";
-    var createpw = new passwordValidator();
-    createpw
-      .is()
-      .min(8)
-      .is()
-      .max(30)
-      .has()
-      .uppercase()
-      .has()
-      .lowercase()
-      .has()
-      .digits()
-      .has()
-      .not()
-      .spaces()
-      .is()
-      .not()
-      .oneOf(["Passw0rd", "Password123"]);
+  async (req, res, next) => {
+    try {
+      const { email, username, password, confirmpassword } = req.body;
+      if (
+        typeof email !== "string" ||
+        typeof username !== "string" ||
+        typeof password !== "string" ||
+        typeof confirmpassword !== "string" ||
+        !email ||
+        !username ||
+        !password ||
+        !confirmpassword
+      ) {
+        req.flash("error_messages", "All Fields Required !");
+        return res.redirect("/signup");
+      }
 
-    var checkpw = createpw.validate(password);
+      const normalizedEmail = email.trim().toLowerCase();
+      const createpw = new passwordValidator();
+      createpw
+        .is()
+        .min(8)
+        .is()
+        .max(30)
+        .has()
+        .uppercase()
+        .has()
+        .lowercase()
+        .has()
+        .digits()
+        .has()
+        .not()
+        .spaces()
+        .is()
+        .not()
+        .oneOf(["Passw0rd", "Password123"]);
 
-    if (!usetempemail) {
-      var checkemail = await isGmail(normalizedEmail);
-    } else {
-      var checkemail = true;
-    }
+      const checkpw = createpw.validate(password);
+      const checkemail = usetempemail ? true : await isGmail(normalizedEmail);
 
-    if (!email || !username || !password || !confirmpassword) {
-      req.flash("error_messages", "All Fields Required !");
-      res.redirect("/signup");
-    } else if (password != confirmpassword) {
-      req.flash("error_messages", "Password Don't Match !");
-      res.redirect("/signup");
-    } else if (!checkpw) {
-      req.flash(
-        "error_messages",
-        "Password Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters,no emoji and no Space Limit 30 text"
-      );
-      res.redirect("/signup");
-    } else if (containsEmoji(password)) {
-      req.flash(
-        "error_messages",
-        "Password Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters,no emoji and no Space Limit 30 text"
-      );
-      res.redirect("/signup");
-    } else if (username.length < 4) {
-      req.flash("error_messages", "Username cannot be less than 4 characters");
-      res.redirect("/signup");
-    } else if (username.length > 20) {
-      req.flash("error_messages", "Username cannot exceed 20 characters");
-      res.redirect("/signup");
-    } else if (containsEmoji(username)) {
-      req.flash("error_messages", "Username Can't Use Emoji");
-      res.redirect("/signup");
-    } else if (!checkemail) {
-      req.flash("error_messages", "Sorry, We Only Accept Email From Gmail");
-      res.redirect("/signup");
-    } else {
-      user.findOne(
-        { $or: [{ email: normalizedEmail }, { username: username }] },
-        function (err, data) {
-          if (err) throw err;
-          if (data) {
-            req.flash("error_messages", "User Exists, Try Logging In !");
-            res.redirect("/signup");
-          } else {
-            bcryptjs.genSalt(12, (err, salt) => {
-              if (err) throw err;
-              bcryptjs.hash(password, salt, (err, hash) => {
-                if (err) throw err;
-                user({
-                  username: username,
-                  email: normalizedEmail,
-                  password: hash,
-                  apikey: generateApiKey({ method: "bytes", length: 8 }),
-                  limitApikey: LimitApikey,
-                }).save((err, data) => {
-                  if (err) throw err;
-                  req.flash(
-                    "success_messages",
-                    "Account has been created, please login"
-                  );
-                  res.redirect("/login");
-                });
-              });
-            });
-          }
-        }
-      );
+      if (password != confirmpassword) {
+        req.flash("error_messages", "Password Don't Match !");
+        return res.redirect("/signup");
+      } else if (!checkpw || containsEmoji(password)) {
+        req.flash(
+          "error_messages",
+          "Password Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters,no emoji and no Space Limit 30 text"
+        );
+        return res.redirect("/signup");
+      } else if (username.length < 4) {
+        req.flash("error_messages", "Username cannot be less than 4 characters");
+        return res.redirect("/signup");
+      } else if (username.length > 20) {
+        req.flash("error_messages", "Username cannot exceed 20 characters");
+        return res.redirect("/signup");
+      } else if (containsEmoji(username)) {
+        req.flash("error_messages", "Username Can't Use Emoji");
+        return res.redirect("/signup");
+      } else if (!checkemail) {
+        req.flash("error_messages", "Sorry, We Only Accept Email From Gmail");
+        return res.redirect("/signup");
+      }
+
+      const existingUser = await user.findOne({
+        $or: [{ email: normalizedEmail }, { username }],
+      });
+      if (existingUser) {
+        req.flash("error_messages", "User Exists, Try Logging In !");
+        return res.redirect("/signup");
+      }
+
+      const salt = await bcryptjs.genSalt(12);
+      const hash = await bcryptjs.hash(password, salt);
+      await new user({
+        username,
+        email: normalizedEmail,
+        password: hash,
+        apikey: generateApiKey({ method: "bytes", length: 8 }),
+        limitApikey: LimitApikey,
+      }).save();
+
+      req.flash("success_messages", "Account has been created, please login");
+      return res.redirect("/login");
+    } catch (error) {
+      return next(error);
     }
   }
 );

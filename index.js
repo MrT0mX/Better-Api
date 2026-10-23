@@ -170,10 +170,13 @@ app.use(function (err, req, res, next) {
   const status = Number.isInteger(statusCode) && statusCode >= 400 && statusCode <= 599
     ? statusCode
     : 500;
+  const csrfTokenError = err.code === "EBADCSRFTOKEN";
 
   const logMessage = `${req.method} ${req.path} failed with HTTP ${status}.`;
   if (status >= 500) logger.error(logMessage, err);
-  else logger.warn(logMessage);
+  else if (csrfTokenError) {
+    logger.warn(`${logMessage} CSRF token is missing, invalid, or expired.`);
+  } else logger.warn(logMessage);
 
   if (req.originalUrl.startsWith("/api/")) {
     const message = status >= 500
@@ -191,6 +194,12 @@ app.use(function (err, req, res, next) {
       status: false,
       message,
     });
+  }
+
+  if (csrfTokenError) {
+    return res
+      .status(403)
+      .send("ফর্মের নিরাপত্তা token মেয়াদোত্তীর্ণ বা অবৈধ। পেজটি reload করে আবার চেষ্টা করুন।");
   }
 
   if (status === 404) return res.status(status).render("404");

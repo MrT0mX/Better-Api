@@ -1067,6 +1067,23 @@ nav .form-group input:focus {
   transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
 }
 
+.docs-language {
+  min-height: 40px;
+  max-width: 112px;
+  padding: 0 10px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface-raised);
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.docs-language:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
 .toggle-sidebar:hover,
 .theme-toggle:hover,
 .health-refresh:hover {

@@ -19,6 +19,14 @@
 .setting-label-row label { font-size: 13px; font-weight: 700; }
 .setting-status { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); font-size: 10px; white-space: nowrap; }
 .status-light { width: 9px; height: 9px; flex: none; border-radius: 50%; }
+.connection-health-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+.connection-health-heading h2 { margin: 0; font: 700 21px Manrope, "Noto Sans Bengali", sans-serif; }
+.connection-health-heading .setting-note { margin-bottom: 0; }
+.connection-overview { display: flex; align-items: center; gap: 10px; margin-top: 17px; padding: 13px 15px; border: 1px solid var(--line); border-radius: 12px; background: rgba(5, 8, 17, .2); }
+.connection-overview > span { margin-left: auto; color: var(--muted); font-size: 11px; }
+.system-health-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 10px; }
+.system-health-item { display: flex; align-items: center; gap: 9px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 11px; color: var(--muted); font-size: 12px; }
+.system-health-item strong { margin-left: auto; color: var(--text); font-size: 11px; }
 .status-saved { background: #42dc91; box-shadow: 0 0 10px rgba(66, 220, 145, .7); }
 .status-missing { background: #ff596b; box-shadow: 0 0 10px rgba(255, 89, 107, .6); }
 .status-ok { background: #42dc91; box-shadow: 0 0 10px rgba(66, 220, 145, .7); }
@@ -34,6 +42,8 @@
 .setting-actions button:disabled { cursor: not-allowed; opacity: .45; }
 .clear-credential { padding: 4px; border: 0; background: transparent; color: #ff8993; font-size: 10px; cursor: pointer; }
 .test-result { flex-basis: 100%; color: var(--muted); font-size: 10px; line-height: 1.5; }
+.test-result[data-status="ok"] { color: #42dc91; }
+.test-result[data-status="error"] { color: #ff8993; }
 .settings-submit { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin: 18px 0 28px; padding: 17px 4px; }
 .settings-submit p { max-width: 570px; margin: 0; color: var(--muted); font-size: 11px; line-height: 1.6; }
 .settings-submit button:disabled { cursor: not-allowed; opacity: .48; }
@@ -52,4 +62,4 @@
 .recovery-codes { margin-top: 20px; padding: 17px; border: 1px solid rgba(255, 191, 91, .4); border-radius: 12px; }
 .security-enabled { color: #42dc91; }
 .usage-alert { color: #ffc15c; font-size: 10px; }
-@media (max-width: 720px) { .settings-main { padding-top: 34px; }.setting-grid { grid-template-columns: 1fr; }.settings-group { padding: 17px; }.settings-submit { align-items: stretch; flex-direction: column; } }
+@media (max-width: 720px) { .settings-main { padding-top: 34px; }.setting-grid,.system-health-grid { grid-template-columns: 1fr; }.settings-group { padding: 17px; }.settings-submit,.connection-health-heading { align-items: stretch; flex-direction: column; } }

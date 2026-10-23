@@ -33,6 +33,16 @@ const router = express.Router();
 const requireAdmin = createAdminGuard((id) =>
   User.findById(id).select("username isAdmin isVerified adminMfaEnabled").lean()
 );
+const checkableCredentialKeys = [
+  "OPENAI_API_KEY",
+  "GEMINI_API_KEY",
+  "ANTHROPIC_API_KEY",
+  "OPENROUTER_API_KEY",
+  "DEEPSEEK_API_KEY",
+  "GROQ_API_KEY",
+  "MISTRAL_API_KEY",
+  "sendemail",
+];
 
 const settingGroups = [
   {
@@ -115,7 +125,7 @@ function buildFields(state) {
       secret: stateByKey.get(key)?.secret || false,
       configured: stateByKey.get(key)?.configured || false,
       source: stateByKey.get(key)?.source || "missing",
-      testable: !key.startsWith("AI_"),
+      testable: checkableCredentialKeys.includes(key),
       type: key.includes("URL") || key === "LLM_BASE_URL" ? "url" :
         key === "LLM_MODEL" || key === "servicesmtp" || key === "domain" ||
         key === "fromsendemail" || key === "sendemail" ? "text" :
@@ -260,6 +270,33 @@ router.post("/admin/settings/check", requireAdmin, asyncHandler(async (req, res)
     outcome: result.status === "error" ? "failure" : "success",
   });
   return res.status(result.status === "error" ? 502 : 200).json(result);
+}));
+
+router.post("/admin/settings/check-all", requireAdmin, asyncHandler(async (req, res) => {
+  const config = await getRuntimeConfig();
+  const configuredKeys = checkableCredentialKeys.filter((key) => config[key]);
+  const checks = await Promise.all(configuredKeys.map(async (key) => ({
+    key,
+    ...await verifyCredential(key, config),
+  })));
+  const failedCount = checks.filter((check) => check.status === "error").length;
+
+  await recordAdminAudit(req, {
+    action: "admin.connection.check",
+    target: "configured-credentials",
+    outcome: failedCount ? "failure" : "success",
+    details: {
+      checkedKeys: checks.map(({ key }) => key),
+      failedCount,
+    },
+  });
+
+  return res.json({
+    checks,
+    checkedAt: new Date().toISOString(),
+    encryptionReady: hasEncryptionKey(),
+    databaseConnected: require("mongoose").connection.readyState === 1,
+  });
 }));
 
 router.get("/admin/security", requireAdmin, (req, res) => {

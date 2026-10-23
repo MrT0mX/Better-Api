@@ -43,6 +43,34 @@
         <p>AI, SMTP, Cuttly/Bitly ও reCAPTCHA credentials এখানে encrypted অবস্থায় থাকবে। MongoDB URI, SESSION_SECRET, admin bootstrap password ও encryption master key website থেকে edit করা যায় না; এগুলো host-এর secret manager/`.env`-এ রাখতে হয়, কারণ server শুরু হওয়ার আগেই লাগে।</p>
       </div>
 
+      <section class="settings-group connection-health" aria-labelledby="connection-health-title">
+        <div class="connection-health-heading">
+          <div>
+            <p class="section-kicker">LIVE DIAGNOSTICS</p>
+            <h2 id="connection-health-title">Connection status</h2>
+            <p class="setting-note">পেজ খোলার সময় configured provider ও SMTP পরীক্ষা হয়; database status প্রতি ৩০ সেকেন্ডে refresh হয়।</p>
+          </div>
+          <button id="run-connection-tests" class="button button-quiet" type="button">সব connection আবার test করুন</button>
+        </div>
+        <div class="connection-overview" id="connection-overview" data-status="unknown" data-encryption-ready="<%= encryptionReady %>" role="status" aria-live="polite">
+          <i id="connection-overview-light" class="status-light status-unknown"></i>
+          <strong id="connection-summary">Connection পরীক্ষা হচ্ছে…</strong>
+          <span id="connection-checked-at"></span>
+        </div>
+        <div class="system-health-grid">
+          <div class="system-health-item" data-health="database">
+            <span class="status-light status-unknown"></span>
+            <span>MongoDB</span>
+            <strong>পরীক্ষা হচ্ছে…</strong>
+          </div>
+          <div class="system-health-item" data-health="encryption">
+            <span class="status-light status-unknown"></span>
+            <span>Secret encryption</span>
+            <strong>পরীক্ষা হচ্ছে…</strong>
+          </div>
+        </div>
+      </section>
+
       <form class="settings-form" method="post" action="/admin/settings" autocomplete="off">
         <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
         <% groups.forEach((group) => { %>
@@ -55,7 +83,7 @@
                     <label for="setting-<%= field.key %>"><%= field.label %></label>
                     <span class="setting-status" data-status-for="<%= field.key %>" data-configured="<%= field.configured ? 'true' : 'false' %>">
                       <i class="status-light status-<%= field.configured ? 'unknown' : 'error' %>"></i>
-                      <span><%= field.configured ? (field.source === 'environment' ? 'Host-এ configured · test বাকি' : 'সংরক্ষিত · test বাকি') : 'দেওয়া হয়নি' %></span>
+                      <span><%= field.configured ? (field.testable ? (field.source === 'environment' ? 'Host-এ configured · test হবে' : 'সংরক্ষিত · test হবে') : 'সংরক্ষিত · auto-test নেই') : 'দেওয়া হয়নি' %></span>
                     </span>
                   </div>
                   <p><%= field.hint %></p>

@@ -11,16 +11,42 @@
   const submitButton = document.querySelector("#ai-submit");
   const providerModels = new Map();
   let configuredProviders = new Set();
+  let language = document.documentElement.lang === "en" ? "en" : "bn";
+  const messages = {
+    bn: {
+      configured: "Provider configure করা আছে",
+      unconfigured: "Provider key configure করা নেই",
+      unavailable: "Provider status পাওয়া যায়নি",
+      apiKeyRequired: "এই API ব্যবহার করতে dashboard account API key প্রয়োজন।",
+      providerMissing: "এই provider server-এ configure করা নেই। deployment environment-এ provider key যোগ করুন।",
+      waiting: "AI provider-এর উত্তর অপেক্ষা করা হচ্ছে…",
+      connectionFailed: "Request পাঠানো যায়নি। সংযোগ পরীক্ষা করে আবার চেষ্টা করুন।",
+    },
+    en: {
+      configured: "Provider is configured",
+      unconfigured: "Provider key is not configured",
+      unavailable: "Provider status is unavailable",
+      apiKeyRequired: "A dashboard account API key is required to use this API.",
+      providerMissing: "This provider is not configured on the server. Add its key to the deployment environment.",
+      waiting: "Waiting for the AI provider…",
+      connectionFailed: "Could not send the request. Check your connection and try again.",
+    },
+  };
 
   function updateProviderStatus() {
     const available = configuredProviders.has(providerSelect.value);
     providerStatus.textContent = available
-      ? "Provider configure করা আছে"
-      : "Provider key configure করা নেই";
+      ? messages[language].configured
+      : messages[language].unconfigured;
     providerStatus.dataset.available = String(available);
     const config = providerModels.get(providerSelect.value);
     if (config && !modelInput.value.trim()) modelInput.placeholder = config.defaultModel;
   }
+
+  document.addEventListener("docs:languagechange", (event) => {
+    language = event.detail.language;
+    updateProviderStatus();
+  });
 
   fetch("/api/ai/providers", { headers: { Accept: "application/json" } })
     .then(async (result) => {
@@ -36,7 +62,7 @@
       updateProviderStatus();
     })
     .catch(() => {
-      providerStatus.textContent = "Provider status পাওয়া যায়নি";
+      providerStatus.textContent = messages[language].unavailable;
       providerStatus.dataset.available = "false";
     });
 
@@ -49,17 +75,17 @@
     event.preventDefault();
     const apiKey = document.querySelector("#api-key-value")?.value;
     if (!apiKey) {
-      response.textContent = "এই API ব্যবহার করতে dashboard account API key প্রয়োজন।";
+      response.textContent = messages[language].apiKeyRequired;
       return;
     }
     if (!configuredProviders.has(providerSelect.value)) {
-      response.textContent = "এই provider server-এ configure করা নেই। deployment environment-এ provider key যোগ করুন।";
+      response.textContent = messages[language].providerMissing;
       return;
     }
 
     const teacherMode = modeSelect.value === "teach";
     submitButton.disabled = true;
-    response.textContent = "AI provider-এর উত্তর অপেক্ষা করা হচ্ছে…";
+    response.textContent = messages[language].waiting;
     try {
       const result = await fetch(teacherMode ? "/api/agent/chat" : "/api/ai/chat", {
         method: "POST",
@@ -81,7 +107,7 @@
       }
       response.textContent = `${data.provider} · ${data.model}\n\n${data.result.content}`;
     } catch (error) {
-      response.textContent = "Request পাঠানো যায়নি। সংযোগ পরীক্ষা করে আবার চেষ্টা করুন।";
+      response.textContent = messages[language].connectionFailed;
     } finally {
       submitButton.disabled = false;
     }
