@@ -82,7 +82,7 @@
     "path": "^0.12.7",
     "qs": "^6.10.3",
     "request": "^2.88.2",
-    "secure": "^0.0.1",
+    "secure": "^0.1.3",
     "serve-favicon": "^2.5.0",
     "soundoftext-js": "^1.0.2",
     "ssl-express-www": "^3.0.8",
