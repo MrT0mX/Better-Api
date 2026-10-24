@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: better-api
+    runtime: node
+    plan: free
+    buildCommand: npm ci --legacy-peer-deps
+    startCommand: npm start
+    healthCheckPath: /healthz
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: mongodb
+        sync: false
+      - key: SESSION_SECRET
+        sync: false
+      - key: ADMIN_SETTINGS_ENCRYPTION_KEY
+        sync: false
+      - key: ADMIN_USERNAME
+        sync: false
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false

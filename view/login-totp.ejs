@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="bn">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex,nofollow" />
+    <title>Admin verification | MrTomXxX API</title>
+    <link rel="stylesheet" href="/css/landing.css" />
+    <link rel="stylesheet" href="/css/admin-settings.css" />
+  </head>
+  <body>
+    <main class="settings-main">
+      <section class="settings-hero">
+        <p class="section-kicker">ADMIN TWO-FACTOR VERIFICATION</p>
+        <h1>Login <span>নিশ্চিত করুন</span></h1>
+        <p>Authenticator app-এর বর্তমান ৬ digit code অথবা একটি unused recovery code দিন।</p>
+      </section>
+      <% if (error) { %><div class="notice notice-danger" role="alert"><%= error %></div><% } %>
+      <form class="settings-group" method="post" action="/login/totp" autocomplete="off">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+        <label class="security-label" for="admin-code">Authenticator / recovery code</label>
+        <input class="security-input" id="admin-code" name="code" required autofocus autocomplete="one-time-code" />
+        <button class="button button-primary" type="submit">Verify ও login</button>
+        <p class="setting-note">নিরাপত্তার জন্য verification challenge ৫ মিনিটে expire হবে এবং সর্বোচ্চ ৬ বার চেষ্টা করা যাবে।</p>
+      </form>
+    </main>
+  </body>
+</html>

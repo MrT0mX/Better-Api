@@ -16,7 +16,27 @@ const passwordValidator = require("password-validator");
 const generateApiKey = require("generate-api-key").default;
 const containsEmoji = require("contains-emoji");
 const Recaptcha = require("express-recaptcha").RecaptchaV2;
-const recaptcha = new Recaptcha(recaptcha_key_1, recaptcha_key_2);
+const { getRuntimeConfig } = require("../lib/runtime-config");
+const { decryptValue } = require("../lib/runtime-config");
+const { verifyTotp, hashRecoveryCode } = require("../lib/admin-totp");
+const { recordAdminAudit } = require("../lib/admin-audit");
+const { reserveAdminMfaAttempt } = require("../lib/admin-mfa-rate-limit");
+
+function recaptchaMiddleware(method) {
+  return async (req, res, next) => {
+    try {
+      const config = await getRuntimeConfig();
+      if (!config.recaptcha_key_1 || !config.recaptcha_key_2) return next();
+      const recaptcha = new Recaptcha(config.recaptcha_key_1, config.recaptcha_key_2);
+      return recaptcha.middleware[method](req, res, next);
+    } catch (error) {
+      return next(error);
+    }
+  };
+}
+
+const renderCaptcha = recaptchaMiddleware("render");
+const verifyCaptcha = recaptchaMiddleware("verify");
 
 //_______________________ ┏ Function ┓ _______________________\\
 
@@ -34,7 +54,7 @@ function checkAuth(req, res, next) {
 }
 
 function captchaForgotPassword(req, res, next) {
-  if (req.recaptcha.error) {
+  if (req.recaptcha && req.recaptcha.error) {
     req.flash("error_messages", "reCAPTCHA Tidak Valid");
     res.redirect("/forgot-password");
   } else {
@@ -44,7 +64,7 @@ function captchaForgotPassword(req, res, next) {
 
 function captchaResetPassword(req, res, next) {
   const { token } = req.body;
-  if (req.recaptcha.error) {
+  if (req.recaptcha && req.recaptcha.error) {
     req.flash("error_messages", "reCAPTCHA Tidak Valid");
     res.redirect(`/reset-password?token=${token}`);
   } else {
@@ -53,7 +73,7 @@ function captchaResetPassword(req, res, next) {
 }
 
 function captchaRegister(req, res, next) {
-  if (req.recaptcha.error) {
+  if (req.recaptcha && req.recaptcha.error) {
     req.flash("error_messages", "reCAPTCHA Tidak Valid");
     res.redirect("/signup");
   } else {
@@ -62,7 +82,7 @@ function captchaRegister(req, res, next) {
 }
 
 function captchaLogin(req, res, next) {
-  if (req.recaptcha.error) {
+  if (req.recaptcha && req.recaptcha.error) {
     req.flash("error_messages", "reCAPTCHA Tidak Valid");
     res.redirect("/login");
   } else {
@@ -72,136 +92,246 @@ function captchaLogin(req, res, next) {
 
 //_______________________ ┏ Router ┓ _______________________\\
 
-router.get("/login", recaptcha.middleware.render, (req, res) => {
+router.get("/login", renderCaptcha, (req, res) => {
   if (req.isAuthenticated()) {
-    res.redirect("/docs");
+    res.redirect(req.user.isAdmin ? "/admin/settings" : "/docs");
+  } else if (req.session.adminMfaPending) {
+    res.redirect("/login/totp");
   } else {
     res.render("login", {
       csrfToken: req.csrfToken(),
-      recaptcha: res.recaptcha,
+      recaptcha: res.recaptcha || null,
     });
   }
 });
 
 router.post(
   "/login",
-  recaptcha.middleware.verify,
+  verifyCaptcha,
   captchaLogin,
   (req, res, next) => {
-    passport.authenticate("local", {
-      failureRedirect: "/login",
-      successRedirect: "/docs",
-      failureFlash: true,
+    passport.authenticate("local", { failureFlash: true }, async (error, account, info) => {
+      if (error) return next(error);
+      if (!account) {
+        req.flash("error", info?.message || "Login failed.");
+        return res.redirect("/login");
+      }
+      if (account.isAdmin && account.adminMfaEnabled) {
+        return req.session.regenerate((sessionError) => {
+          if (sessionError) return next(sessionError);
+          req.session.adminMfaPending = {
+            userId: String(account._id),
+            expiresAt: Date.now() + 5 * 60 * 1000,
+            attempts: 0,
+          };
+          return req.session.save((saveError) => {
+            if (saveError) return next(saveError);
+            return res.redirect("/login/totp");
+          });
+        });
+      }
+      try {
+        if (account.isAdmin) {
+          await recordAdminAudit(req, {
+            actorId: account._id,
+            actor: account.username,
+            action: "admin.login",
+            details: { mfa: "disabled" },
+          });
+        }
+        return req.logIn(account, (loginError) => {
+          if (loginError) return next(loginError);
+          return res.redirect(account.isAdmin ? "/admin/settings" : "/docs");
+        });
+      } catch (auditError) {
+        return next(auditError);
+      }
     })(req, res, next);
   }
 );
 
-router.get("/signup", recaptcha.middleware.render, (req, res) => {
+router.get("/login/totp", (req, res) => {
+  const challenge = req.session.adminMfaPending;
+  if (!challenge || challenge.expiresAt < Date.now() || challenge.attempts >= 6) {
+    delete req.session.adminMfaPending;
+    req.flash("error", "Admin verification session শেষ হয়েছে। আবার login করুন।");
+    return res.redirect("/login");
+  }
+  return res.render("login-totp", { csrfToken: req.csrfToken() });
+});
+
+router.post("/login/totp", async (req, res, next) => {
+  const challenge = req.session.adminMfaPending;
+  if (!challenge || challenge.expiresAt < Date.now() || challenge.attempts >= 6) {
+    delete req.session.adminMfaPending;
+    req.flash("error", "Admin verification session শেষ হয়েছে। আবার login করুন।");
+    return res.redirect("/login");
+  }
+
+  try {
+    const attempt = await reserveAdminMfaAttempt(challenge.userId);
+    if (!attempt) {
+      req.flash("error", "Admin MFA-তে অনেকবার চেষ্টা হয়েছে। এক মিনিট অপেক্ষা করে আবার চেষ্টা করুন।");
+      return res.status(429).redirect("/login/totp");
+    }
+    const admin = await user.findOne({
+      _id: challenge.userId,
+      isAdmin: true,
+      isVerified: true,
+      adminMfaEnabled: true,
+    }).select("+adminMfaSecret adminMfaRecoveryHashes adminMfaLastStep username");
+    let verified = false;
+    if (admin?.adminMfaSecret) {
+      const secret = decryptValue(admin.adminMfaSecret);
+      const matchedStep = verifyTotp(secret, String(req.body.code || ""));
+      if (matchedStep !== null) {
+        const updated = await user.updateOne(
+          { _id: admin._id, adminMfaEnabled: true, adminMfaLastStep: { $lt: matchedStep } },
+          { $set: { adminMfaLastStep: matchedStep } }
+        );
+        verified = updated.modifiedCount === 1;
+      } else {
+        const recoveryHash = hashRecoveryCode(String(req.body.code || ""));
+        const consumed = await user.updateOne(
+          { _id: admin._id, adminMfaRecoveryHashes: recoveryHash },
+          { $pull: { adminMfaRecoveryHashes: recoveryHash } }
+        );
+        verified = consumed.modifiedCount === 1;
+      }
+    }
+
+    if (!verified) {
+      challenge.attempts += 1;
+      await recordAdminAudit(req, {
+        actorId: challenge.userId,
+        actor: "admin",
+        action: "admin.mfa.login",
+        outcome: "failure",
+      });
+      req.flash("error", "কোডটি সঠিক নয় বা ইতিমধ্যে ব্যবহার হয়েছে।");
+      return res.redirect(challenge.attempts >= 6 ? "/login" : "/login/totp");
+    }
+
+    await recordAdminAudit(req, {
+      actorId: admin._id,
+      actor: admin.username,
+      action: "admin.login",
+      details: { mfa: "verified" },
+    });
+    delete req.session.adminMfaPending;
+    return req.session.regenerate((sessionError) => {
+      if (sessionError) return next(sessionError);
+      return req.logIn(admin, (loginError) => {
+        if (loginError) return next(loginError);
+        req.session.adminMfaVerifiedUserId = String(admin._id);
+        return res.redirect("/admin/settings");
+      });
+    });
+  } catch (error) {
+    return next(error);
+  }
+});
+
+router.get("/signup", renderCaptcha, (req, res) => {
   if (req.isAuthenticated()) {
     res.redirect("/docs");
   } else {
     res.render("signup", {
       csrfToken: req.csrfToken(),
-      recaptcha: res.recaptcha,
+      recaptcha: res.recaptcha || null,
     });
   }
 });
 
 router.post(
   "/signup",
-  recaptcha.middleware.verify,
+  verifyCaptcha,
   captchaRegister,
-  async (req, res) => {
-    const { email, username, password, confirmpassword } = req.body;
-    var createpw = new passwordValidator();
-    createpw
-      .is()
-      .min(8)
-      .is()
-      .max(30)
-      .has()
-      .uppercase()
-      .has()
-      .lowercase()
-      .has()
-      .digits()
-      .has()
-      .not()
-      .spaces()
-      .is()
-      .not()
-      .oneOf(["Passw0rd", "Password123"]);
+  async (req, res, next) => {
+    try {
+      const { email, username, password, confirmpassword } = req.body;
+      if (
+        typeof email !== "string" ||
+        typeof username !== "string" ||
+        typeof password !== "string" ||
+        typeof confirmpassword !== "string" ||
+        !email ||
+        !username ||
+        !password ||
+        !confirmpassword
+      ) {
+        req.flash("error_messages", "All Fields Required !");
+        return res.redirect("/signup");
+      }
 
-    var checkpw = createpw.validate(password);
+      const normalizedEmail = email.trim().toLowerCase();
+      const createpw = new passwordValidator();
+      createpw
+        .is()
+        .min(8)
+        .is()
+        .max(30)
+        .has()
+        .uppercase()
+        .has()
+        .lowercase()
+        .has()
+        .digits()
+        .has()
+        .not()
+        .spaces()
+        .is()
+        .not()
+        .oneOf(["Passw0rd", "Password123"]);
 
-    if (!usetempemail) {
-      var checkemail = await isGmail(email);
-    } else {
-      var checkemail = true;
-    }
+      const checkpw = createpw.validate(password);
+      const checkemail = usetempemail ? true : await isGmail(normalizedEmail);
 
-    if (!email || !username || !password || !confirmpassword) {
-      req.flash("error_messages", "All Fields Required !");
-      res.redirect("/signup");
-    } else if (password != confirmpassword) {
-      req.flash("error_messages", "Password Don't Match !");
-      res.redirect("/signup");
-    } else if (!checkpw) {
-      req.flash(
-        "error_messages",
-        "Password Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters,no emoji and no Space Limit 30 text"
-      );
-      res.redirect("/signup");
-    } else if (containsEmoji(password)) {
-      req.flash(
-        "error_messages",
-        "Password Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters,no emoji and no Space Limit 30 text"
-      );
-      res.redirect("/signup");
-    } else if (username.length < 4) {
-      req.flash("error_messages", "Username cannot be less than 4 characters");
-      res.redirect("/signup");
-    } else if (username.length > 20) {
-      req.flash("error_messages", "Username cannot exceed 20 characters");
-      res.redirect("/signup");
-    } else if (containsEmoji(username)) {
-      req.flash("error_messages", "Username Can't Use Emoji");
-      res.redirect("/signup");
-    } else if (!checkemail) {
-      req.flash("error_messages", "Sorry, We Only Accept Email From Gmail");
-      res.redirect("/signup");
-    } else {
-      user.findOne(
-        { $or: [{ email: email }, { username: username }] },
-        function (err, data) {
-          if (err) throw err;
-          if (data) {
-            req.flash("error_messages", "User Exists, Try Logging In !");
-            res.redirect("/signup");
-          } else {
-            bcryptjs.genSalt(12, (err, salt) => {
-              if (err) throw err;
-              bcryptjs.hash(password, salt, (err, hash) => {
-                if (err) throw err;
-                user({
-                  username: username,
-                  email: email,
-                  password: hash,
-                  apikey: generateApiKey({ method: "bytes", length: 8 }),
-                  limitApikey: LimitApikey,
-                }).save((err, data) => {
-                  if (err) throw err;
-                  req.flash(
-                    "success_messages",
-                    "Account has been created, please login"
-                  );
-                  res.redirect("/login");
-                });
-              });
-            });
-          }
-        }
-      );
+      if (password != confirmpassword) {
+        req.flash("error_messages", "Password Don't Match !");
+        return res.redirect("/signup");
+      } else if (!checkpw || containsEmoji(password)) {
+        req.flash(
+          "error_messages",
+          "Password Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters,no emoji and no Space Limit 30 text"
+        );
+        return res.redirect("/signup");
+      } else if (username.length < 4) {
+        req.flash("error_messages", "Username cannot be less than 4 characters");
+        return res.redirect("/signup");
+      } else if (username.length > 20) {
+        req.flash("error_messages", "Username cannot exceed 20 characters");
+        return res.redirect("/signup");
+      } else if (containsEmoji(username)) {
+        req.flash("error_messages", "Username Can't Use Emoji");
+        return res.redirect("/signup");
+      } else if (!checkemail) {
+        req.flash("error_messages", "Sorry, We Only Accept Email From Gmail");
+        return res.redirect("/signup");
+      }
+
+      const existingUser = await user.findOne({
+        $or: [{ email: normalizedEmail }, { username }],
+      });
+      if (existingUser) {
+        req.flash("error_messages", "User Exists, Try Logging In !");
+        return res.redirect("/signup");
+      }
+
+      const salt = await bcryptjs.genSalt(12);
+      const hash = await bcryptjs.hash(password, salt);
+      await new user({
+        username,
+        email: normalizedEmail,
+        password: hash,
+        apikey: generateApiKey({ method: "bytes", length: 8 }),
+        limitApikey: LimitApikey,
+      }).save();
+
+      req.flash("success_messages", "Account has been created, please login");
+      return res.redirect("/login");
+    } catch (error) {
+      return next(error);
     }
   }
 );
@@ -262,18 +392,18 @@ router.get("/verifyemail", async (req, res) => {
 
 router.get(
   "/forgot-password",
-  recaptcha.middleware.render,
+  renderCaptcha,
   async (req, res) => {
     res.render("forgot-password.ejs", {
       csrfToken: req.csrfToken(),
-      recaptcha: res.recaptcha,
+      recaptcha: res.recaptcha || null,
     });
   }
 );
 
 router.post(
   "/forgot-password",
-  recaptcha.middleware.verify,
+  verifyCaptcha,
   captchaForgotPassword,
   async (req, res) => {
     const { email } = req.body;
@@ -314,7 +444,7 @@ router.post(
   }
 );
 
-router.get("/reset-password", recaptcha.middleware.render, async (req, res) => {
+router.get("/reset-password", renderCaptcha, async (req, res) => {
   const token = req.query.token;
 
   if (token) {
@@ -322,7 +452,7 @@ router.get("/reset-password", recaptcha.middleware.render, async (req, res) => {
     if (check) {
       res.render("forgot-password.ejs", {
         csrfToken: req.csrfToken(),
-        recaptcha: res.recaptcha,
+        recaptcha: res.recaptcha || null,
         reset: true,
         email: check.email,
         token: token,
@@ -338,7 +468,7 @@ router.get("/reset-password", recaptcha.middleware.render, async (req, res) => {
 
 router.post(
   "/reset-password",
-  recaptcha.middleware.verify,
+  verifyCaptcha,
   captchaResetPassword,
   async (req, res) => {
     const { password, confirmpassword, email, token } = req.body;

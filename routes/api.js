@@ -22,8 +22,11 @@ const { fetchJson, getBuffer, runtime } = require("../lib/myfunc");
 const Canvacord = require("canvacord");
 const isNumber = require("is-number");
 const User = require("../model/user");
-const dataweb = require("../model/DataWeb");
 const router = express.Router();
+const asyncHandler = require("../lib/async-handler");
+const logger = require("../lib/logger");
+const cekKey = require("../lib/api-key");
+const { getRuntimeConfig } = require("../lib/runtime-config");
 
 //_______________________ ┏  Info  ┓ _______________________\\
 //
@@ -57,42 +60,9 @@ const router = express.Router();
 
 //―――――――――――――――――――――――――――――――――――――――――― ┏  Function ┓ ―――――――――――――――――――――――――――――――――――――――――― \\
 
-async function cekKey(req, res, next) {
-  var apikey = req.query.apikey;
-  if (!apikey)
-    return res.json({
-      status: false,
-      creator: `${creator}`,
-      message: "[!] Masukan parameter apikey",
-    });
-
-  let db = await User.findOne({ apikey: apikey });
-  if (db === null) {
-    return res.json({
-      status: false,
-      creator: `${creator}`,
-      message: "[!] Apikey Tidak Ditemukan",
-    });
-  } else if (!db.isVerified) {
-    return res.send(loghandler.verify);
-  } else if (db.limitApikey === 0) {
-    return res.json({
-      status: false,
-      creator: `${creator}`,
-      message: "[!] Apikey Sudah Habis",
-    });
-  } else {
-    return next();
-  }
-}
-
-async function limitapikey(apikey) {
-  await dataweb.updateOne({}, { $inc: { RequestToday: 1 } });
-  await User.findOneAndUpdate(
-    { apikey: apikey },
-    { $inc: { limitApikey: -1 } },
-    { upsert: true, new: true }
-  );
+function sendServiceError(res) {
+  logger.error(`${res.req.method} ${res.req.path} failed while processing an API request.`);
+  return res.status(loghandler.error.code).json(loghandler.error);
 }
 
 //―――――――――――――――――――――――――――――――――――――――――― ┏  Api Test  ┓ ―――――――――――――――――――――――――――――――――――――――――― \\
@@ -100,7 +70,7 @@ router.get("/test", async (req, res) => {
   res.json({
     status: 200,
     creator: `${creator}`,
-    result: `Hello`,
+    result: "হ্যালো! API সচল আছে।",
     method: `GET`,
   });
 });
@@ -114,7 +84,7 @@ router.get("/cekapikey", cekKey, async (req, res) => {
       username: `${db.username}`,
       email: `${db.email}`,
       apikey: `${db.apikey}`,
-      limit: `${db.limitApikey}`,
+      limit: db.isAdmin ? "unlimited" : `${db.limitApikey}`,
     },
   });
 });
@@ -132,8 +102,7 @@ router.get("/api/dowloader/fbdown", cekKey, async (req, res, next) => {
   mtx
     .fbdown(url)
     .then((data) => {
-      if (!data.Normal_video) return res.json(loghandler.noturl);
-      limitapikey(req.query.apikey);
+      if (!data.Normal_video) return res.status(loghandler.noturl.code).json(loghandler.noturl);
       res.json({
         status: true,
         creator: `${creator}`,
@@ -141,7 +110,7 @@ router.get("/api/dowloader/fbdown", cekKey, async (req, res, next) => {
       });
     })
     .catch((e) => {
-      res.json(loghandler.error);
+      sendServiceError(res);
     });
 });
 
@@ -157,8 +126,7 @@ router.get("/api/dowloader/twitter", cekKey, async (req, res, next) => {
   mtx
     .twitter(url)
     .then((data) => {
-      if (!data.thumb) res.json(loghandler.noturl);
-      limitapikey(req.query.apikey);
+      if (!data.thumb) res.status(loghandler.noturl.code).json(loghandler.noturl);
       res.json({
         status: true,
         creator: `${creator}`,
@@ -166,7 +134,7 @@ router.get("/api/dowloader/twitter", cekKey, async (req, res, next) => {
       });
     })
     .catch((e) => {
-      res.json(loghandler.error);
+      sendServiceError(res);
     });
 });
 
@@ -182,8 +150,7 @@ router.get("/api/dowloader/tikok", cekKey, async (req, res, next) => {
   mtx
     .musically(url)
     .then((data) => {
-      if (!data) return res.json(loghandler.noturl);
-      limitapikey(req.query.apikey);
+      if (!data) return res.status(loghandler.noturl.code).json(loghandler.noturl);
       res.json({
         status: true,
         creator: `${creator}`,
@@ -191,7 +158,7 @@ router.get("/api/dowloader/tikok", cekKey, async (req, res, next) => {
       });
     })
     .catch((e) => {
-      res.json(loghandler.noturl);
+      res.status(loghandler.noturl.code).json(loghandler.noturl);
     });
 });
 
@@ -208,13 +175,12 @@ router.get("/api/dowloader/igdowloader", cekKey, async (req, res, next) => {
       url
     )
   )
-    return res.json(loghandler.noturl);
+    return res.status(loghandler.noturl.code).json(loghandler.noturl);
 
   mtx
     .igdl(url)
     .then(async (data) => {
-      if (!data) return res.json(loghandler.instgram);
-      limitapikey(req.query.apikey);
+      if (!data) return res.status(loghandler.instgram.code).json(loghandler.instgram);
       res.json({
         status: true,
         creator: `${creator}`,
@@ -222,7 +188,7 @@ router.get("/api/dowloader/igdowloader", cekKey, async (req, res, next) => {
       });
     })
     .catch((e) => {
-      res.json(loghandler.noturl);
+      res.status(loghandler.noturl.code).json(loghandler.noturl);
     });
 });
 
@@ -237,8 +203,7 @@ router.get("/api/dowloader/yt", cekKey, async (req, res, next) => {
 
   var mp3 = await ytMp3(url);
   var mp4 = await ytMp4(url);
-  if (!mp4 || !mp3) return res.json(loghandler.noturl);
-  limitapikey(req.query.apikey);
+  if (!mp4 || !mp3) return res.status(loghandler.noturl.code).json(loghandler.noturl);
   res.json({
     status: true,
     creator: `${creator}`,
@@ -274,8 +239,7 @@ router.get("/api/dowloader/soundcloud", cekKey, async (req, res, next) => {
   mtx
     .soundcloud(url)
     .then((data) => {
-      if (!data.download) return res.json(loghandler.noturl);
-      limitapikey(req.query.apikey);
+      if (!data.download) return res.status(loghandler.noturl.code).json(loghandler.noturl);
       res.json({
         status: true,
         creator: `${creator}`,
@@ -283,7 +247,7 @@ router.get("/api/dowloader/soundcloud", cekKey, async (req, res, next) => {
       });
     })
     .catch((e) => {
-      res.json(loghandler.error);
+      sendServiceError(res);
     });
 });
 
@@ -299,8 +263,7 @@ router.get("/api/dowloader/mediafire", cekKey, async (req, res, next) => {
   mtx
     .mediafiredl(url)
     .then(async (data) => {
-      if (!data) return res.json(loghandler.noturl);
-      limitapikey(req.query.apikey);
+      if (!data) return res.status(loghandler.noturl.code).json(loghandler.noturl);
       res.json({
         status: true,
         creator: `${creator}`,
@@ -308,7 +271,7 @@ router.get("/api/dowloader/mediafire", cekKey, async (req, res, next) => {
       });
     })
     .catch((e) => {
-      res.json(loghandler.noturl);
+      res.status(loghandler.noturl.code).json(loghandler.noturl);
     });
 });
 
@@ -324,8 +287,7 @@ router.get("/api/dowloader/sfilemobi", cekKey, async (req, res, next) => {
   mtx
     .sfilemobi(url)
     .then(async (data) => {
-      if (!data) return res.json(loghandler.noturl);
-      limitapikey(req.query.apikey);
+      if (!data) return res.status(loghandler.noturl.code).json(loghandler.noturl);
       res.json({
         status: true,
         creator: `${creator}`,
@@ -333,7 +295,7 @@ router.get("/api/dowloader/sfilemobi", cekKey, async (req, res, next) => {
       });
     })
     .catch((e) => {
-      res.json(loghandler.noturl);
+      res.status(loghandler.noturl.code).json(loghandler.noturl);
     });
 });
 
@@ -349,8 +311,7 @@ router.get("/api/dowloader/zippyshare", cekKey, async (req, res, next) => {
   mtx
     .zippyshare(url)
     .then(async (data) => {
-      if (!data) return res.json(loghandler.noturl);
-      limitapikey(req.query.apikey);
+      if (!data) return res.status(loghandler.noturl.code).json(loghandler.noturl);
       res.json({
         status: true,
         creator: `${creator}`,
@@ -358,7 +319,7 @@ router.get("/api/dowloader/zippyshare", cekKey, async (req, res, next) => {
       });
     })
     .catch((e) => {
-      res.json(loghandler.noturl);
+      res.status(loghandler.noturl.code).json(loghandler.noturl);
     });
 });
 
@@ -371,12 +332,11 @@ router.get("/api/dowloader/telesticker", cekKey, async (req, res, next) => {
       message: "[!] Masukan parameter url",
     });
   if (!url.match(/(https:\/\/t.me\/addstickers\/)/gi))
-    return res.json(loghandler.noturl);
+    return res.status(loghandler.noturl.code).json(loghandler.noturl);
 
   mtx
     .telesticker(url)
     .then((data) => {
-      limitapikey(req.query.apikey);
       res.json({
         status: true,
         creator: `${creator}`,
@@ -384,7 +344,7 @@ router.get("/api/dowloader/telesticker", cekKey, async (req, res, next) => {
       });
     })
     .catch((e) => {
-      res.json(loghandler.error);
+      sendServiceError(res);
     });
 });
 
@@ -404,12 +364,11 @@ router.get("/api/textpro/pencil", cekKey, async (req, res, next) => {
       [text1]
     )
     .then((data) => {
-      limitapikey(req.query.apikey);
       res.set({ "Content-Type": "image/png" });
       res.send(data);
     })
     .catch((err) => {
-      res.json(loghandler.error);
+      sendServiceError(res);
     });
 });
 
@@ -427,12 +386,11 @@ router.get("/api/textpro/glitch", cekKey, async (req, res, next) => {
       [text1]
     )
     .then((data) => {
-      limitapikey(req.query.apikey);
       res.set({ "Content-Type": "image/png" });
       res.send(data);
     })
     .catch((err) => {
-      res.json(loghandler.error);
+      sendServiceError(res);
     });
 });
 
@@ -450,12 +408,11 @@ router.get("/api/textpro/blackpink", cekKey, async (req, res, next) => {
       [text1]
     )
     .then((data) => {
-      limitapikey(req.query.apikey);
       res.set({ "Content-Type": "image/png" });
       res.send(data);
     })
     .catch((err) => {
-      res.json(loghandler.error);
+      sendServiceError(res);
     });
 });
 
@@ -473,12 +430,11 @@ router.get("/api/textpro/berry", cekKey, async (req, res, next) => {
       [text1]
     )
     .then((data) => {
-      limitapikey(req.query.apikey);
       res.set({ "Content-Type": "image/png" });
       res.send(data);
     })
     .catch((err) => {
-      res.json(loghandler.error);
+      sendServiceError(res);
     });
 });
 
@@ -495,12 +451,11 @@ router.get("/api/textpro/neon", cekKey, async (req, res, next) => {
       text1,
     ])
     .then((data) => {
-      limitapikey(req.query.apikey);
       res.set({ "Content-Type": "image/png" });
       res.send(data);
     })
     .catch((err) => {
-      res.json(loghandler.error);
+      sendServiceError(res);
     });
 });
 
@@ -518,12 +473,11 @@ router.get("/api/textpro/logobear", cekKey, async (req, res, next) => {
       [text1]
     )
     .then((data) => {
-      limitapikey(req.query.apikey);
       res.set({ "Content-Type": "image/png" });
       res.send(data);
     })
     .catch((err) => {
-      res.json(loghandler.error);
+      sendServiceError(res);
     });
 });
 
@@ -540,12 +494,11 @@ router.get("/api/textpro/3dchristmas", cekKey, async (req, res, next) => {
       text1,
     ])
     .then((data) => {
-      limitapikey(req.query.apikey);
       res.set({ "Content-Type": "image/png" });
       res.send(data);
     })
     .catch((err) => {
-      res.json(loghandler.error);
+      sendServiceError(res);
     });
 });
 
@@ -563,12 +516,11 @@ router.get("/api/textpro/thunder", cekKey, async (req, res, next) => {
       [text1]
     )
     .then((data) => {
-      limitapikey(req.query.apikey);
       res.set({ "Content-Type": "image/png" });
       res.send(data);
     })
     .catch((err) => {
-      res.json(loghandler.error);
+      sendServiceError(res);
     });
 });
 
@@ -583,12 +535,11 @@ router.get("/api/textpro/3dboxtext", cekKey, async (req, res, next) => {
   mtx
     .textpro("https://textpro.me/3d-box-text-effect-online-880.html", [text1])
     .then((data) => {
-      limitapikey(req.query.apikey);
       res.set({ "Content-Type": "image/png" });
       res.send(data);
     })
     .catch((err) => {
-      res.json(loghandler.error);
+      sendServiceError(res);
     });
 });
 
@@ -613,12 +564,11 @@ router.get("/api/textpro/glitch2", cekKey, async (req, res, next) => {
       [text1, text2]
     )
     .then((data) => {
-      limitapikey(req.query.apikey);
       res.set({ "Content-Type": "image/png" });
       res.send(data);
     })
     .catch((err) => {
-      res.json(loghandler.error);
+      sendServiceError(res);
     });
 });
 
@@ -643,12 +593,11 @@ router.get("/api/textpro/glitchtiktok", cekKey, async (req, res, next) => {
       [text1, text2]
     )
     .then((data) => {
-      limitapikey(req.query.apikey);
       res.set({ "Content-Type": "image/png" });
       res.send(data);
     })
     .catch((err) => {
-      res.json(loghandler.error);
+      sendServiceError(res);
     });
 });
 
@@ -676,12 +625,11 @@ router.get(
         [text1, text2]
       )
       .then((data) => {
-        limitapikey(req.query.apikey);
         res.set({ "Content-Type": "image/png" });
         res.send(data);
       })
       .catch((err) => {
-        res.json(loghandler.error);
+        sendServiceError(res);
       });
   }
 );
@@ -707,12 +655,11 @@ router.get("/api/textpro/marvel-studios", cekKey, async (req, res, next) => {
       [text1, text2]
     )
     .then((data) => {
-      limitapikey(req.query.apikey);
       res.set({ "Content-Type": "image/png" });
       res.send(data);
     })
     .catch((err) => {
-      res.json(loghandler.error);
+      sendServiceError(res);
     });
 });
 
@@ -737,12 +684,11 @@ router.get("/api/textpro/ninja-logo", cekKey, async (req, res, next) => {
       text2,
     ])
     .then((data) => {
-      limitapikey(req.query.apikey);
       res.set({ "Content-Type": "image/png" });
       res.send(data);
     })
     .catch((err) => {
-      res.json(loghandler.error);
+      sendServiceError(res);
     });
 });
 
@@ -760,12 +706,11 @@ router.get("/api/textpro/green-horror", cekKey, async (req, res, next) => {
       [text1]
     )
     .then((data) => {
-      limitapikey(req.query.apikey);
       res.set({ "Content-Type": "image/png" });
       res.send(data);
     })
     .catch((err) => {
-      res.json(loghandler.error);
+      sendServiceError(res);
     });
 });
 
@@ -783,12 +728,11 @@ router.get("/api/textpro/magma", cekKey, async (req, res, next) => {
       [text1]
     )
     .then((data) => {
-      limitapikey(req.query.apikey);
       res.set({ "Content-Type": "image/png" });
       res.send(data);
     })
     .catch((err) => {
-      res.json(loghandler.error);
+      sendServiceError(res);
     });
 });
 
@@ -806,12 +750,11 @@ router.get("/api/textpro/3d-neon-light", cekKey, async (req, res, next) => {
       [text1]
     )
     .then((data) => {
-      limitapikey(req.query.apikey);
       res.set({ "Content-Type": "image/png" });
       res.send(data);
     })
     .catch((err) => {
-      res.json(loghandler.error);
+      sendServiceError(res);
     });
 });
 
@@ -829,12 +772,11 @@ router.get("/api/textpro/3d-orange-juice", cekKey, async (req, res, next) => {
       [text1]
     )
     .then((data) => {
-      limitapikey(req.query.apikey);
       res.set({ "Content-Type": "image/png" });
       res.send(data);
     })
     .catch((err) => {
-      res.json(loghandler.error);
+      sendServiceError(res);
     });
 });
 
@@ -849,12 +791,11 @@ router.get("/api/textpro/chocolate-cake", cekKey, async (req, res, next) => {
   mtx
     .textpro("https://textpro.me/chocolate-cake-text-effect-890.html", [text1])
     .then((data) => {
-      limitapikey(req.query.apikey);
       res.set({ "Content-Type": "image/png" });
       res.send(data);
     })
     .catch((err) => {
-      res.json(loghandler.error);
+      sendServiceError(res);
     });
 });
 
@@ -871,12 +812,11 @@ router.get("/api/textpro/strawberry", cekKey, async (req, res, next) => {
       text1,
     ])
     .then((data) => {
-      limitapikey(req.query.apikey);
       res.set({ "Content-Type": "image/png" });
       res.send(data);
     })
     .catch((err) => {
-      res.json(loghandler.error);
+      sendServiceError(res);
     });
 });
 
@@ -896,12 +836,11 @@ router.get("/api/photooxy/flaming", cekKey, async (req, res, next) => {
       [text1]
     )
     .then((data) => {
-      limitapikey(req.query.apikey);
       res.set({ "Content-Type": "image/png" });
       res.send(data);
     })
     .catch((err) => {
-      res.json(loghandler.error);
+      sendServiceError(res);
     });
 });
 
@@ -919,12 +858,11 @@ router.get("/api/photooxy/shadow-sky", cekKey, async (req, res, next) => {
       [text1]
     )
     .then((data) => {
-      limitapikey(req.query.apikey);
       res.set({ "Content-Type": "image/png" });
       res.send(data);
     })
     .catch((err) => {
-      res.json(loghandler.error);
+      sendServiceError(res);
     });
 });
 
@@ -942,12 +880,11 @@ router.get("/api/photooxy/metallic", cekKey, async (req, res, next) => {
       [text1]
     )
     .then((data) => {
-      limitapikey(req.query.apikey);
       res.set({ "Content-Type": "image/png" });
       res.send(data);
     })
     .catch((err) => {
-      res.json(loghandler.error);
+      sendServiceError(res);
     });
 });
 
@@ -965,12 +902,11 @@ router.get("/api/photooxy/naruto", cekKey, async (req, res, next) => {
       [text1]
     )
     .then((data) => {
-      limitapikey(req.query.apikey);
       res.set({ "Content-Type": "image/png" });
       res.send(data);
     })
     .catch((err) => {
-      res.json(loghandler.error);
+      sendServiceError(res);
     });
 });
 
@@ -995,12 +931,11 @@ router.get("/api/photooxy/pubg", cekKey, async (req, res, next) => {
       [text1, text2]
     )
     .then((data) => {
-      limitapikey(req.query.apikey);
       res.set({ "Content-Type": "image/png" });
       res.send(data);
     })
     .catch((err) => {
-      res.json(loghandler.error);
+      sendServiceError(res);
     });
 });
 
@@ -1018,12 +953,11 @@ router.get("/api/photooxy/under-grass", cekKey, async (req, res, next) => {
       [text1]
     )
     .then((data) => {
-      limitapikey(req.query.apikey);
       res.set({ "Content-Type": "image/png" });
       res.send(data);
     })
     .catch((err) => {
-      res.json(loghandler.error);
+      sendServiceError(res);
     });
 });
 
@@ -1041,12 +975,11 @@ router.get("/api/photooxy/harry-potter", cekKey, async (req, res, next) => {
       [text1]
     )
     .then((data) => {
-      limitapikey(req.query.apikey);
       res.set({ "Content-Type": "image/png" });
       res.send(data);
     })
     .catch((err) => {
-      res.json(loghandler.error);
+      sendServiceError(res);
     });
 });
 
@@ -1067,12 +1000,11 @@ router.get(
         [text1]
       )
       .then((data) => {
-        limitapikey(req.query.apikey);
         res.set({ "Content-Type": "image/png" });
         res.send(data);
       })
       .catch((err) => {
-        res.json(loghandler.error);
+        sendServiceError(res);
       });
   }
 );
@@ -1091,12 +1023,11 @@ router.get("/api/photooxy/picture-of-love", cekKey, async (req, res, next) => {
       [text1]
     )
     .then((data) => {
-      limitapikey(req.query.apikey);
       res.set({ "Content-Type": "image/png" });
       res.send(data);
     })
     .catch((err) => {
-      res.json(loghandler.error);
+      sendServiceError(res);
     });
 });
 
@@ -1114,12 +1045,11 @@ router.get("/api/photooxy/coffee-cup", cekKey, async (req, res, next) => {
       [text1]
     )
     .then((data) => {
-      limitapikey(req.query.apikey);
       res.set({ "Content-Type": "image/png" });
       res.send(data);
     })
     .catch((err) => {
-      res.json(loghandler.error);
+      sendServiceError(res);
     });
 });
 
@@ -1137,12 +1067,11 @@ router.get("/api/photooxy/butterfly", cekKey, async (req, res, next) => {
       [text1]
     )
     .then((data) => {
-      limitapikey(req.query.apikey);
       res.set({ "Content-Type": "image/png" });
       res.send(data);
     })
     .catch((err) => {
-      res.json(loghandler.error);
+      sendServiceError(res);
     });
 });
 
@@ -1160,12 +1089,11 @@ router.get("/api/photooxy/night-sky", cekKey, async (req, res, next) => {
       [text1]
     )
     .then((data) => {
-      limitapikey(req.query.apikey);
       res.set({ "Content-Type": "image/png" });
       res.send(data);
     })
     .catch((err) => {
-      res.json(loghandler.error);
+      sendServiceError(res);
     });
 });
 
@@ -1183,12 +1111,11 @@ router.get("/api/photooxy/carved-wood", cekKey, async (req, res, next) => {
       [text1]
     )
     .then((data) => {
-      limitapikey(req.query.apikey);
       res.set({ "Content-Type": "image/png" });
       res.send(data);
     })
     .catch((err) => {
-      res.json(loghandler.error);
+      sendServiceError(res);
     });
 });
 
@@ -1209,12 +1136,11 @@ router.get(
         [text1]
       )
       .then((data) => {
-        limitapikey(req.query.apikey);
         res.set({ "Content-Type": "image/png" });
         res.send(data);
       })
       .catch((err) => {
-        res.json(loghandler.error);
+        sendServiceError(res);
       });
   }
 );
@@ -1233,12 +1159,11 @@ router.get("/api/photooxy/sweet-candy", cekKey, async (req, res, next) => {
       [text1]
     )
     .then((data) => {
-      limitapikey(req.query.apikey);
       res.set({ "Content-Type": "image/png" });
       res.send(data);
     })
     .catch((err) => {
-      res.json(loghandler.error);
+      sendServiceError(res);
     });
 });
 
@@ -1264,7 +1189,6 @@ router.get("/api/soundoftext", cekKey, async (req, res, next) => {
   textto.sounds
     .create({ text: text1, voice: lan })
     .then((soundUrl) => {
-      limitapikey(req.query.apikey);
       res.json({
         status: true,
         creator: `${creator}`,
@@ -1272,7 +1196,7 @@ router.get("/api/soundoftext", cekKey, async (req, res, next) => {
       });
     })
     .catch((e) => {
-      res.json(loghandler.error);
+      sendServiceError(res);
     });
 });
 
@@ -1289,8 +1213,7 @@ router.get("/api/search/linkgroupwa", cekKey, async (req, res, next) => {
   mtx
     .linkwa(text1)
     .then((data) => {
-      if (!data[0]) return res.json(loghandler.notfound);
-      limitapikey(req.query.apikey);
+      if (!data[0]) return res.status(loghandler.notfound.code).json(loghandler.notfound);
       res.json({
         status: true,
         creator: `${creator}`,
@@ -1298,7 +1221,7 @@ router.get("/api/search/linkgroupwa", cekKey, async (req, res, next) => {
       });
     })
     .catch((err) => {
-      res.json(loghandler.notfound);
+      res.status(loghandler.notfound.code).json(loghandler.notfound);
     });
 });
 
@@ -1313,8 +1236,7 @@ router.get("/api/search/pinterest", cekKey, async (req, res, next) => {
   mtx
     .pinterest(text1)
     .then((data) => {
-      if (!data[0]) return res.json(loghandler.notfound);
-      limitapikey(req.query.apikey);
+      if (!data[0]) return res.status(loghandler.notfound.code).json(loghandler.notfound);
       res.json({
         status: true,
         creator: `${creator}`,
@@ -1322,7 +1244,7 @@ router.get("/api/search/pinterest", cekKey, async (req, res, next) => {
       });
     })
     .catch((err) => {
-      res.json(loghandler.notfound);
+      res.status(loghandler.notfound.code).json(loghandler.notfound);
     });
 });
 
@@ -1337,8 +1259,7 @@ router.get("/api/search/ringtone", cekKey, async (req, res, next) => {
   mtx
     .ringtone(text1)
     .then((data) => {
-      if (!data) return res.json(loghandler.notfound);
-      limitapikey(req.query.apikey);
+      if (!data) return res.status(loghandler.notfound.code).json(loghandler.notfound);
       res.json({
         status: true,
         creator: `${creator}`,
@@ -1346,7 +1267,7 @@ router.get("/api/search/ringtone", cekKey, async (req, res, next) => {
       });
     })
     .catch((err) => {
-      res.json(loghandler.notfound);
+      res.status(loghandler.notfound.code).json(loghandler.notfound);
     });
 });
 
@@ -1361,8 +1282,7 @@ router.get("/api/search/wikimedia", cekKey, async (req, res, next) => {
   mtx
     .wikimedia(text1)
     .then((data) => {
-      if (!data[0]) return res.json(loghandler.notfound);
-      limitapikey(req.query.apikey);
+      if (!data[0]) return res.status(loghandler.notfound.code).json(loghandler.notfound);
       res.json({
         status: true,
         creator: `${creator}`,
@@ -1370,7 +1290,7 @@ router.get("/api/search/wikimedia", cekKey, async (req, res, next) => {
       });
     })
     .catch((err) => {
-      res.json(loghandler.notfound);
+      res.status(loghandler.notfound.code).json(loghandler.notfound);
     });
 });
 
@@ -1385,8 +1305,7 @@ router.get("/api/search/wallpaper", cekKey, async (req, res, next) => {
   mtx
     .wallpaper(text1)
     .then((data) => {
-      if (!data[0]) return res.json(loghandler.notfound);
-      limitapikey(req.query.apikey);
+      if (!data[0]) return res.status(loghandler.notfound.code).json(loghandler.notfound);
       res.json({
         status: true,
         creator: `${creator}`,
@@ -1394,7 +1313,7 @@ router.get("/api/search/wallpaper", cekKey, async (req, res, next) => {
       });
     })
     .catch((err) => {
-      res.json(loghandler.notfound);
+      res.status(loghandler.notfound.code).json(loghandler.notfound);
     });
 });
 
@@ -1409,8 +1328,7 @@ router.get("/api/search/google", cekKey, async (req, res, next) => {
 
   googleIt({ query: text1 })
     .then((results) => {
-      if (!results[0]) return res.json(loghandler.notfound);
-      limitapikey(req.query.apikey);
+      if (!results[0]) return res.status(loghandler.notfound.code).json(loghandler.notfound);
       res.json({
         status: true,
         creator: `${creator}`,
@@ -1418,7 +1336,7 @@ router.get("/api/search/google", cekKey, async (req, res, next) => {
       });
     })
     .catch((e) => {
-      res.json(loghandler.notfound);
+      res.status(loghandler.notfound.code).json(loghandler.notfound);
     });
 });
 
@@ -1436,10 +1354,9 @@ router.get("/api/search/googleimage", cekKey, async (req, res, next) => {
 
   function logResults(error, results) {
     if (error) {
-      res.json(loghandler.notfound);
+      res.status(loghandler.notfound.code).json(loghandler.notfound);
     } else {
-      if (!results[0]) return res.json(loghandler.notfound);
-      limitapikey(req.query.apikey);
+      if (!results[0]) return res.status(loghandler.notfound.code).json(loghandler.notfound);
       res.json({
         status: true,
         creator: `${creator}`,
@@ -1463,8 +1380,7 @@ router.get("/api/search/ytplay", cekKey, async (req, res, next) => {
   let url = search.all[Math.floor(Math.random() * search.all.length)];
   var mp3 = await ytMp3(url.url);
   var mp4 = await ytMp4(url.url);
-  if (!mp4 || !mp3) return res.json(loghandler.noturl);
-  limitapikey(req.query.apikey);
+  if (!mp4 || !mp3) return res.status(loghandler.noturl.code).json(loghandler.noturl);
   res.json({
     status: true,
     creator: `${creator}`,
@@ -1504,8 +1420,7 @@ router.get("/api/search/sticker", cekKey, async (req, res, next) => {
   mtx
     .stickersearch(text1)
     .then((data) => {
-      if (!data) return res.json(loghandler.notfound);
-      limitapikey(req.query.apikey);
+      if (!data) return res.status(loghandler.notfound.code).json(loghandler.notfound);
       res.json({
         status: true,
         creator: `${creator}`,
@@ -1513,7 +1428,7 @@ router.get("/api/search/sticker", cekKey, async (req, res, next) => {
       });
     })
     .catch((e) => {
-      res.json(loghandler.error);
+      sendServiceError(res);
     });
 });
 
@@ -1528,8 +1443,7 @@ router.get("/api/search/sfilemobi", cekKey, async (req, res, next) => {
   mtx
     .sfilemobiSearch(text1)
     .then((data) => {
-      if (!data) return res.json(loghandler.notfound);
-      limitapikey(req.query.apikey);
+      if (!data) return res.status(loghandler.notfound.code).json(loghandler.notfound);
       res.json({
         status: true,
         creator: `${creator}`,
@@ -1537,7 +1451,7 @@ router.get("/api/search/sfilemobi", cekKey, async (req, res, next) => {
       });
     })
     .catch((e) => {
-      res.json(loghandler.error);
+      sendServiceError(res);
     });
 });
 
@@ -1548,7 +1462,6 @@ router.get("/api/randomgambar/couplepp", cekKey, async (req, res, next) => {
     "https://raw.githubusercontent.com/MrT0mX/data-rest-api/main/kopel.json"
   );
   let random = resultt[Math.floor(Math.random() * resultt.length)];
-  limitapikey(req.query.apikey);
   res.json({
     status: true,
     creator: `${creator}`,
@@ -1565,14 +1478,12 @@ router.get("/api/randomgambar/dadu", cekKey, async (req, res, next) => {
   );
   let random = dadu[Math.floor(Math.random() * dadu.length)];
   var result = await getBuffer(random.result);
-  limitapikey(req.query.apikey);
   res.set({ "Content-Type": "image/webp" });
   res.send(result);
 });
 
 router.get("/api/randomgambar/coffee", cekKey, async (req, res, next) => {
   var result = await getBuffer("https://coffee.alexflipnote.dev/random");
-  limitapikey(req.query.apikey);
   res.set({ "Content-Type": "image/png" });
   res.send(result);
 });
@@ -1583,7 +1494,6 @@ router.get("/api/game/tembakgambar", cekKey, async (req, res, next) => {
   mtx
     .tebakgambar()
     .then((data) => {
-      limitapikey(req.query.apikey);
       res.json({
         status: true,
         creator: `${creator}`,
@@ -1591,7 +1501,7 @@ router.get("/api/game/tembakgambar", cekKey, async (req, res, next) => {
       });
     })
     .catch((err) => {
-      res.json(loghandler.error);
+      sendServiceError(res);
     });
 });
 
@@ -1600,7 +1510,6 @@ router.get("/api/game/susunkata", cekKey, async (req, res, next) => {
     "https://raw.githubusercontent.com/MrT0mX/data-rest-api/main/susunkata.json"
   );
   let ha = ra[Math.floor(Math.random() * ra.length)];
-  limitapikey(req.query.apikey);
   res.json({
     status: true,
     creator: `${creator}`,
@@ -1613,7 +1522,6 @@ router.get("/api/game/tembakbendera", cekKey, async (req, res, next) => {
     "https://raw.githubusercontent.com/MrT0mX/data-rest-api/main/tebakbendera.json"
   );
   let ha = ra[Math.floor(Math.random() * ra.length)];
-  limitapikey(req.query.apikey);
   res.json({
     status: true,
     creator: `${creator}`,
@@ -1626,7 +1534,6 @@ router.get("/api/game/tembakgame", cekKey, async (req, res, next) => {
     "https://raw.githubusercontent.com/MrT0mX/data-rest-api/main/tebakgame.json"
   );
   let ha = ra[Math.floor(Math.random() * ra.length)];
-  limitapikey(req.query.apikey);
   res.json({
     status: true,
     creator: `${creator}`,
@@ -1639,7 +1546,6 @@ router.get("/api/game/tembakkata", cekKey, async (req, res, next) => {
     "https://raw.githubusercontent.com/MrT0mX/data-rest-api/main/tebakkata.json"
   );
   let ha = ra[Math.floor(Math.random() * ra.length)];
-  limitapikey(req.query.apikey);
   res.json({
     status: true,
     creator: `${creator}`,
@@ -1652,7 +1558,6 @@ router.get("/api/game/tembaklirik", cekKey, async (req, res, next) => {
     "https://raw.githubusercontent.com/MrT0mX/data-rest-api/main/tebaklirik.json"
   );
   let ha = ra[Math.floor(Math.random() * ra.length)];
-  limitapikey(req.query.apikey);
   res.json({
     status: true,
     creator: `${creator}`,
@@ -1665,7 +1570,6 @@ router.get("/api/game/tembaklagu", cekKey, async (req, res, next) => {
     "https://raw.githubusercontent.com/MrT0mX/data-rest-api/main/tebaklagu.json"
   );
   let ha = ra[Math.floor(Math.random() * ra.length)];
-  limitapikey(req.query.apikey);
   res.json({
     status: true,
     creator: `${creator}`,
@@ -1677,7 +1581,6 @@ router.get("/api/game/tembakkimia", cekKey, async (req, res, next) => {
     "https://raw.githubusercontent.com/MrT0mX/data-rest-api/main/tebakkimia.json"
   );
   let ha = ra[Math.floor(Math.random() * ra.length)];
-  limitapikey(req.query.apikey);
   res.json({
     status: true,
     creator: `${creator}`,
@@ -1686,7 +1589,6 @@ router.get("/api/game/tembakkimia", cekKey, async (req, res, next) => {
 });
 
 router.get("/api/game/truth", cekKey, async (req, res, next) => {
-  limitapikey(req.query.apikey);
   scr.truth().then((data) => {
     let result = data;
     res.json({
@@ -1700,7 +1602,6 @@ router.get("/api/game/truth", cekKey, async (req, res, next) => {
 });
 
 router.get("/api/game/dare", cekKey, async (req, res, next) => {
-  limitapikey(req.query.apikey);
   scr.dare().then((data) => {
     let result = data;
     res.json({
@@ -1719,7 +1620,6 @@ router.get("/api/game/dare", cekKey, async (req, res, next) => {
 //     "https://raw.githubusercontent.com/MrT0mX/data-rest-api/main/cecanchina.json"
 //   );
 //   let result = china[Math.floor(Math.random() * china.length)];
-//   limitapikey(req.query.apikey);
 //   let gambar = await getBuffer(result);
 //   res.set("Content-Type", "image/png");
 //   res.send(gambar);
@@ -1729,7 +1629,6 @@ router.get("/api/game/dare", cekKey, async (req, res, next) => {
 //   let vietnam = await fetchJson(
 //     "https://raw.githubusercontent.com/MrT0mX/data-rest-api/main/cecanvietnam.json"
 //   );
-//   limitapikey(req.query.apikey);
 //   let result = vietnam[Math.floor(Math.random() * vietnam.length)];
 //   let gambar = await getBuffer(result);
 //   res.set("Content-Type", "image/png");
@@ -1740,7 +1639,6 @@ router.get("/api/game/dare", cekKey, async (req, res, next) => {
 //   let thailand = await fetchJson(
 //     "https://raw.githubusercontent.com/MrT0mX/data-rest-api/main/cecanthailand.json"
 //   );
-//   limitapikey(req.query.apikey);
 //   let result = thailand[Math.floor(Math.random() * thailand.length)];
 //   let gambar = await getBuffer(result);
 //   res.set("Content-Type", "image/png");
@@ -1751,7 +1649,6 @@ router.get("/api/game/dare", cekKey, async (req, res, next) => {
 //   let indo = await fetchJson(
 //     "https://raw.githubusercontent.com/MrT0mX/data-rest-api/main/cecanindo.json"
 //   );
-//   limitapikey(req.query.apikey);
 //   let result = indo[Math.floor(Math.random() * indo.length)];
 //   let gambar = await getBuffer(result);
 //   res.set("Content-Type", "image/png");
@@ -1762,7 +1659,6 @@ router.get("/api/game/dare", cekKey, async (req, res, next) => {
 //   let korea = await fetchJson(
 //     "https://raw.githubusercontent.com/MrT0mX/data-rest-api/main/cecankorea.json"
 //   );
-//   limitapikey(req.query.apikey);
 //   let result = korea[Math.floor(Math.random() * korea.length)];
 //   let gambar = await getBuffer(result);
 //   res.set("Content-Type", "image/png");
@@ -1773,7 +1669,6 @@ router.get("/api/game/dare", cekKey, async (req, res, next) => {
 //   let jepang = await fetchJson(
 //     "https://raw.githubusercontent.com/MrT0mX/data-rest-api/main/cecanjepang.json"
 //   );
-//   limitapikey(req.query.apikey);
 //   let result = jepang[Math.floor(Math.random() * jepang.length)];
 //   let gambar = await getBuffer(result);
 //   res.set("Content-Type", "image/png");
@@ -1784,7 +1679,6 @@ router.get("/api/game/dare", cekKey, async (req, res, next) => {
 //   let malay = await fetchJson(
 //     "https://raw.githubusercontent.com/MrT0mX/data-rest-api/main/cecanmalay.json"
 //   );
-//   limitapikey(req.query.apikey);
 //   let result = malay[Math.floor(Math.random() * malay.length)];
 //   let gambar = await getBuffer(result);
 //   res.set("Content-Type", "image/png");
@@ -1808,7 +1702,6 @@ router.get("/api/maker/circle", cekKey, async (req, res) => {
       message: "[!] cek kembali url image",
     });
   const hasil = await Canvacord.Canvas.circle(text);
-  limitapikey(req.query.apikey);
   res.set({ "Content-Type": "image/png" });
   res.send(hasil);
 });
@@ -1829,7 +1722,6 @@ router.get("/api/maker/beautiful", cekKey, async (req, res) => {
       message: "[!] cek kembali url image",
     });
   const hasil = await Canvacord.Canvas.beautiful(text);
-  limitapikey(req.query.apikey);
   res.set({ "Content-Type": "image/png" });
   res.send(hasil);
 });
@@ -1850,7 +1742,6 @@ router.get("/api/maker/blur", cekKey, async (req, res) => {
       message: "[!] cek kembali url image",
     });
   const hasil = await Canvacord.Canvas.blur(text);
-  limitapikey(req.query.apikey);
   res.set({ "Content-Type": "image/png" });
   res.send(hasil);
 });
@@ -1887,7 +1778,6 @@ router.get("/api/maker/darkness", cekKey, async (req, res) => {
     });
 
   const hasil = await Canvacord.Canvas.darkness(text, shortText(no, 3));
-  limitapikey(req.query.apikey);
   res.set({ "Content-Type": "image/png" });
   res.send(hasil);
 });
@@ -1909,7 +1799,6 @@ router.get("/api/maker/facepalm", cekKey, async (req, res) => {
     });
 
   const hasil = await Canvacord.Canvas.facepalm(text);
-  limitapikey(req.query.apikey);
   res.set({ "Content-Type": "image/png" });
   res.send(hasil);
 });
@@ -1931,7 +1820,6 @@ router.get("/api/maker/invert", cekKey, async (req, res) => {
     });
 
   const hasil = await Canvacord.Canvas.invert(text);
-  limitapikey(req.query.apikey);
   res.set({ "Content-Type": "image/png" });
   res.send(hasil);
 });
@@ -1971,7 +1859,6 @@ router.get("/api/maker/pixelate", cekKey, async (req, res) => {
     text,
     convertStringToNumber(no)
   );
-  limitapikey(req.query.apikey);
   res.set({ "Content-Type": "image/png" });
   res.send(hasil);
 });
@@ -1993,7 +1880,6 @@ router.get("/api/maker/rainbow", cekKey, async (req, res) => {
     });
 
   const hasil = await Canvacord.Canvas.rainbow(text);
-  limitapikey(req.query.apikey);
   res.set({ "Content-Type": "image/png" });
   res.send(hasil);
 });
@@ -2058,7 +1944,6 @@ router.get("/api/maker/resize", cekKey, async (req, res) => {
     convertStringToNumber(w),
     convertStringToNumber(h)
   );
-  limitapikey(req.query.apikey);
   res.set({ "Content-Type": "image/png" });
   res.send(hasil);
 });
@@ -2080,7 +1965,6 @@ router.get("/api/maker/trigger", cekKey, async (req, res) => {
     });
 
   const hasil = await Canvacord.Canvas.trigger(text);
-  limitapikey(req.query.apikey);
   res.set({ "Content-Type": "gif" });
   res.send(hasil);
 });
@@ -2102,7 +1986,6 @@ router.get("/api/maker/wanted", cekKey, async (req, res) => {
     });
 
   const hasil = await Canvacord.Canvas.wanted(text);
-  limitapikey(req.query.apikey);
   res.set({ "Content-Type": "image/png" });
   res.send(hasil);
 });
@@ -2124,7 +2007,6 @@ router.get("/api/maker/wasted", cekKey, async (req, res) => {
     });
 
   const hasil = await Canvacord.Canvas.wasted(text);
-  limitapikey(req.query.apikey);
   res.set({ "Content-Type": "image/png" });
   res.send(hasil);
 });
@@ -2217,7 +2099,6 @@ router.get("/api/maker/attp", cekKey, async (req, res) => {
       quality: 100, // the quality of the gif, a value between 1 and 100, default: 100
     }
   ).then((buffer) => {
-    limitapikey(req.query.apikey);
     res.set({ "Content-Type": "gif" });
     res.send(buffer);
   });
@@ -2282,7 +2163,6 @@ router.get("/api/maker/attp", cekKey, async (req, res) => {
     ttp.context.strokeText(text, 290, 300);
     ttp.context.fillStyle = "white";
     ttp.context.fillText(text, 290, 300);
-    limitapikey(req.query.apikey);
     res.set({ "Content-Type": "image/png" });
     res.send(ttp.create.toBuffer());
   });
@@ -2310,10 +2190,9 @@ router.get("/api/maker/emojimix", cekKey, async (req, res, next) => {
     )}_${encodeURIComponent(emoji2)}`
   );
   let jadi = data.results[Math.floor(Math.random() * data.results.length)];
-  if (!jadi) return res.json(loghandler.notfound);
+  if (!jadi) return res.status(loghandler.notfound.code).json(loghandler.notfound);
   for (let ress of data.results) {
     resul = await getBuffer(ress.url);
-    limitapikey(req.query.apikey);
     res.set({ "Content-Type": "image/png" });
     res.send(resul);
   }
@@ -2416,7 +2295,6 @@ router.get("/api/maker/welcome1", cekKey, async (req, res, next) => {
     canvas.context.drawImage(pp, 1, 150, 300, 300);
   });
 
-  limitapikey(req.query.apikey);
   res.set({ "Content-Type": "image/png" });
   res.send(canvas.create.toBuffer());
 });
@@ -2518,7 +2396,6 @@ router.get("/api/maker/goodbye1", cekKey, async (req, res, next) => {
     canvas.context.drawImage(pp, 1, 150, 300, 300);
   });
 
-  limitapikey(req.query.apikey);
   res.set({ "Content-Type": "image/png" });
   res.send(canvas.create.toBuffer());
 });
@@ -2543,8 +2420,7 @@ router.get("/api/linkshort/tinyurl", cekKey, async (req, res, next) => {
     });
 
   TinyURL.shorten(link, function (link, err) {
-    if (err) return res.json(loghandler.error);
-    limitapikey(req.query.apikey);
+    if (err) return sendServiceError(res);
     res.json({
       status: true,
       creator: `${creator}`,
@@ -2583,8 +2459,7 @@ router.get(
     const data = { url: link, alias: shortText(alias, 30) };
 
     TinyURL.shortenWithAlias(data).then(function (link) {
-      if (link == "Error") return res.json(loghandler.redy);
-      limitapikey(req.query.apikey);
+      if (link == "Error") return res.status(loghandler.redy.code).json(loghandler.redy);
       res.json({
         status: true,
         creator: `${creator}`,
@@ -2610,12 +2485,16 @@ router.get("/api/linkshort/cuttly", cekKey, async (req, res, next) => {
       message: "[!] Masukan parameter url sahaja",
     });
 
-  let randomapicuttly = apicuttly[Math.floor(Math.random() * apicuttly.length)];
+  const configuredKeys = (await getRuntimeConfig()).CUTTLY_API_KEYS.split(",").map((key) => key.trim()).filter(Boolean);
+  if (!configuredKeys.length) {
+    return res.status(503).json({ status: false, message: "Cuttly API keys are not configured." });
+  }
+
+  let randomapicuttly = configuredKeys[Math.floor(Math.random() * configuredKeys.length)];
   var hasil = await fetchJson(
     `https://cutt.ly/api/api.php?key=${randomapicuttly}&short=${link}`
   );
-  if (!hasil.url) return res.json(loghandler.noturl);
-  limitapikey(req.query.apikey);
+  if (!hasil.url) return res.status(loghandler.noturl.code).json(loghandler.noturl);
   res.json({
     status: true,
     creator: `${creator}`,
@@ -2640,12 +2519,16 @@ router.get("/api/linkshort/bitly", cekKey, async (req, res, next) => {
       message: "[!] Masukan parameter url sahaja",
     });
 
-  let randomapibitly = apibitly[Math.floor(Math.random() * apibitly.length)];
+  const configuredKeys = (await getRuntimeConfig()).BITLY_API_KEYS.split(",").map((key) => key.trim()).filter(Boolean);
+  if (!configuredKeys.length) {
+    return res.status(503).json({ status: false, message: "Bitly API keys are not configured." });
+  }
+
+  let randomapibitly = configuredKeys[Math.floor(Math.random() * configuredKeys.length)];
   const bitly = new BitlyClient(randomapibitly);
   bitly
     .shorten(link)
     .then(function (result) {
-      limitapikey(req.query.apikey);
       res.json({
         status: true,
         creator: `${creator}`,
@@ -2653,7 +2536,7 @@ router.get("/api/linkshort/bitly", cekKey, async (req, res, next) => {
       });
     })
     .catch(function (error) {
-      res.json(loghandler.error);
+      sendServiceError(res);
     });
 });
 
@@ -2668,8 +2551,7 @@ router.get("/api/info/githubstalk", cekKey, async (req, res, next) => {
       message: "[!] masukan parameter user",
     });
   let gitstalk = await fetchJson(`https://api.github.com/users/${user}`);
-  if (!gitstalk.login) return res.json(loghandler.notfound);
-  limitapikey(req.query.apikey);
+  if (!gitstalk.login) return res.status(loghandler.notfound.code).json(loghandler.notfound);
 
   res.json({
     status: true,
@@ -2683,7 +2565,6 @@ router.get("/api/info/infogempabmkg", cekKey, async (req, res) => {
     "https://data.bmkg.go.id/DataMKG/TEWS/autogempa.json"
   );
   let gempa = data.Infogempa.gempa;
-  limitapikey(req.query.apikey);
   res.json({
     status: true,
     creator: `${creator}`,
@@ -2708,8 +2589,7 @@ router.get("/api/info/waktuksolatmy", cekKey, async (req, res, next) => {
   mtx
     .watuksolatmy()
     .then((data) => {
-      if (!data.Tarikh) return res.json(loghandler.error);
-      limitapikey(req.query.apikey);
+      if (!data.Tarikh) return sendServiceError(res);
       res.json({
         status: true,
         creator: `${creator}`,
@@ -2717,7 +2597,7 @@ router.get("/api/info/waktuksolatmy", cekKey, async (req, res, next) => {
       });
     })
     .catch((e) => {
-      res.json(loghandler.error);
+      sendServiceError(res);
     });
 });
 
@@ -2741,7 +2621,6 @@ router.get("/api/info/translate", cekKey, async (req, res, next) => {
 
   translate(text, { to: lang })
     .then((data) => {
-      limitapikey(req.query.apikey);
       res.json({
         status: true,
         creator: `${creator}`,
@@ -2773,7 +2652,6 @@ router.get("/api/info/emoji", cekKey, async (req, res, next) => {
       creator: `${creator}`,
       message: "[!] masukan parameter emoji dengan 1 emoji sahaja",
     });
-  limitapikey(req.query.apikey);
   res.json({
     status: true,
     creator: `${creator}`,
@@ -2797,7 +2675,6 @@ router.get("/api/tools/ebase64", cekKey, async (req, res, next) => {
       creator: `${creator}`,
       message: "[!] Maximal 2.048 String!",
     });
-  limitapikey(req.query.apikey);
 
   res.json({
     status: true,
@@ -2820,7 +2697,6 @@ router.get("/api/tools/debase64", cekKey, async (req, res, next) => {
       creator: `${creator}`,
       message: "[!] Maximal 2.048 String!",
     });
-  limitapikey(req.query.apikey);
 
   res.json({
     status: true,
@@ -2853,7 +2729,6 @@ router.get("/api/tools/ebinary", cekKey, async (req, res, next) => {
       })
       .join(" ");
   }
-  limitapikey(req.query.apikey);
 
   res.json({
     status: true,
@@ -2883,7 +2758,6 @@ router.get("/api/tools/debinary", cekKey, async (req, res, next) => {
       .map((str) => String.fromCharCode(Number.parseInt(str, 2)))
       .join("");
   }
-  limitapikey(req.query.apikey);
 
   res.json({
     status: true,
@@ -2912,13 +2786,12 @@ router.get("/api/tools/ssweb", cekKey, async (req, res, next) => {
   mtx
     .ssweb(link)
     .then((data) => {
-      limitapikey(req.query.apikey);
-      if (!data) return res.json(loghandler.notfound);
+      if (!data) return res.status(loghandler.notfound.code).json(loghandler.notfound);
       res.set({ "Content-Type": "image/png" });
       res.send(data);
     })
     .catch((err) => {
-      res.json(loghandler.notfound);
+      res.status(loghandler.notfound.code).json(loghandler.notfound);
     });
 });
 
@@ -2934,8 +2807,7 @@ router.get("/api/tools/styletext", cekKey, async (req, res, next) => {
   mtx
     .styletext(text)
     .then((data) => {
-      if (!data) return res.json(loghandler.error);
-      limitapikey(req.query.apikey);
+      if (!data) return sendServiceError(res);
 
       res.json({
         status: true,
@@ -2944,7 +2816,7 @@ router.get("/api/tools/styletext", cekKey, async (req, res, next) => {
       });
     })
     .catch((err) => {
-      res.json(loghandler.error);
+      sendServiceError(res);
     });
 });
 
@@ -2961,8 +2833,7 @@ router.get("/api/islamic/surah", cekKey, async (req, res, next) => {
   mtx
     .surah(text1)
     .then((data) => {
-      if (!data) return res.json(loghandler.notfound);
-      limitapikey(req.query.apikey);
+      if (!data) return res.status(loghandler.notfound.code).json(loghandler.notfound);
       res.json({
         status: true,
         creator: `${creator}`,
@@ -2970,7 +2841,7 @@ router.get("/api/islamic/surah", cekKey, async (req, res, next) => {
       });
     })
     .catch((err) => {
-      res.json(loghandler.error);
+      sendServiceError(res);
     });
 });
 
@@ -2985,8 +2856,7 @@ router.get("/api/islamic/tafsirsurah", cekKey, async (req, res, next) => {
   mtx
     .tafsirsurah(text1)
     .then((data) => {
-      if (!data[0]) return res.json(loghandler.notfound);
-      limitapikey(req.query.apikey);
+      if (!data[0]) return res.status(loghandler.notfound.code).json(loghandler.notfound);
       res.json({
         status: true,
         creator: `${creator}`,
@@ -2994,12 +2864,11 @@ router.get("/api/islamic/tafsirsurah", cekKey, async (req, res, next) => {
       });
     })
     .catch((err) => {
-      res.json(loghandler.error);
+      sendServiceError(res);
     });
 });
 
 router.get("/api/islamic/asmaulhusnafull", cekKey, async (req, res) => {
-  limitapikey(req.query.apikey);
   const result = await fetchJson(
     "https://raw.githubusercontent.com/MrT0mX/data-rest-api/main/asmaulhusna.json"
   );
@@ -3010,7 +2879,6 @@ router.get("/api/islamic/asmaulhusnafull", cekKey, async (req, res) => {
   });
 });
 router.get("/api/islamic/asmaulhusnarandom", cekKey, async (req, res) => {
-  limitapikey(req.query.apikey);
   const data = await fetchJson(
     "https://raw.githubusercontent.com/MrT0mX/data-rest-api/main/asmaulhusna.json"
   );
@@ -3020,6 +2888,14 @@ router.get("/api/islamic/asmaulhusnarandom", cekKey, async (req, res) => {
     creator: `${creator}`,
     result,
   });
+});
+
+router.stack.forEach((layer) => {
+  if (layer.route) {
+    layer.route.stack.forEach((routeLayer) => {
+      routeLayer.handle = asyncHandler(routeLayer.handle);
+    });
+  }
 });
 
 module.exports = router;

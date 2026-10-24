@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="bn">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0a0c16" />
+    <meta name="description" content="Free guest text effects: neon, chrome, fire, ice, retro and more. No account required." />
+    <title>Text Effects Studio | MrTomXxX API</title>
+    <link rel="stylesheet" href="/css/landing.css" />
+    <link rel="stylesheet" href="/css/effects.css" />
+    <script src="/js/effects.js" defer></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="/"><span class="brand-mark">M</span><span>MrTom<span class="accent">XxX</span><small>TEXT EFFECTS STUDIO</small></span></a>
+      <nav class="nav-actions">
+        <a class="nav-link" href="/" data-i18n="home">হোম</a>
+        <select id="effects-language" class="language-switch" aria-label="ভাষা নির্বাচন"><option value="bn">বাংলা</option><option value="en">English</option></select>
+        <button id="effects-theme" class="theme-switch" type="button" aria-label="থিম বদলান">☼</button>
+        <a class="button button-outline" href="/login" data-i18n="login">লগইন</a>
+      </nav>
+    </header>
+
+    <main class="effects-main">
+      <section class="effects-hero">
+        <div>
+          <span class="status-pill"><span class="pulse"></span><span data-i18n="guestFree">অতিথি মোড · বিনামূল্যে ব্যবহার করুন</span></span>
+          <p class="section-kicker" data-i18n="originalStyles">মৌলিক text styles</p>
+          <h1><span data-i18n="effectsHeading">আপনার লেখায় দিন</span><br /><span data-i18n="effectsAccent">নিজস্ব visual touch.</span></h1>
+          <p class="hero-description" data-i18n="effectsIntro">লেখা লিখুন, একটি effect বেছে নিন, সাথে সাথে preview দেখুন এবং SVG হিসেবে download করুন। কোনো account লাগবে না।</p>
+        </div>
+        <aside class="guest-ai-card">
+          <span class="lock-icon" aria-hidden="true">⌑</span>
+          <p class="section-kicker">AI WORKSPACE</p>
+          <h2 data-i18n="guestAiTitle">AI tools account-এর জন্য</h2>
+          <p data-i18n="guestAiCopy">Guest mode-এ AI বন্ধ। Login করে verified account-এর quota দিয়ে AI chat ও teaching agent চালান।</p>
+          <a class="button button-primary" href="/login" data-i18n="unlockAi">Login করে unlock করুন ↗</a>
+        </aside>
+      </section>
+
+      <section class="effect-editor" aria-label="Text effect editor">
+        <div class="editor-heading"><div><p class="section-kicker">01 / CREATE</p><h2 data-i18n="editorTitle">আপনার ডিজাইন তৈরি করুন</h2></div><span class="guest-badge">GUEST · <span data-i18n="freeLabel">বিনামূল্যে</span></span></div>
+        <form id="effect-form" class="editor-controls">
+          <label for="effect-text" data-i18n="textLabel">মূল লেখা</label>
+          <input id="effect-text" name="text" type="text" maxlength="28" value="Hello World" placeholder="আপনার লেখা..." required />
+          <label for="effect-text2" data-i18n="subtitleLabel">দ্বিতীয় লাইন <span data-i18n="optional">(ঐচ্ছিক)</span></label>
+          <input id="effect-text2" name="text2" type="text" maxlength="20" placeholder="Subtitle" />
+          <div class="editor-actions">
+            <span id="effect-message" role="status" aria-live="polite" data-i18n="chooseStyle">একটি style বেছে নিন। প্রতি মিনিটে সর্বোচ্চ ৩০টি guest preview।</span>
+            <button id="download-effect" type="button" class="button button-primary" disabled><span data-i18n="downloadSvg">SVG download</span> ↓</button>
+          </div>
+        </form>
+        <div class="effect-preview" aria-live="polite">
+          <div class="preview-top"><span data-i18n="preview">LIVE PREVIEW</span><span id="selected-effect">NEON GLOW</span></div>
+          <div class="preview-stage"><img id="effect-preview" alt="Text effect preview" hidden /><p id="preview-placeholder" data-i18n="previewPlaceholder">আপনার effect preview এখানে দেখা যাবে</p></div>
+        </div>
+      </section>
+
+      <section class="style-library">
+        <div class="library-heading"><div><p class="section-kicker">02 / STYLE LIBRARY</p><h2 data-i18n="libraryTitle">আপনার mood বেছে নিন</h2></div><span id="style-count">Loading styles...</span></div>
+        <div class="style-groups" id="style-groups">
+          <button class="style-card active" type="button" data-effect="neon"><span class="swatch swatch-neon">Aa</span><span>Neon Glow<small>GLOW</small></span></button>
+          <button class="style-card" type="button" data-effect="aurora"><span class="swatch swatch-aurora">Aa</span><span>Aurora Gradient<small>GLOW</small></span></button>
+          <button class="style-card" type="button" data-effect="cyber"><span class="swatch swatch-cyber">Aa</span><span>Cyber Grid<small>DIGITAL</small></span></button>
+          <button class="style-card" type="button" data-effect="glitch"><span class="swatch swatch-glitch">Aa</span><span>Chromatic Shift<small>DIGITAL</small></span></button>
+          <button class="style-card" type="button" data-effect="gold"><span class="swatch swatch-gold">Aa</span><span>Liquid Gold<small>METAL</small></span></button>
+          <button class="style-card" type="button" data-effect="chrome"><span class="swatch swatch-chrome">Aa</span><span>Silver Chrome<small>METAL</small></span></button>
+          <button class="style-card" type="button" data-effect="fire"><span class="swatch swatch-fire">Aa</span><span>Ember Flame<small>NATURE</small></span></button>
+          <button class="style-card" type="button" data-effect="ice"><span class="swatch swatch-ice">Aa</span><span>Arctic Ice<small>NATURE</small></span></button>
+          <button class="style-card" type="button" data-effect="rose"><span class="swatch swatch-rose">Aa</span><span>Rose Quartz<small>SOFT</small></span></button>
+          <button class="style-card" type="button" data-effect="retro"><span class="swatch swatch-retro">Aa</span><span>Retro Sunset<small>RETRO</small></span></button>
+          <button class="style-card" type="button" data-effect="comic"><span class="swatch swatch-comic">Aa</span><span>Pop Comic<small>RETRO</small></span></button>
+          <button class="style-card" type="button" data-effect="outline"><span class="swatch swatch-outline">Aa</span><span>Outline Studio<small>MINIMAL</small></span></button>
+        </div>
+      </section>
+
+      <section class="effects-api">
+        <div><p class="section-kicker">03 / API</p><h2 data-i18n="apiTitle">আপনার app-এ text effect API</h2><p data-i18n="apiCopy">Guest preview endpoint-এ account লাগে না, তবে অপব্যবহার ঠেকাতে rate-limited।</p></div>
+        <code>GET /api/text-effects/render?text=Hello&amp;effect=neon</code>
+        <a href="/api/text-effects/styles" target="_blank" rel="noopener noreferrer" data-i18n="styleApi">সব style দেখুন ↗</a>
+      </section>
+    </main>
+    <footer><span>© <span id="year"></span> MrTomXxX</span><span data-i18n="guestLimit">Guest preview: ৩০টি / মিনিট</span><a href="/login" data-i18n="login">লগইন</a></footer>
+  </body>
+</html>

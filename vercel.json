@@ -1,0 +1,14 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "functions": {
+    "index.js": {
+      "includeFiles": "{view/**,public/**}"
+    }
+  },
+  "crons": [
+    {
+      "path": "/api/maintenance/daily",
+      "schedule": "0 19 * * *"
+    }
+  ]
+}

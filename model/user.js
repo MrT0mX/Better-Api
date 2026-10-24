@@ -16,6 +16,34 @@ const userSchema = new mongoose.Schema({
         type: Boolean,
         default: false,
     },
+    isAdmin: {
+        type: Boolean,
+        default: false,
+    },
+    adminMfaEnabled: {
+        type: Boolean,
+        default: false,
+    },
+    adminMfaPendingSecret: {
+        type: mongoose.Schema.Types.Mixed,
+        default: null,
+    },
+    adminMfaPendingExpiresAt: {
+        type: Date,
+        default: null,
+    },
+    adminMfaSecret: {
+        type: mongoose.Schema.Types.Mixed,
+        default: null,
+    },
+    adminMfaRecoveryHashes: {
+        type: [String],
+        default: [],
+    },
+    adminMfaLastStep: {
+        type: Number,
+        default: -1,
+    },
     apikey: { 
         type: String 
     },
