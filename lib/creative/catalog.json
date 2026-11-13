@@ -1,0 +1,680 @@
+[
+  {
+    "id": "panorama",
+    "icon": "◉",
+    "bn": "৩৬০° প্যানোরামা",
+    "en": "360° Panorama",
+    "descBn": "চারপাশ ঘুরে দেখা যায় এমন panorama",
+    "descEn": "Explore a wide panoramic scene",
+    "ratio": [
+      1600,
+      800
+    ],
+    "motif": "horizon",
+    "templates": [
+      {
+        "id": "blue-hour",
+        "bn": "নীল সন্ধ্যা",
+        "en": "Blue Hour",
+        "colors": [
+          "#102443",
+          "#247c93",
+          "#e89469"
+        ]
+      },
+      {
+        "id": "golden-orbit",
+        "bn": "সোনালি দিগন্ত",
+        "en": "Golden Horizon",
+        "colors": [
+          "#43264d",
+          "#ee8651",
+          "#ffd06f"
+        ]
+      },
+      {
+        "id": "night-orbit",
+        "bn": "নক্ষত্র রাত",
+        "en": "Star Orbit",
+        "colors": [
+          "#101336",
+          "#313a78",
+          "#8b73ae"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "frames",
+    "icon": "▣",
+    "bn": "ফটো ফ্রেম",
+    "en": "Photo Frames",
+    "descBn": "ছবির জন্য ফুল, গ্যালারি ও মিনিমাল ফ্রেম",
+    "descEn": "Botanical, gallery and clean photo frames",
+    "ratio": [
+      1000,
+      1000
+    ],
+    "motif": "frame",
+    "templates": [
+      {
+        "id": "botanical",
+        "bn": "বোটানিক্যাল",
+        "en": "Botanical",
+        "colors": [
+          "#14251f",
+          "#49765c",
+          "#d3bd81"
+        ]
+      },
+      {
+        "id": "gallery",
+        "bn": "গ্যালারি কার্ড",
+        "en": "Gallery Card",
+        "colors": [
+          "#20263a",
+          "#596a91",
+          "#d5d7e1"
+        ]
+      },
+      {
+        "id": "sunlit",
+        "bn": "রোদেলা জানালা",
+        "en": "Sunlit Window",
+        "colors": [
+          "#754936",
+          "#d69a61",
+          "#f1d2a0"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "birthday",
+    "icon": "✳",
+    "bn": "জন্মদিন",
+    "en": "Birthday Frames",
+    "descBn": "কনফেটি, কেক ও শুভেচ্ছা কার্ড",
+    "descEn": "Confetti, candles and birthday cards",
+    "ratio": [
+      1000,
+      1200
+    ],
+    "motif": "confetti",
+    "templates": [
+      {
+        "id": "confetti-pop",
+        "bn": "কনফেটি পপ",
+        "en": "Confetti Pop",
+        "colors": [
+          "#302052",
+          "#853f8d",
+          "#ffbb65"
+        ]
+      },
+      {
+        "id": "candlelight",
+        "bn": "ক্যান্ডেল গ্লো",
+        "en": "Candle Glow",
+        "colors": [
+          "#392234",
+          "#a44d67",
+          "#ffd07c"
+        ]
+      },
+      {
+        "id": "party-paper",
+        "bn": "পার্টি পেপার",
+        "en": "Party Paper",
+        "colors": [
+          "#173a4d",
+          "#297e87",
+          "#74d1bb"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "romance",
+    "icon": "♡",
+    "bn": "ভালোবাসা",
+    "en": "Love & Romance",
+    "descBn": "হার্ট, ফুল ও চিঠির নকশা",
+    "descEn": "Heart, flower and handwritten-note designs",
+    "ratio": [
+      1000,
+      1200
+    ],
+    "motif": "hearts",
+    "templates": [
+      {
+        "id": "rose-letter",
+        "bn": "রোজ লেটার",
+        "en": "Rose Letter",
+        "colors": [
+          "#3d1e32",
+          "#a6486b",
+          "#f3b7a3"
+        ]
+      },
+      {
+        "id": "heart-bloom",
+        "bn": "হার্ট ব্লুম",
+        "en": "Heart Bloom",
+        "colors": [
+          "#46244c",
+          "#c45d91",
+          "#ffbdcb"
+        ]
+      },
+      {
+        "id": "soft-memory",
+        "bn": "সফট মেমোরি",
+        "en": "Soft Memory",
+        "colors": [
+          "#3c354d",
+          "#947c9e",
+          "#efc5b4"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "burning",
+    "icon": "♨",
+    "bn": "আগুনের ছোঁয়া",
+    "en": "Burning Effects",
+    "descBn": "এমবার, আগুনের আলো ও উষ্ণ টোন",
+    "descEn": "Embers, firelight and warm compositions",
+    "ratio": [
+      1200,
+      900
+    ],
+    "motif": "fire",
+    "templates": [
+      {
+        "id": "ember-edge",
+        "bn": "এমবার এজ",
+        "en": "Ember Edge",
+        "colors": [
+          "#1d1116",
+          "#72271e",
+          "#ff9b3f"
+        ]
+      },
+      {
+        "id": "solar-flare",
+        "bn": "সোলার ফ্লেয়ার",
+        "en": "Solar Flare",
+        "colors": [
+          "#2a1222",
+          "#b33128",
+          "#ffc35b"
+        ]
+      },
+      {
+        "id": "warm-ash",
+        "bn": "ওয়ার্ম অ্যাশ",
+        "en": "Warm Ash",
+        "colors": [
+          "#17171c",
+          "#61413a",
+          "#ca7651"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "glass",
+    "icon": "◇",
+    "bn": "গ্লাস ও প্রিজম",
+    "en": "Glass Effects",
+    "descBn": "ফ্রস্টেড, প্রিজম ও আলো ভাঙার নকশা",
+    "descEn": "Frosted glass, prisms and refracted light",
+    "ratio": [
+      1000,
+      1000
+    ],
+    "motif": "glass",
+    "templates": [
+      {
+        "id": "prism-pane",
+        "bn": "প্রিজম পেইন",
+        "en": "Prism Pane",
+        "colors": [
+          "#122d48",
+          "#347d91",
+          "#bf98de"
+        ]
+      },
+      {
+        "id": "frosted",
+        "bn": "ফ্রস্টেড গ্লাস",
+        "en": "Frosted Glass",
+        "colors": [
+          "#243b56",
+          "#6299a9",
+          "#d1e6e3"
+        ]
+      },
+      {
+        "id": "rain-glass",
+        "bn": "রেইন গ্লাস",
+        "en": "Rain Glass",
+        "colors": [
+          "#152137",
+          "#455877",
+          "#99bdd4"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "winter",
+    "icon": "❄",
+    "bn": "শীত ও উৎসব",
+    "en": "Winter & Holidays",
+    "descBn": "তুষার, আলো ও উৎসবের কার্ড",
+    "descEn": "Snowfall, lights and seasonal cards",
+    "ratio": [
+      1000,
+      1200
+    ],
+    "motif": "snow",
+    "templates": [
+      {
+        "id": "alpine-glow",
+        "bn": "আল্পাইন গ্লো",
+        "en": "Alpine Glow",
+        "colors": [
+          "#132942",
+          "#39718a",
+          "#d5d9e8"
+        ]
+      },
+      {
+        "id": "winter-post",
+        "bn": "উইন্টার পোস্ট",
+        "en": "Winter Post",
+        "colors": [
+          "#173549",
+          "#4d7884",
+          "#edf0dc"
+        ]
+      },
+      {
+        "id": "festive-night",
+        "bn": "ফেস্টিভ নাইট",
+        "en": "Festive Night",
+        "colors": [
+          "#251c47",
+          "#8d405a",
+          "#f0bd75"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "art",
+    "icon": "▧",
+    "bn": "আর্ট ফিল্টার",
+    "en": "Art Effects",
+    "descBn": "স্কেচ, হাফটোন ও রঙের রূপান্তর",
+    "descEn": "Sketch, halftone and color treatments",
+    "ratio": [
+      1000,
+      1000
+    ],
+    "motif": "art",
+    "templates": [
+      {
+        "id": "ink-sketch",
+        "bn": "ইঙ্ক স্কেচ",
+        "en": "Ink Sketch",
+        "colors": [
+          "#202732",
+          "#617083",
+          "#e2d8c6"
+        ],
+        "filter": "grayscale(1) contrast(1.35)"
+      },
+      {
+        "id": "sunset-print",
+        "bn": "সানসেট প্রিন্ট",
+        "en": "Sunset Print",
+        "colors": [
+          "#572c59",
+          "#dc665f",
+          "#ffcf72"
+        ],
+        "filter": "saturate(.8) sepia(.22)"
+      },
+      {
+        "id": "cool-duotone",
+        "bn": "কুল ডুওটোন",
+        "en": "Cool Duotone",
+        "colors": [
+          "#142c54",
+          "#376ca1",
+          "#9be0db"
+        ],
+        "filter": "grayscale(.5) hue-rotate(165deg) saturate(1.4)"
+      }
+    ]
+  },
+  {
+    "id": "text",
+    "icon": "Aa",
+    "bn": "লোগো ও টেক্সট",
+    "en": "Logo & Text",
+    "descBn": "ক্রোম, নিয়ন ও এমবসড লেখা",
+    "descEn": "Chrome, neon and embossed typography",
+    "ratio": [
+      1200,
+      840
+    ],
+    "motif": "type",
+    "templates": [
+      {
+        "id": "chrome-type",
+        "bn": "ক্রোম টাইপ",
+        "en": "Chrome Type",
+        "colors": [
+          "#17202d",
+          "#52637a",
+          "#e7f1ff"
+        ]
+      },
+      {
+        "id": "neon-orbit",
+        "bn": "নিয়ন অরবিট",
+        "en": "Neon Orbit",
+        "colors": [
+          "#11112b",
+          "#553a87",
+          "#55e6d2"
+        ]
+      },
+      {
+        "id": "gold-press",
+        "bn": "গোল্ড প্রেস",
+        "en": "Gold Press",
+        "colors": [
+          "#281b17",
+          "#865126",
+          "#f3d28c"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "fps",
+    "icon": "⌖",
+    "bn": "FPS গেম",
+    "en": "FPS Arena",
+    "descBn": "ট্যাকটিক্যাল ফ্রেম, HUD ও অ্যাভাটার কার্ড",
+    "descEn": "Tactical frames, HUD and avatar cards",
+    "ratio": [
+      1200,
+      1000
+    ],
+    "motif": "hud",
+    "templates": [
+      {
+        "id": "tactical-grid",
+        "bn": "ট্যাকটিক্যাল গ্রিড",
+        "en": "Tactical Grid",
+        "colors": [
+          "#101c26",
+          "#275a5c",
+          "#a8ce83"
+        ]
+      },
+      {
+        "id": "neon-crosshair",
+        "bn": "নিয়ন ক্রসহেয়ার",
+        "en": "Neon Crosshair",
+        "colors": [
+          "#111b35",
+          "#285b89",
+          "#4ce4dc"
+        ]
+      },
+      {
+        "id": "arena-plate",
+        "bn": "এরিনা প্লেট",
+        "en": "Arena Plate",
+        "colors": [
+          "#281b28",
+          "#78384f",
+          "#e79d5d"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "fantasy",
+    "icon": "✧",
+    "bn": "ফ্যান্টাসি র‍্যাঙ্ক",
+    "en": "Fantasy Rank",
+    "descBn": "অরিজিনাল ক্রেস্ট, র‍্যাঙ্ক ও লোডিং কার্ড",
+    "descEn": "Original crests, rank badges and loading cards",
+    "ratio": [
+      1000,
+      1200
+    ],
+    "motif": "crest",
+    "templates": [
+      {
+        "id": "arcane-crest",
+        "bn": "আর্কেন ক্রেস্ট",
+        "en": "Arcane Crest",
+        "colors": [
+          "#211b46",
+          "#534b9a",
+          "#d4b6ff"
+        ]
+      },
+      {
+        "id": "solar-rank",
+        "bn": "সোলার র‍্যাঙ্ক",
+        "en": "Solar Rank",
+        "colors": [
+          "#36223e",
+          "#a65b62",
+          "#f2c27a"
+        ]
+      },
+      {
+        "id": "moon-guard",
+        "bn": "মুন গার্ড",
+        "en": "Moon Guard",
+        "colors": [
+          "#182644",
+          "#526b9d",
+          "#a9d9eb"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "manga",
+    "icon": "▤",
+    "bn": "মাঙ্গা ও কমিক",
+    "en": "Manga & Comics",
+    "descBn": "স্পিড লাইন, প্যানেল ও ইঙ্ক টোন",
+    "descEn": "Speed lines, comic panels and ink tones",
+    "ratio": [
+      1000,
+      1200
+    ],
+    "motif": "manga",
+    "templates": [
+      {
+        "id": "speed-panel",
+        "bn": "স্পিড প্যানেল",
+        "en": "Speed Panel",
+        "colors": [
+          "#241d35",
+          "#7c426c",
+          "#f0c3a8"
+        ]
+      },
+      {
+        "id": "ink-burst",
+        "bn": "ইঙ্ক বার্স্ট",
+        "en": "Ink Burst",
+        "colors": [
+          "#1b2634",
+          "#3f697d",
+          "#b7d9dc"
+        ]
+      },
+      {
+        "id": "halftone-pop",
+        "bn": "হাফটোন পপ",
+        "en": "Halftone Pop",
+        "colors": [
+          "#38224e",
+          "#a44979",
+          "#f3bf68"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "banner",
+    "icon": "▰",
+    "bn": "ব্যানার ও কভার",
+    "en": "Banners & Covers",
+    "descBn": "চ্যানেল, প্রোফাইল ও ওয়াইড কভার",
+    "descEn": "Channel headers, profile and wide covers",
+    "ratio": [
+      1500,
+      600
+    ],
+    "motif": "banner",
+    "templates": [
+      {
+        "id": "aurora-cover",
+        "bn": "অরোরা কভার",
+        "en": "Aurora Cover",
+        "colors": [
+          "#132241",
+          "#385b8b",
+          "#61d2c3"
+        ]
+      },
+      {
+        "id": "creator-deck",
+        "bn": "ক্রিয়েটর ডেক",
+        "en": "Creator Deck",
+        "colors": [
+          "#241a3e",
+          "#67458e",
+          "#e27990"
+        ]
+      },
+      {
+        "id": "minimal-wave",
+        "bn": "মিনিমাল ওয়েভ",
+        "en": "Minimal Wave",
+        "colors": [
+          "#123342",
+          "#317b84",
+          "#bad5ac"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "game",
+    "icon": "✦",
+    "bn": "গেমিং ডিজাইন",
+    "en": "Game Designs",
+    "descBn": "অরিজিনাল লুট কার্ড, পোর্টাল ও অ্যাভাটার",
+    "descEn": "Original loot cards, portals and avatars",
+    "ratio": [
+      1000,
+      1000
+    ],
+    "motif": "game",
+    "templates": [
+      {
+        "id": "loot-card",
+        "bn": "লুট কার্ড",
+        "en": "Loot Card",
+        "colors": [
+          "#1a2238",
+          "#5165a1",
+          "#e0b86a"
+        ]
+      },
+      {
+        "id": "portal-light",
+        "bn": "পোর্টাল লাইট",
+        "en": "Portal Light",
+        "colors": [
+          "#181741",
+          "#5b3d99",
+          "#69c7ef"
+        ]
+      },
+      {
+        "id": "pixel-relic",
+        "bn": "পিক্সেল রেলিক",
+        "en": "Pixel Relic",
+        "colors": [
+          "#182b2b",
+          "#3c8468",
+          "#d3d875"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "other",
+    "icon": "✺",
+    "bn": "আরও ডিজাইন",
+    "en": "More Designs",
+    "descBn": "ডাবল এক্সপোজার, ভিন্টেজ ও হোলোগ্রাফিক",
+    "descEn": "Double exposure, vintage and holographic styles",
+    "ratio": [
+      1200,
+      840
+    ],
+    "motif": "other",
+    "templates": [
+      {
+        "id": "holo-sheen",
+        "bn": "হোলো শিন",
+        "en": "Holo Sheen",
+        "colors": [
+          "#18233d",
+          "#58528b",
+          "#8ce4dc"
+        ]
+      },
+      {
+        "id": "paper-memory",
+        "bn": "পেপার মেমোরি",
+        "en": "Paper Memory",
+        "colors": [
+          "#3c2c2b",
+          "#9b6852",
+          "#e8c69b"
+        ]
+      },
+      {
+        "id": "deep-double",
+        "bn": "ডিপ ডাবল",
+        "en": "Deep Double",
+        "colors": [
+          "#141c32",
+          "#335e69",
+          "#bb7198"
+        ]
+      }
+    ]
+  }
+]

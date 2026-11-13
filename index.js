@@ -54,7 +54,7 @@ var main = require("./routes/main"),
   api = require("./routes/api");
 app.set("view engine", "ejs");
 app.set("views", __dirname + "/view");
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: "4mb" }));
 app.use(bodyParser.urlencoded({ extended: true }));
 
 //_______________________ ┏ Connect Database ┓ _______________________\\

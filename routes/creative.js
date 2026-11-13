@@ -5,6 +5,8 @@ const { styles: logoStyles, getLogoStyle, renderLogoSvg } = require("../lib/crea
 const { motions, getMotion, renderAnimatedSvg } = require("../lib/creative/animation");
 const { listUpstreamStyles } = require("../lib/creative/upstream-catalog");
 const { listLocalTextStyles } = require("../lib/api/creative-text");
+const { catalog, findDesign, renderDesignSvg } = require("../lib/creative/design-renderer");
+const cekKey = require("../lib/api-key");
 
 const router = express.Router();
 const guestRateLimit = createGuestRateLimiter({ maxRequests: 30 });
@@ -60,6 +62,60 @@ router.get("/api/textpro/styles", (req, res) => {
 router.get("/api/photooxy/styles", (req, res) => {
   res.json(listLocalTextStyles());
 });
+
+router.get("/api/creative/catalog", (req, res) => {
+  res.json({
+    status: true,
+    provider: "Better-Api Original Creative Library",
+    output: ["image/svg+xml", "image/png"],
+    photoInput: "optional base64 data URL; PNG, JPEG, or WEBP",
+    renderEndpoint: "/api/creative/design/render",
+    method: "GET or POST",
+    apiKey: "required: apikey query parameter or x-api-key header",
+    categories: catalog,
+  });
+});
+
+async function renderDesign(req, res) {
+  const input = req.method === "POST" ? req.body || {} : req.query;
+  const categoryId = typeof input.category === "string" ? input.category.trim().toLowerCase() : "";
+  const templateId = typeof input.template === "string" ? input.template.trim().toLowerCase() : "";
+  if (!findDesign(categoryId, templateId)) {
+    return res.status(400).json({ status: false, message: "Unknown category or template. See GET /api/creative/catalog." });
+  }
+  try {
+    const svg = renderDesignSvg({
+      categoryId,
+      templateId,
+      text: input.text,
+      subtext: input.subtext,
+      intensity: input.intensity,
+      image: input.image,
+    });
+    const format = typeof input.format === "string" ? input.format.trim().toLowerCase() : "svg";
+    if (format === "png") {
+      const Canvas = require("canvas");
+      const image = await Canvas.loadImage(Buffer.from(svg));
+      const canvas = Canvas.createCanvas(image.width, image.height);
+      canvas.getContext("2d").drawImage(image, 0, 0);
+      res.set({
+        "Cache-Control": "no-store",
+        "Content-Disposition": `inline; filename="${categoryId}-${templateId}.png"`,
+        "X-Content-Type-Options": "nosniff",
+      });
+      return res.type("image/png").send(canvas.toBuffer("image/png"));
+    }
+    if (format !== "svg") {
+      return res.status(400).json({ status: false, message: "format must be svg or png." });
+    }
+    return sendSvg(res, svg, `${categoryId}-${templateId}`);
+  } catch (error) {
+    return res.status(400).json({ status: false, message: error.message });
+  }
+}
+
+router.get("/api/creative/design/render", cekKey, renderDesign);
+router.post("/api/creative/design/render", cekKey, renderDesign);
 
 router.get("/api/creative/text/render", guestRateLimit, (req, res) => {
   const text = readText(req, res);

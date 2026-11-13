@@ -206,7 +206,8 @@ Text-effect render সীমা: প্রতি IP-তে মিনিটে �
 
 - Downloader
 - Text Pro
-- Photooxy
+- Original creative text art (legacy `/api/photooxy/*` routes, rendered locally)
+- Creative Design API (15 categories, 45 templates, SVG/PNG, optional photo input): [API guide](./CREATIVE_API.md)
 - Sound Of Text
 - Search
 - Random Images
