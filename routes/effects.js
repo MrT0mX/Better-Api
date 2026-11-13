@@ -9,10 +9,6 @@ router.get("/effects", (req, res) => {
   res.render("effects");
 });
 
-router.get("/studio", (req, res) => {
-  res.render("studio");
-});
-
 router.get("/api/text-effects/styles", (req, res) => {
   const groups = effects.reduce((result, effect) => {
     (result[effect.group] ||= []).push(effect);
