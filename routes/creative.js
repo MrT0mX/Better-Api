@@ -4,6 +4,7 @@ const { effects, getEffect, renderEffectSvg, isValidXmlText } = require("../lib/
 const { styles: logoStyles, getLogoStyle, renderLogoSvg } = require("../lib/creative/logo");
 const { motions, getMotion, renderAnimatedSvg } = require("../lib/creative/animation");
 const { listUpstreamStyles } = require("../lib/creative/upstream-catalog");
+const { listLocalTextStyles } = require("../lib/api/creative-text");
 
 const router = express.Router();
 const guestRateLimit = createGuestRateLimiter({ maxRequests: 30 });
@@ -57,7 +58,7 @@ router.get("/api/textpro/styles", (req, res) => {
 });
 
 router.get("/api/photooxy/styles", (req, res) => {
-  res.json(listUpstreamStyles("photooxy"));
+  res.json(listLocalTextStyles());
 });
 
 router.get("/api/creative/text/render", guestRateLimit, (req, res) => {
