@@ -836,7 +836,7 @@ router.get("/api/photooxy/flaming", cekKey, async (req, res, next) => {
       [text1]
     )
     .then((data) => {
-      res.set({ "Content-Type": "image/png" });
+      res.set({ "Content-Type": "image/svg+xml; charset=utf-8" });
       res.send(data);
     })
     .catch((err) => {
@@ -858,7 +858,7 @@ router.get("/api/photooxy/shadow-sky", cekKey, async (req, res, next) => {
       [text1]
     )
     .then((data) => {
-      res.set({ "Content-Type": "image/png" });
+      res.set({ "Content-Type": "image/svg+xml; charset=utf-8" });
       res.send(data);
     })
     .catch((err) => {
@@ -880,7 +880,7 @@ router.get("/api/photooxy/metallic", cekKey, async (req, res, next) => {
       [text1]
     )
     .then((data) => {
-      res.set({ "Content-Type": "image/png" });
+      res.set({ "Content-Type": "image/svg+xml; charset=utf-8" });
       res.send(data);
     })
     .catch((err) => {
@@ -902,7 +902,7 @@ router.get("/api/photooxy/naruto", cekKey, async (req, res, next) => {
       [text1]
     )
     .then((data) => {
-      res.set({ "Content-Type": "image/png" });
+      res.set({ "Content-Type": "image/svg+xml; charset=utf-8" });
       res.send(data);
     })
     .catch((err) => {
@@ -931,7 +931,7 @@ router.get("/api/photooxy/pubg", cekKey, async (req, res, next) => {
       [text1, text2]
     )
     .then((data) => {
-      res.set({ "Content-Type": "image/png" });
+      res.set({ "Content-Type": "image/svg+xml; charset=utf-8" });
       res.send(data);
     })
     .catch((err) => {
@@ -953,7 +953,7 @@ router.get("/api/photooxy/under-grass", cekKey, async (req, res, next) => {
       [text1]
     )
     .then((data) => {
-      res.set({ "Content-Type": "image/png" });
+      res.set({ "Content-Type": "image/svg+xml; charset=utf-8" });
       res.send(data);
     })
     .catch((err) => {
@@ -975,7 +975,7 @@ router.get("/api/photooxy/harry-potter", cekKey, async (req, res, next) => {
       [text1]
     )
     .then((data) => {
-      res.set({ "Content-Type": "image/png" });
+      res.set({ "Content-Type": "image/svg+xml; charset=utf-8" });
       res.send(data);
     })
     .catch((err) => {
@@ -1000,7 +1000,7 @@ router.get(
         [text1]
       )
       .then((data) => {
-        res.set({ "Content-Type": "image/png" });
+        res.set({ "Content-Type": "image/svg+xml; charset=utf-8" });
         res.send(data);
       })
       .catch((err) => {
@@ -1023,7 +1023,7 @@ router.get("/api/photooxy/picture-of-love", cekKey, async (req, res, next) => {
       [text1]
     )
     .then((data) => {
-      res.set({ "Content-Type": "image/png" });
+      res.set({ "Content-Type": "image/svg+xml; charset=utf-8" });
       res.send(data);
     })
     .catch((err) => {
@@ -1045,7 +1045,7 @@ router.get("/api/photooxy/coffee-cup", cekKey, async (req, res, next) => {
       [text1]
     )
     .then((data) => {
-      res.set({ "Content-Type": "image/png" });
+      res.set({ "Content-Type": "image/svg+xml; charset=utf-8" });
       res.send(data);
     })
     .catch((err) => {
@@ -1067,7 +1067,7 @@ router.get("/api/photooxy/butterfly", cekKey, async (req, res, next) => {
       [text1]
     )
     .then((data) => {
-      res.set({ "Content-Type": "image/png" });
+      res.set({ "Content-Type": "image/svg+xml; charset=utf-8" });
       res.send(data);
     })
     .catch((err) => {
@@ -1089,7 +1089,7 @@ router.get("/api/photooxy/night-sky", cekKey, async (req, res, next) => {
       [text1]
     )
     .then((data) => {
-      res.set({ "Content-Type": "image/png" });
+      res.set({ "Content-Type": "image/svg+xml; charset=utf-8" });
       res.send(data);
     })
     .catch((err) => {
@@ -1111,7 +1111,7 @@ router.get("/api/photooxy/carved-wood", cekKey, async (req, res, next) => {
       [text1]
     )
     .then((data) => {
-      res.set({ "Content-Type": "image/png" });
+      res.set({ "Content-Type": "image/svg+xml; charset=utf-8" });
       res.send(data);
     })
     .catch((err) => {
@@ -1136,7 +1136,7 @@ router.get(
         [text1]
       )
       .then((data) => {
-        res.set({ "Content-Type": "image/png" });
+        res.set({ "Content-Type": "image/svg+xml; charset=utf-8" });
         res.send(data);
       })
       .catch((err) => {
@@ -1159,7 +1159,7 @@ router.get("/api/photooxy/sweet-candy", cekKey, async (req, res, next) => {
       [text1]
     )
     .then((data) => {
-      res.set({ "Content-Type": "image/png" });
+      res.set({ "Content-Type": "image/svg+xml; charset=utf-8" });
       res.send(data);
     })
     .catch((err) => {
