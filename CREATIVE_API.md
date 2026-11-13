@@ -19,6 +19,8 @@ Required values:
 - `text`: main text (up to 42 characters)
 - `apikey`: Better-Api account key, or send it as the `x-api-key` header
 
+Get the account key from the Better-Api dashboard (`/docs`) after signing in. Store it in the bot host's secret environment as `BETTER_API_KEY`.
+
 Optional values:
 
 - `subtext`: second line (up to 32 characters)
@@ -29,6 +31,10 @@ Optional values:
 For bot integrations, use `POST` and put the key in the header so it does not appear in URLs or logs:
 
 ```js
+const photoDataUrl = photoBuffer
+  ? `data:image/jpeg;base64,${photoBuffer.toString("base64")}`
+  : undefined;
+
 const response = await fetch("https://better-api-eta.vercel.app/api/creative/design/render", {
   method: "POST",
   headers: {
@@ -40,7 +46,7 @@ const response = await fetch("https://better-api-eta.vercel.app/api/creative/des
     template: "botanical",
     text: "Happy Birthday",
     subtext: "Have a wonderful day",
-    image: photoDataUrl, // optional base64 PNG, JPEG, or WEBP
+    image: photoDataUrl, // optional; convert the bot attachment buffer to a data URL
     format: "png",
   }),
 });
