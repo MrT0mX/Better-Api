@@ -45,7 +45,7 @@ const { getRuntimeConfig } = require("../lib/runtime-config");
 //  >>>>>Menu<<<<<
 // >Dowloader
 // >Text Pro
-// >Photooxy
+// >Original Text Art (legacy route names)
 // >Sound Of Text
 // >Search
 // >Random Gambar
@@ -830,13 +830,9 @@ router.get("/api/photooxy/flaming", cekKey, async (req, res, next) => {
       creator: `${creator}`,
       message: "[!] Masukan parameter text",
     });
-  mtx
-    .photooxy(
-      "https://photooxy.com/logo-and-text-effects/realistic-flaming-text-effect-online-197.html",
-      [text1]
-    )
+  mtx.creativeText.renderLocalText("fire", [text1])
     .then((data) => {
-      res.set({ "Content-Type": "image/png" });
+      res.set({ "Content-Type": "image/svg+xml; charset=utf-8" });
       res.send(data);
     })
     .catch((err) => {
@@ -852,13 +848,9 @@ router.get("/api/photooxy/shadow-sky", cekKey, async (req, res, next) => {
       creator: `${creator}`,
       message: "[!] Masukan parameter text",
     });
-  mtx
-    .photooxy(
-      "https://photooxy.com/logo-and-text-effects/shadow-text-effect-in-the-sky-394.html",
-      [text1]
-    )
+  mtx.creativeText.renderLocalText("shadow", [text1])
     .then((data) => {
-      res.set({ "Content-Type": "image/png" });
+      res.set({ "Content-Type": "image/svg+xml; charset=utf-8" });
       res.send(data);
     })
     .catch((err) => {
@@ -874,13 +866,9 @@ router.get("/api/photooxy/metallic", cekKey, async (req, res, next) => {
       creator: `${creator}`,
       message: "[!] Masukan parameter text",
     });
-  mtx
-    .photooxy(
-      "https://photooxy.com/other-design/create-metallic-text-glow-online-188.html",
-      [text1]
-    )
+  mtx.creativeText.renderLocalText("metallic", [text1])
     .then((data) => {
-      res.set({ "Content-Type": "image/png" });
+      res.set({ "Content-Type": "image/svg+xml; charset=utf-8" });
       res.send(data);
     })
     .catch((err) => {
@@ -896,13 +884,9 @@ router.get("/api/photooxy/naruto", cekKey, async (req, res, next) => {
       creator: `${creator}`,
       message: "[!] Masukan parameter text",
     });
-  mtx
-    .photooxy(
-      "https://photooxy.com/manga-and-anime/make-naruto-banner-online-free-378.html",
-      [text1]
-    )
+  mtx.creativeText.renderLocalText("naruto", [text1])
     .then((data) => {
-      res.set({ "Content-Type": "image/png" });
+      res.set({ "Content-Type": "image/svg+xml; charset=utf-8" });
       res.send(data);
     })
     .catch((err) => {
@@ -925,13 +909,9 @@ router.get("/api/photooxy/pubg", cekKey, async (req, res, next) => {
       creator: `${creator}`,
       message: "[!] Masukan parameter text2",
     });
-  mtx
-    .photooxy(
-      "https://photooxy.com/battlegrounds/make-wallpaper-battlegrounds-logo-text-146.html",
-      [text1, text2]
-    )
+  mtx.creativeText.renderLocalText("pubg", [text1, text2])
     .then((data) => {
-      res.set({ "Content-Type": "image/png" });
+      res.set({ "Content-Type": "image/svg+xml; charset=utf-8" });
       res.send(data);
     })
     .catch((err) => {
@@ -947,13 +927,9 @@ router.get("/api/photooxy/under-grass", cekKey, async (req, res, next) => {
       creator: `${creator}`,
       message: "[!] Masukan parameter text",
     });
-  mtx
-    .photooxy(
-      "https://photooxy.com/logo-and-text-effects/make-quotes-under-grass-376.html",
-      [text1]
-    )
+  mtx.creativeText.renderLocalText("under-grass", [text1])
     .then((data) => {
-      res.set({ "Content-Type": "image/png" });
+      res.set({ "Content-Type": "image/svg+xml; charset=utf-8" });
       res.send(data);
     })
     .catch((err) => {
@@ -969,13 +945,9 @@ router.get("/api/photooxy/harry-potter", cekKey, async (req, res, next) => {
       creator: `${creator}`,
       message: "[!] Masukan parameter text",
     });
-  mtx
-    .photooxy(
-      "https://photooxy.com/logo-and-text-effects/create-harry-potter-text-on-horror-background-178.html",
-      [text1]
-    )
+  mtx.creativeText.renderLocalText("harry-potter", [text1])
     .then((data) => {
-      res.set({ "Content-Type": "image/png" });
+      res.set({ "Content-Type": "image/svg+xml; charset=utf-8" });
       res.send(data);
     })
     .catch((err) => {
@@ -994,13 +966,9 @@ router.get(
         creator: `${creator}`,
         message: "[!] Masukan parameter text",
       });
-    mtx
-      .photooxy(
-        "https://photooxy.com/art-effects/flower-typography-text-effect-164.html",
-        [text1]
-      )
+    mtx.creativeText.renderLocalText("flower-typography", [text1])
       .then((data) => {
-        res.set({ "Content-Type": "image/png" });
+        res.set({ "Content-Type": "image/svg+xml; charset=utf-8" });
         res.send(data);
       })
       .catch((err) => {
@@ -1017,13 +985,9 @@ router.get("/api/photooxy/picture-of-love", cekKey, async (req, res, next) => {
       creator: `${creator}`,
       message: "[!] Masukan parameter text",
     });
-  mtx
-    .photooxy(
-      "https://photooxy.com/logo-and-text-effects/create-a-picture-of-love-message-377.html",
-      [text1]
-    )
+  mtx.creativeText.renderLocalText("picture-of-love", [text1])
     .then((data) => {
-      res.set({ "Content-Type": "image/png" });
+      res.set({ "Content-Type": "image/svg+xml; charset=utf-8" });
       res.send(data);
     })
     .catch((err) => {
@@ -1039,13 +1003,9 @@ router.get("/api/photooxy/coffee-cup", cekKey, async (req, res, next) => {
       creator: `${creator}`,
       message: "[!] Masukan parameter text",
     });
-  mtx
-    .photooxy(
-      "https://photooxy.com/logo-and-text-effects/put-any-text-in-to-coffee-cup-371.html",
-      [text1]
-    )
+  mtx.creativeText.renderLocalText("coffee-cup", [text1])
     .then((data) => {
-      res.set({ "Content-Type": "image/png" });
+      res.set({ "Content-Type": "image/svg+xml; charset=utf-8" });
       res.send(data);
     })
     .catch((err) => {
@@ -1061,13 +1021,9 @@ router.get("/api/photooxy/butterfly", cekKey, async (req, res, next) => {
       creator: `${creator}`,
       message: "[!] Masukan parameter text",
     });
-  mtx
-    .photooxy(
-      "https://photooxy.com/logo-and-text-effects/butterfly-text-with-reflection-effect-183.html",
-      [text1]
-    )
+  mtx.creativeText.renderLocalText("butterfly", [text1])
     .then((data) => {
-      res.set({ "Content-Type": "image/png" });
+      res.set({ "Content-Type": "image/svg+xml; charset=utf-8" });
       res.send(data);
     })
     .catch((err) => {
@@ -1083,13 +1039,9 @@ router.get("/api/photooxy/night-sky", cekKey, async (req, res, next) => {
       creator: `${creator}`,
       message: "[!] Masukan parameter text",
     });
-  mtx
-    .photooxy(
-      "https://photooxy.com/logo-and-text-effects/write-stars-text-on-the-night-sky-200.html",
-      [text1]
-    )
+  mtx.creativeText.renderLocalText("night-sky", [text1])
     .then((data) => {
-      res.set({ "Content-Type": "image/png" });
+      res.set({ "Content-Type": "image/svg+xml; charset=utf-8" });
       res.send(data);
     })
     .catch((err) => {
@@ -1105,13 +1057,9 @@ router.get("/api/photooxy/carved-wood", cekKey, async (req, res, next) => {
       creator: `${creator}`,
       message: "[!] Masukan parameter text",
     });
-  mtx
-    .photooxy(
-      "https://photooxy.com/logo-and-text-effects/carved-wood-effect-online-171.html",
-      [text1]
-    )
+  mtx.creativeText.renderLocalText("carved-wood", [text1])
     .then((data) => {
-      res.set({ "Content-Type": "image/png" });
+      res.set({ "Content-Type": "image/svg+xml; charset=utf-8" });
       res.send(data);
     })
     .catch((err) => {
@@ -1130,13 +1078,9 @@ router.get(
         creator: `${creator}`,
         message: "[!] Masukan parameter text",
       });
-    mtx
-      .photooxy(
-        "https://photooxy.com/logo-and-text-effects/illuminated-metallic-effect-177.html",
-        [text1]
-      )
+    mtx.creativeText.renderLocalText("illuminated-metallic", [text1])
       .then((data) => {
-        res.set({ "Content-Type": "image/png" });
+        res.set({ "Content-Type": "image/svg+xml; charset=utf-8" });
         res.send(data);
       })
       .catch((err) => {
@@ -1153,13 +1097,9 @@ router.get("/api/photooxy/sweet-candy", cekKey, async (req, res, next) => {
       creator: `${creator}`,
       message: "[!] Masukan parameter text",
     });
-  mtx
-    .photooxy(
-      "https://photooxy.com/logo-and-text-effects/sweet-andy-text-online-168.html",
-      [text1]
-    )
+  mtx.creativeText.renderLocalText("sweet-candy", [text1])
     .then((data) => {
-      res.set({ "Content-Type": "image/png" });
+      res.set({ "Content-Type": "image/svg+xml; charset=utf-8" });
       res.send(data);
     })
     .catch((err) => {

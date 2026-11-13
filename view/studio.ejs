@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="bn">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0a0c16" />
+    <meta name="description" content="Create original photo frames, text art, banners and visual effects in the Better-Api Creative Studio." />
+    <title>Creative Studio | MrTomXxX API</title>
+    <link rel="stylesheet" href="/css/landing.css" />
+    <link rel="stylesheet" href="/css/studio.css" />
+    <script src="/js/studio.js" defer></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="/"><span class="brand-mark">M</span><span>MrTom<span class="accent">XxX</span><small>CREATIVE STUDIO</small></span></a>
+      <nav class="nav-actions" aria-label="Main navigation">
+        <a class="nav-link" href="/" data-i18n="home">হোম</a>
+        <a class="nav-link" href="/effects" data-i18n="text">Text Effects</a>
+        <select id="studio-language" class="language-switch" aria-label="ভাষা নির্বাচন"><option value="bn">বাংলা</option><option value="en">English</option></select>
+        <button id="studio-theme" class="theme-switch" type="button" aria-label="থিম বদলান">☼</button>
+        <a class="button button-outline" href="/login" data-i18n="login">লগইন</a>
+      </nav>
+    </header>
+
+    <main class="studio-main">
+      <section class="studio-hero">
+        <div>
+          <span class="status-pill"><span class="pulse"></span><span data-i18n="localBadge">নিজস্ব design · browser-e render</span></span>
+          <p class="section-kicker" data-i18n="kicker">ORIGINAL CREATIVE TOOLS</p>
+          <h1><span data-i18n="hero1">নিজের ছবি,</span><br /><span data-i18n="hero2">নিজের style-এ.</span></h1>
+          <p class="hero-description" data-i18n="heroCopy">Frame, text art, banner ebong visual effect—nijer design toiri korun. Chobi apnar browser-er baire upload hoy na.</p>
+        </div>
+        <div class="studio-hero-art" aria-hidden="true"><span class="hero-ring ring-one"></span><span class="hero-ring ring-two"></span><span class="hero-art-card card-back">✦</span><span class="hero-art-card card-front">Aa</span><span class="hero-art-dot">✳</span></div>
+      </section>
+
+      <section class="studio-layout" aria-label="Creative editor">
+        <aside class="studio-panel controls-panel">
+          <div class="panel-heading"><div><p class="section-kicker" data-i18n="stepOne">01 / CATEGORY</p><h2 data-i18n="chooseCategory">Category বেছে নিন</h2></div><span class="small-tag">15</span></div>
+          <div id="category-list" class="category-list" role="list"></div>
+          <div class="panel-divider"></div>
+          <div class="panel-heading compact-heading"><div><p class="section-kicker" data-i18n="stepTwo">02 / TEMPLATE</p><h2 data-i18n="chooseTemplate">Original template</h2></div></div>
+          <div id="template-list" class="template-list"></div>
+          <div class="panel-divider"></div>
+          <div class="panel-heading compact-heading"><div><p class="section-kicker" data-i18n="stepThree">03 / PERSONALIZE</p><h2 data-i18n="personalize">নিজের মতো সাজান</h2></div></div>
+          <label class="field-label" for="studio-text" data-i18n="mainText">মূল লেখা</label>
+          <input id="studio-text" class="studio-input" type="text" maxlength="42" value="YOUR STORY" placeholder="আপনার লেখা" />
+          <label class="field-label" for="studio-subtext" data-i18n="subText">দ্বিতীয় লাইন (ঐচ্ছিক)</label>
+          <input id="studio-subtext" class="studio-input" type="text" maxlength="32" placeholder="একটি ছোট বার্তা" />
+          <label class="field-label upload-label" for="studio-image" data-i18n="uploadPhoto">নিজের ছবি দিন (ঐচ্ছিক)</label>
+          <label class="upload-drop" id="upload-drop" for="studio-image"><span class="upload-symbol">↑</span><span id="upload-copy">ছবি এখানে রাখুন বা বেছে নিন</span><small>JPG, PNG, WEBP · সর্বোচ্চ ১২ MB</small></label>
+          <input id="studio-image" type="file" accept="image/jpeg,image/png,image/webp" hidden />
+          <button id="remove-image" class="text-button" type="button" hidden data-i18n="removeImage">ছবি সরান</button>
+          <details id="photo-adjust" class="photo-adjust" hidden>
+            <summary data-i18n="photoAdjust">ছবির framing</summary>
+            <label class="field-label" for="photo-zoom"><span data-i18n="zoom">Zoom</span><output id="zoom-value">100%</output></label>
+            <input id="photo-zoom" class="range-control" type="range" min="100" max="220" value="100" />
+            <label class="field-label" for="photo-x" data-i18n="positionX">Horizontal position</label>
+            <input id="photo-x" class="range-control" type="range" min="0" max="100" value="50" />
+            <label class="field-label" for="photo-y" data-i18n="positionY">Vertical position</label>
+            <input id="photo-y" class="range-control" type="range" min="0" max="100" value="50" />
+          </details>
+          <label class="field-label intensity-label" for="studio-intensity"><span data-i18n="intensity">Effect-এর মাত্রা</span><output id="intensity-value">70%</output></label>
+          <input id="studio-intensity" class="range-control" type="range" min="20" max="100" value="70" />
+        </aside>
+
+        <section class="studio-panel preview-panel" aria-label="Design preview">
+          <div class="panel-heading preview-heading"><div><p class="section-kicker" data-i18n="livePreview">LIVE PREVIEW</p><h2 id="active-category-title">Text & Logo</h2></div><span id="canvas-size" class="small-tag">1200 × 840</span></div>
+          <div id="canvas-stage" class="canvas-stage"><canvas id="studio-canvas" width="1200" height="840" aria-label="আপনার ডিজাইনের preview"></canvas><div id="panorama-hint" class="panorama-hint" hidden>ছবি টেনে panorama ঘোরান</div></div>
+          <div class="preview-caption"><span id="studio-status" role="status" aria-live="polite">Browser-e design ready.</span><span data-i18n="privateNote">ছবি device-ei thake</span></div>
+          <div class="export-row"><button id="download-png" class="button button-primary" type="button"><span data-i18n="downloadPng">PNG download</span> ↓</button><button id="reset-design" class="button button-quiet" type="button" data-i18n="reset">আবার শুরু</button></div>
+          <div class="studio-tip"><span>✦</span><p><strong data-i18n="tipTitle">নিজস্ব design system</strong><br /><span data-i18n="tipCopy">সব preview canvas-e তৈরি হয়; kono third-party template service use hoy na.</span></p></div>
+        </section>
+      </section>
+      <section class="studio-library">
+        <div class="library-heading"><div><p class="section-kicker" data-i18n="libraryKicker">THE DESIGN LIBRARY</p><h2 data-i18n="libraryTitle">সব category এক জায়গায়</h2></div><p data-i18n="libraryCopy">Prottek category-te nijeder editable template ache.</p></div>
+        <div id="category-library" class="category-library"></div>
+      </section>
+    </main>
+    <footer><span>© <span id="studio-year"></span> MrTomXxX</span><span data-i18n="footerNote">Original designs · local preview</span><a href="/effects" data-i18n="text">Text Effects</a></footer>
+  </body>
+</html>
